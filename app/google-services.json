@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "902248879974",
+    "project_id": "tellink-3de74",
+    "storage_bucket": "tellink-3de74.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902248879974:android:c3727bac86d700485b1aa7",
+        "android_client_info": {
+          "package_name": "org.d3if3121.tellink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4QCujlm9CZOP066Zn7-YmXA9UYu5m0Tc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

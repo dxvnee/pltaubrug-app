@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">Tellink</string>
+    <string name="tellink">Tellink.</string>
+    <string name="login">Login</string>
+    <string name="nim">NIM :</string>
+    <string name="name">Name :</string>
+    <string name="enter_nim">Enter NIM here:</string>
+    <string name="enter_name">Enter name here:</string>
+    <string name="enter_password">Enter Password here:</string>
+    <string name="password">Password :</string>
+    <string name="confirm_password">Confirm :</string>
+    <string name="login_bold">LOGIN</string>
+    <string name="login_title">Log in to </string>
+    <string name="register_bold">REGISTER</string>
+    <string name="register_title">Register to </string>
+    <string name="dont_have_account">Not have account? </string>
+    <string name="have_account">Have account? </string>
+    <string name="register">Register!</string>
+    <string name="nama">Eigiya Daramuli Kale</string>
+    <string name="full_name">Full Name: </string>
+
+
+    //Home
+    <string name="welcome">Welcome, Egia</string>
+    <string name="recenty">Recently Hot</string>
+    <string name="konten_seminar">Seminar Workshop IoT 2023 Seminar Workshop IoT 2023</string>
+    <string name="why">Why Telkom University Link?</string>
+    <string name="facts">Telkom University Facts:</string>
+    <string name="search">Search posts...</string>
+    <string name="search_tag">Search tag...</string>
+    <string name="request">+ Request</string>
+    <string name="cancel">- Cancel</string>
+    <string name="konten_why">“Telkom University Link is made spesific for Telkom University student, it can provide you lots of knownledge and experience with our features, no need to worry about your career we can discuss it here.”</string>
+
+
+    //Profile
+    <string name="edit">Edit</string>
+    <string name="accepted">Accepted!</string>
+    <string name="acc">+</string>
+    <string name="kick">-</string>
+    <string name="chat">Chat</string>
+    <string name="requested"> People requested to join this project..</string>
+    <string name="major">Major:</string>
+    <string name="enter_major">Enter major here:</string>
+
+    //Project
+    <string name="title">Title:</string>
+    <string name="enter_title">Enter title here:</string>
+    <string name="desc">Description:</string>
+    <string name="upload_image">Image: </string>
+    <string name="tags">Tags: </string>
+    <string name="enter_desc">Write your description:</string>
+    <string name="edit_title">Edit Title:</string>
+    <string name="edit_desc">Edit Desc:</string>
+
+
+
+</resources>
