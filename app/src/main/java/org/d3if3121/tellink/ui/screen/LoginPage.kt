@@ -7,6 +7,7 @@ import org.d3if3121.tellink.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,7 +69,6 @@ fun LoginPagePreview() {
 
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(
     navController: NavHostController,
@@ -121,40 +121,39 @@ fun LoginPage(
         Column {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 95.dp),
+                    .padding(top = 100.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo),
+                    painter = painterResource(id = R.drawable.pln),
                     contentDescription = "App logo",
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(120.dp)
-                        .shadow(elevation = 25.dp, shape = CircleShape, ambientColor = Color.Red)
+                        .width(263.dp)
+                        .height(70.dp)
                 )
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Column(
-                    modifier = Modifier.padding(12.dp),
+
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
                     Row {
                         Text(
-                            text = "Log in to ",
+                            text = "Masuk ke ",
                             color = Warna.MerahNormal,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.Normal,
                         )
                         Text(
-                            text = "Tellink.",
+                            text = "PLTA UBRUG.",
                             color = Warna.MerahNormal,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.ExtraBold,
@@ -280,7 +279,7 @@ fun LoginPage(
                                 .size(46.dp),
                             content = {
                                 Text(
-                                    text = "LOGIN",
+                                    text = "MASUK",
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 18.sp,
                                     color = Warna.PutihNormal
@@ -294,12 +293,12 @@ fun LoginPage(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Don't have account? ",
+                                text = "Belum punya akun? ",
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight(500)
+                                fontWeight = FontWeight(300)
                             )
                             ClickableText(
-                                text = AnnotatedString("Register!"),
+                                text = AnnotatedString("Silahkan daftar!"),
                                 onClick = {
                                     navController.navigate(Screen.Register.route)
                                 },

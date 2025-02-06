@@ -132,46 +132,44 @@ fun RegisterPage(
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Warna.PutihNormal, RectangleShape)
-    ) {
+    ){
 
         Column {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 95.dp),
+                    .padding(top = 100.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo),
+                    painter = painterResource(id = R.drawable.pln),
                     contentDescription = "App logo",
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(120.dp)
-                        .shadow(elevation = 25.dp, shape = CircleShape, ambientColor = Color.Red)
+                        .width(263.dp)
+                        .height(70.dp)
                 )
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Column(
-                    modifier = Modifier.padding(12.dp),
+
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
                     Row {
                         Text(
-                            text = stringResource(id = R.string.register_title),
+                            text = "Masuk ke ",
                             color = Warna.MerahNormal,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.Normal,
-                            modifier = Modifier.padding(end = 7.dp)
                         )
                         Text(
-                            text = stringResource(id = R.string.tellink),
+                            text = "PLTA UBRUG.",
                             color = Warna.MerahNormal,
                             fontSize = 26.sp,
                             fontWeight = FontWeight.ExtraBold,

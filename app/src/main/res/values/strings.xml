@@ -2,22 +2,22 @@
     <string name="app_name">Tellink</string>
     <string name="tellink">Tellink.</string>
     <string name="login">Login</string>
-    <string name="nim">NIM :</string>
+    <string name="nim">NIP :</string>
     <string name="name">Name :</string>
-    <string name="enter_nim">Enter NIM here:</string>
-    <string name="enter_name">Enter name here:</string>
-    <string name="enter_password">Enter Password here:</string>
+    <string name="enter_nim">Masukkan NIP disini: </string>
+    <string name="enter_name">Masukkan nama disini:</string>
+    <string name="enter_password">Masukkan password disini:</string>
     <string name="password">Password :</string>
-    <string name="confirm_password">Confirm :</string>
+    <string name="confirm_password">Konfirmasi :</string>
     <string name="login_bold">LOGIN</string>
     <string name="login_title">Log in to </string>
-    <string name="register_bold">REGISTER</string>
+    <string name="register_bold">DAFTAR</string>
     <string name="register_title">Register to </string>
     <string name="dont_have_account">Not have account? </string>
-    <string name="have_account">Have account? </string>
+    <string name="have_account">Punya akun? </string>
     <string name="register">Register!</string>
     <string name="nama">Eigiya Daramuli Kale</string>
-    <string name="full_name">Full Name: </string>
+    <string name="full_name">Nama Lengkap :</string>
 
 
     //Home

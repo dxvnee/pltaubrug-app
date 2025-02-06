@@ -11,8 +11,8 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 object Warna {
-    val MerahNormal = Color(0xFFE40000)
-    val MerahTua = Color(0xFFC7001E)
+    val MerahTua = Color(0xFF0797DA)
+    val MerahNormal = Color(0xFF2A2E78)
     val PutihNormal = Color(0xFFFFFFFF)
     val HitamNormal = Color(0xFF000000)
     val AbuNormal = Color(0xFFC3C3C3)
