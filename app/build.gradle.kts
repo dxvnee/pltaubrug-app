@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "org.d3if3121.tellink"
+    namespace = "org.d3if3121.pltaconnect"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.d3if3121.tellink"
+        applicationId = "org.d3if3121.pltaconnect"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

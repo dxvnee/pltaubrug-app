@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="org.d3if3121.tellink" />
-                  <option name="mobileSdkAppId" value="1:902248879974:android:c3727bac86d700485b1aa7" />
-                  <option name="projectId" value="tellink-3de74" />
-                  <option name="projectNumber" value="902248879974" />
+                  <option name="appId" value="org.d3if3121.pltaconnect" />
+                  <option name="mobileSdkAppId" value="1:314267859494:android:f8cb4ef5ed0578e63a84e7" />
+                  <option name="projectId" value="pltaubrug-377bd" />
+                  <option name="projectNumber" value="314267859494" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

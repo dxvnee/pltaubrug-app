@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "902248879974",
-    "project_id": "tellink-3de74",
-    "storage_bucket": "tellink-3de74.firebasestorage.app"
+    "project_number": "314267859494",
+    "project_id": "pltaubrug-377bd",
+    "storage_bucket": "pltaubrug-377bd.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:902248879974:android:c3727bac86d700485b1aa7",
+        "mobilesdk_app_id": "1:314267859494:android:f8cb4ef5ed0578e63a84e7",
         "android_client_info": {
-          "package_name": "org.d3if3121.tellink"
+          "package_name": "org.d3if3121.pltaconnect"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC4QCujlm9CZOP066Zn7-YmXA9UYu5m0Tc"
+          "current_key": "AIzaSyBqtgjiw9ghzQY5nHyW4cNK62bhUTRkBa4"
         }
       ],
       "services": {

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Tellink"
+rootProject.name = "PLTAConnect"
 include(":app")
  
