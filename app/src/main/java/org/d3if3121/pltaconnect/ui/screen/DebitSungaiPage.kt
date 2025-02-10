@@ -77,11 +77,14 @@ import org.d3if3121.pltaconnect.ui.component.DataDua
 import org.d3if3121.pltaconnect.ui.component.InputPutih
 import org.d3if3121.pltaconnect.ui.component.InputPutihKeterangan
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
+import org.d3if3121.pltaconnect.ui.screen.content.ContentDebit
+import org.d3if3121.pltaconnect.ui.screen.content.ContentProduksi
+import org.d3if3121.pltaconnect.ui.screen.content.DebitSungaiResponse
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DebitSungaiPage(
+fun ContentPage(
     navController: NavHostController,
     viewModel: PegawaiListViewModel = hiltViewModel(),
     projectviewmodel: ProjectListViewModel = hiltViewModel()
@@ -103,14 +106,15 @@ fun DebitSungaiPage(
                 is Loading -> LoadingIndicator()
                 is Success -> projectListUserResponse.data.let { projectList ->
                         Column(modifier = Modifier.background(color = Warna.PutihNormal)){
-                            MainContentDebitSungai(
+                            MainContent(
                                 navController = navController,
                                 lazyListState = lazyListState,
                                 paddingValues = paddingValues,
                                 viewmodel = viewModel,
                                 projectviewmodel = projectviewmodel,
                                 projectList = projectList!!,
-                                user = user
+                                user = user,
+                                context = context
                             )
                         }
 
@@ -126,11 +130,11 @@ fun DebitSungaiPage(
         },
         contentColor = Warna.PutihNormal
     )
-    DebitSungaiResponse(context, projectviewmodel)
+
 }
 
 @Composable
-fun MainContentDebitSungai(
+fun MainContent(
     navController: NavHostController,
     lazyListState: LazyListState,
     paddingValues: PaddingValues,
@@ -138,9 +142,11 @@ fun MainContentDebitSungai(
     projectviewmodel: ProjectListViewModel,
     projectList: List<Project>,
     viewModel: PegawaiListViewModel = hiltViewModel(),
-    user: Pegawai
+    user: Pegawai,
+    context: Context = LocalContext.current
 ) {
 
+    var contentnow by  remember { mutableStateOf("Debit") }
     val padding by animateDpAsState(
         targetValue = if (cekScroll(lazyListState)) 0.dp else TOP_BAR_HEIGHT,
         animationSpec = tween(
@@ -151,321 +157,34 @@ fun MainContentDebitSungai(
     Column(
         modifier = Modifier.padding(start = 17.dp, end = 17.dp, top = padding)
     ) {
-
-        JudulUtama(
-            judul1 = "Debit Sungai",
-            judul2 = "(Jam 24)",
-            tanggal = "11 Februari 2025",
-        )
-
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight()
-                .background(color = Warna.PutihNormal),
-            state = lazyListState
-        ){
-            item {
-
-                Column {
-                    Text(
-                        text = "Pilih Unit: ",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Warna.MerahNormal,
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
-
-                    ButtonTiga(
-                        onClick1 = {},
-                        onClick2 = {},
-                        onClick3 = {}
-                    )
-
-                    Row (
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ){
-                        Text(
-                            text = "Unit 1",
-                            fontSize = 21.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Warna.MerahNormal,
-                            modifier = Modifier.padding(top = 14.dp)
-                        )
+        when(contentnow){
+            "Debit" -> {
+                ContentDebit(
+                    lazyListState = lazyListState,
+                    onClickNext = {
+                        contentnow = "Produksi"
+                    },
+                    onClickBack = {
+                        contentnow = "Debit"
                     }
-                }
-
-
-                ProjectListProduksi()
+                )
+                DebitSungaiResponse(context, projectviewmodel)
             }
-
-        }
-    }
-}
-
-@Composable
-fun ProjectListDebit(
-){
-    var maxdebit by remember { mutableStateOf("") }
-    var mindebit by remember { mutableStateOf("") }
-    var ratarata by remember { mutableStateOf("32,04") }
-
-    var dam by remember { mutableStateOf("") }
-    var kth by remember { mutableStateOf("") }
-    var ph by remember { mutableStateOf("") }
-
-    var maxdam by remember { mutableStateOf("") }
-    var mindam by remember { mutableStateOf("") }
-
-    var tma by remember { mutableStateOf("") }
-
-
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth().fillMaxHeight(),
-        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
-        shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ){
-
-        Column (
-            modifier = Modifier.padding(17.dp).fillMaxWidth()
-        ){
-            DataDua(
-                ratacond = true,
-                judul1 = "Debit Sungai Cicatih",
-                judul2 = "Rata-rata:",
-                warnarata1 = Warna.MerahNormal,
-                ratarata = ratarata,
-                text1k1 = "Maksimal:",
-                text2k1 = "m2/d",
-                text1k2 = "Minimal:",
-                text2k2 = "m2/d",
-                hasil1 = maxdebit,
-                onHasil1Change = {
-                    maxdebit = it
-                },
-                hasil2 = mindebit,
-                onHasil2Change = {
-                    mindebit = it
-                } ,
-            )
-
-            DataDua(
-                tigacond = true,
-                judul1 = "Curah Hujan",
-                text1k1 = "DAM:",
-                text2k1 = "mm",
-                text1k2 = "KTH:",
-                text2k2 = "mm",
-                text1k3 = "PH:",
-                text2k3 = "mm",
-                hasil1 = dam,
-                onHasil1Change = {
-                    dam = it
-                },
-                hasil2 = kth,
-                onHasil2Change = {
-                    kth = it
-                } ,
-                hasil3 = ph,
-                onHasil3Change = {
-                    ph = it
-                } ,
-            )
-
-            DataDua(
-                judul1 = "Diatas DAM",
-                text1k1 = "Max:",
-                text2k1 = "cm",
-                text1k2 = "Min:",
-                text2k2 = "cm",
-
-                hasil1 = maxdam,
-                onHasil1Change = {
-                    maxdam = it
-                },
-                hasil2 = mindam,
-                onHasil2Change = {
-                    mindam = it
-                } ,
-            )
-
-            InputPutihKeterangan(
-                text1 = "TMA Rata-rata KTH :",
-                inputan = tma,
-                onInputanChange = {
-                    tma = it
-                },
-                modifier = Modifier.padding(bottom = 10.dp)
-            )
-
-
-
+            "Produksi" -> {
+                ContentProduksi(
+                    lazyListState = lazyListState,
+                    onClickNext = {
+                        contentnow = "Debit"
+                    },
+                    onClickBack = {
+                        contentnow = "Produksi"
+                    }
+                )
+            }
         }
 
     }
-    ButtonMerah(
-        onClick = {
-
-        },
-        modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
-        content = {
-            Text(
-                text = "KIRIM",
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 17.sp,
-                color = Warna.PutihNormal
-            )
-        }
-    )
-
-
-    Spacer(modifier = Modifier.height(150.dp))
-}
-
-
-@Composable
-fun ProjectListProduksi(
-){
-    var sesudah by remember { mutableStateOf("") }
-    var sebelum by remember { mutableStateOf("") }
-    var selisih by remember { mutableStateOf("32,04") }
-    var kwh by remember { mutableStateOf("90.118,54") }
-
-    var rataair by remember { mutableStateOf("7776") }
-    var air by remember { mutableStateOf("") }
-    var ekonomisair by remember { mutableStateOf("") }
-
-
-    var maxdam by remember { mutableStateOf("") }
-    var mindam by remember { mutableStateOf("") }
-
-    var tma by remember { mutableStateOf("") }
-
-
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth().height(580.dp),
-        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
-        shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ){
-
-        Column (
-            modifier = Modifier.padding(17.dp).fillMaxWidth()
-        ){
-            DataDua(
-                ratacond = true,
-                duaratacond = true,
-                judul1 = "Produksi:",
-                judul2 = "Selisih:",
-                warnarata2 = Warna.BiruNormal,
-                ratarata = selisih,
-                text1k1 = "Sesudah:",
-                text2k1 = "11 Januari 2025",
-                text1k2 = "Sebelum:",
-                text2k2 = "10 Januari 2025",
-
-                judul2k2 = "kWh:",
-                ratarata2 = kwh,
-                hasil1 = sesudah,
-                onHasil1Change = {
-                    sesudah = it
-                },
-                hasil2 = sebelum,
-                onHasil2Change = {
-                    sebelum = it
-                },
-                besartext2 = 12
-            )
-
-            DataDua(
-                ratacond = true,
-                judul1 = "Data Air:",
-                judul2 = "Rata-rata penggunaan air:",
-                ratarata = rataair,
-                warnarata1 = Warna.MerahTua,
-                text1k1 = "Penggunaan Air:",
-                text2k1 = "",
-                text1k2 = "Ekonomis Air:",
-                text2k2 = "",
-
-                hasil1 = air,
-                onHasil1Change = {
-                    air = it
-                },
-                hasil2 = ekonomisair,
-                onHasil2Change = {
-                    ekonomisair = it
-                },
-            )
-
-            DataDua(
-                judul1 = "Lainnya:",
-                text1k1 = "Pemakaian Sendiri:",
-                text2k1 = "",
-                text1k2 = "Penjualan:",
-                text2k2 = "",
-
-                hasil1 = maxdam,
-                onHasil1Change = {
-                    maxdam = it
-                },
-                hasil2 = mindam,
-                onHasil2Change = {
-                    mindam = it
-                } ,
-            )
-
-
-
-        }
-
-    }
-    ButtonMerah(
-        onClick = {
-
-        },
-        modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
-        content = {
-            Text(
-                text = "KIRIM",
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 17.sp,
-                color = Warna.PutihNormal
-            )
-        }
-    )
-
-
-    Spacer(modifier = Modifier.height(150.dp))
 }
 
 
 
-@Composable
-fun DebitSungaiResponse(context: Context, projectviewmodel: ProjectListViewModel){
-
-    when(val addRequestResponse = projectviewmodel.addRequestResponse){
-        is Loading -> {
-
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetAddRequestResponse()
-        }
-        is Failure -> printError(addRequestResponse.e)
-    }
-    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
-        is Loading -> {
-
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetDeleteRequestResponse()
-        }
-        is Failure -> printError(deleteRequestResponse.e)
-    }
-}

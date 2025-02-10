@@ -42,6 +42,10 @@ fun JudulUtama(
     judul1: String,
     judul2: String = "",
     tanggal: String,
+
+    onClickBack: () -> Unit,
+    onClickNext: () -> Unit,
+
 ){
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -53,13 +57,9 @@ fun JudulUtama(
         ) {
             ButtonKecil(
                 imageVector = Icons.Default.ArrowBackIosNew,
-                onClick = {
-
-                }
+                onClick = onClickBack
             )
         }
-
-
 
         Column (
             verticalArrangement = Arrangement.Center,
@@ -94,9 +94,7 @@ fun JudulUtama(
         ) {
             ButtonKecil(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                onClick = {
-
-                },
+                onClick = onClickNext,
             )
         }
     }

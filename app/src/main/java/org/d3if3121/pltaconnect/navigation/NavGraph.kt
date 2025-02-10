@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.d3if3121.pltaconnect.ui.screen.ConfirmPage
-import org.d3if3121.pltaconnect.ui.screen.DebitSungaiPage
+import org.d3if3121.pltaconnect.ui.screen.ContentPage
 import org.d3if3121.pltaconnect.ui.screen.EditPage
 import org.d3if3121.pltaconnect.ui.screen.HomePage
 import org.d3if3121.pltaconnect.ui.screen.LoginPage
@@ -43,7 +43,7 @@ fun SetupNavGraph(){
         }
 
         composable(route = Screen.Project.route){
-            DebitSungaiPage(navController, pegawailistviewmodel)
+            ContentPage(navController, pegawailistviewmodel)
         }
 
         composable(route = Screen.Profile.route){

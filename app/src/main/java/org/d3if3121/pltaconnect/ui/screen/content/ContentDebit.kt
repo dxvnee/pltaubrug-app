@@ -1,0 +1,244 @@
+package org.d3if3121.pltaconnect.ui.screen.content
+
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import org.d3if3121.pltaconnect.core.printError
+import org.d3if3121.pltaconnect.data.model.Response.Failure
+import org.d3if3121.pltaconnect.data.model.Response.Loading
+import org.d3if3121.pltaconnect.data.model.Response.Success
+import org.d3if3121.pltaconnect.ui.component.ButtonMerah
+import org.d3if3121.pltaconnect.ui.component.ButtonTiga
+import org.d3if3121.pltaconnect.ui.component.DataDua
+import org.d3if3121.pltaconnect.ui.component.InputPutihKeterangan
+import org.d3if3121.pltaconnect.ui.component.JudulUtama
+import org.d3if3121.pltaconnect.ui.theme.Warna
+import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
+
+
+@Composable
+fun ContentDebit(
+    lazyListState: LazyListState,
+    onClickBack: () -> Unit,
+    onClickNext: () -> Unit,
+){
+
+    JudulUtama(
+        judul1 = "Debit Sungai",
+        judul2 = "(Jam 24)",
+        tanggal = "11 Februari 2025",
+
+        onClickBack = onClickBack,
+        onClickNext = onClickNext
+    )
+
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight()
+            .background(color = Warna.PutihNormal),
+        state = lazyListState
+    ){
+        item {
+
+            Column {
+                Text(
+                    text = "Pilih Unit: ",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Warna.MerahNormal,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+
+                ButtonTiga(
+                    onClick1 = {},
+                    onClick2 = {},
+                    onClick3 = {}
+                )
+
+                Row (
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(
+                        text = "Unit 1",
+                        fontSize = 21.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Warna.MerahNormal,
+                        modifier = Modifier.padding(top = 14.dp)
+                    )
+                }
+            }
+            MainContentDebit()
+        }
+
+    }
+}
+@Composable
+fun MainContentDebit(
+){
+    var maxdebit by remember { mutableStateOf("") }
+    var mindebit by remember { mutableStateOf("") }
+    var ratarata by remember { mutableStateOf("32,04") }
+
+    var dam by remember { mutableStateOf("") }
+    var kth by remember { mutableStateOf("") }
+    var ph by remember { mutableStateOf("") }
+
+    var maxdam by remember { mutableStateOf("") }
+    var mindam by remember { mutableStateOf("") }
+
+    var tma by remember { mutableStateOf("") }
+
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth().fillMaxHeight(),
+        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+        shape = RoundedCornerShape(10.dp),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ){
+
+        Column (
+            modifier = Modifier.padding(17.dp).fillMaxWidth()
+        ){
+            DataDua(
+                ratacond = true,
+                judul1 = "Debit Sungai Cicatih",
+                judul2 = "Rata-rata:",
+                warnarata1 = Warna.MerahNormal,
+                ratarata = ratarata,
+                text1k1 = "Maksimal:",
+                text2k1 = "m2/d",
+                text1k2 = "Minimal:",
+                text2k2 = "m2/d",
+                hasil1 = maxdebit,
+                onHasil1Change = {
+                    maxdebit = it
+                },
+                hasil2 = mindebit,
+                onHasil2Change = {
+                    mindebit = it
+                } ,
+            )
+
+            DataDua(
+                tigacond = true,
+                judul1 = "Curah Hujan",
+                text1k1 = "DAM:",
+                text2k1 = "mm",
+                text1k2 = "KTH:",
+                text2k2 = "mm",
+                text1k3 = "PH:",
+                text2k3 = "mm",
+                hasil1 = dam,
+                onHasil1Change = {
+                    dam = it
+                },
+                hasil2 = kth,
+                onHasil2Change = {
+                    kth = it
+                } ,
+                hasil3 = ph,
+                onHasil3Change = {
+                    ph = it
+                } ,
+            )
+
+            DataDua(
+                judul1 = "Diatas DAM",
+                text1k1 = "Max:",
+                text2k1 = "cm",
+                text1k2 = "Min:",
+                text2k2 = "cm",
+
+                hasil1 = maxdam,
+                onHasil1Change = {
+                    maxdam = it
+                },
+                hasil2 = mindam,
+                onHasil2Change = {
+                    mindam = it
+                } ,
+            )
+
+            InputPutihKeterangan(
+                text1 = "TMA Rata-rata KTH :",
+                inputan = tma,
+                onInputanChange = {
+                    tma = it
+                },
+                modifier = Modifier.padding(bottom = 10.dp)
+            )
+
+
+
+        }
+
+    }
+    ButtonMerah(
+        onClick = {
+
+        },
+        modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
+        content = {
+            Text(
+                text = "KIRIM",
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 17.sp,
+                color = Warna.PutihNormal
+            )
+        }
+    )
+
+
+    Spacer(modifier = Modifier.height(150.dp))
+}
+
+
+
+@Composable
+fun DebitSungaiResponse(context: Context, projectviewmodel: ProjectListViewModel){
+
+    when(val addRequestResponse = projectviewmodel.addRequestResponse){
+        is Loading -> {
+
+        }
+        is Success -> {
+            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
+            projectviewmodel.resetAddRequestResponse()
+        }
+        is Failure -> printError(addRequestResponse.e)
+    }
+    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
+        is Loading -> {
+
+        }
+        is Success -> {
+            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
+            projectviewmodel.resetDeleteRequestResponse()
+        }
+        is Failure -> printError(deleteRequestResponse.e)
+    }
+}
