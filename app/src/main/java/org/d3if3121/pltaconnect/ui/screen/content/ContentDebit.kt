@@ -41,18 +41,24 @@ import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
 
 @Composable
 fun ContentDebit(
+    tanggal: String = "Tanggal Kosong",
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
 ){
 
+    var judul2 by remember { mutableStateOf("(Jam 24)") }
+
     JudulUtama(
         judul1 = "Debit Sungai",
-        judul2 = "(Jam 24)",
-        tanggal = "11 Februari 2025",
+        judul2 = judul2,
+        tanggal = tanggal,
 
         onClickBack = onClickBack,
-        onClickNext = onClickNext
+        onClickNext = onClickNext,
+        onJudul2Change = {
+            judul2 = it
+        }
     )
 
     LazyColumn(
@@ -61,35 +67,7 @@ fun ContentDebit(
         state = lazyListState
     ){
         item {
-
-            Column {
-                Text(
-                    text = "Pilih Unit: ",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Warna.MerahNormal,
-                    modifier = Modifier.padding(top = 10.dp)
-                )
-
-                ButtonTiga(
-                    onClick1 = {},
-                    onClick2 = {},
-                    onClick3 = {}
-                )
-
-                Row (
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        text = "Unit 1",
-                        fontSize = 21.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Warna.MerahNormal,
-                        modifier = Modifier.padding(top = 14.dp)
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.padding(bottom = 6.dp))
             MainContentDebit()
         }
 

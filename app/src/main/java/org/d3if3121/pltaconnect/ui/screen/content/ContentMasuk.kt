@@ -24,38 +24,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.d3if3121.pltaconnect.R
 import org.d3if3121.pltaconnect.ui.component.BarisTigaText
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
+import org.d3if3121.pltaconnect.ui.component.InputPutih
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.component.PindahUnit
 import org.d3if3121.pltaconnect.ui.theme.Warna
 
 
 @Composable
-fun ContentProduksi(
+fun ContentMasuk(
     tanggal: String,
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
 ){
-    var judul2 by remember { mutableStateOf("(Jam 24)") }
-
     var unit by remember { mutableStateOf("Unit 1") }
+
     JudulUtama(
-        judul1 = "Produksi",
-        judul2 = judul2,
+        judul1 = "Masuk Keluar Unit",
+        judul2cond = false,
         tanggal = tanggal,
         onClickBack =  onClickBack,
         onClickNext =  onClickNext,
 
-        onJudul2Change = {
-            judul2 = it
-        }
     )
 
     LazyColumn(
@@ -90,22 +90,24 @@ fun ContentProduksi(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                     horizontalArrangement = Arrangement.Center
                 ){
-                   PindahUnit(unit)
+                    PindahUnit(unit)
                 }
             }
-            MainContentProduksi()
+            MainContentMasuk()
         }
 
     }
 }
 
+
 @Composable
-fun MainContentProduksi(
+fun MainContentMasuk(
 ){
-    var sesudah by remember { mutableStateOf("") }
-    var sebelum by remember { mutableStateOf("") }
-    var selisih by remember { mutableStateOf("32,04") }
+    var masuk by remember { mutableStateOf("") }
+    var keluar by remember { mutableStateOf("") }
+    var jamkerja by remember { mutableStateOf("24:00:00") }
     var kwh by remember { mutableStateOf("90.118,54") }
+    var keterangan by remember { mutableStateOf("") }
 
     var rataair by remember { mutableStateOf("7776") }
     var air by remember { mutableStateOf("") }
@@ -121,7 +123,7 @@ fun MainContentProduksi(
 
     Card(
         modifier = Modifier
-            .fillMaxWidth().height(560.dp),
+            .fillMaxWidth().height(240.dp),
         colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(6.dp)
@@ -132,109 +134,74 @@ fun MainContentProduksi(
         ){
             DataDua(
                 ratacond = true,
-                duaratacond = true,
-                judul1 = "Produksi:",
-                judul2 = "Selisih:",
-                warnarata2 = Warna.BiruNormal,
-                ratarata = selisih,
-                text1k1 = "Sesudah:",
+                judul1 = "Jam:",
+                judul2 = "Jam Kerja:",
+                warnarata2 = Warna.MerahTua,
+                ratarata = jamkerja,
+                text1k1 = "Masuk:",
                 text2k1 = "11 Januari 2025",
-                text1k2 = "Sebelum:",
+                text1k2 = "Keluar:",
                 text2k2 = "10 Januari 2025",
 
-                judul2k2 = "kWh:",
-                ratarata2 = kwh,
-                hasil1 = sesudah,
+                hasil1 = masuk,
                 onHasil1Change = {
-                    sesudah = it
+                    masuk = it
                 },
-                hasil2 = sebelum,
+                hasil2 = keluar,
                 onHasil2Change = {
-                    sebelum = it
+                    keluar = it
                 },
                 besartext2 = 12
             )
 
-            DataDua(
-                ratacond = true,
-                judul1 = "Data Air:",
-                judul2 = "Rata-rata penggunaan air:",
-                ratarata = rataair,
-                warnarata1 = Warna.MerahTua,
-                text1k1 = "Penggunaan Air:",
-                text2k1 = "",
-                text1k2 = "Ekonomis Air:",
-                text2k2 = "",
-
-                hasil1 = air,
-                onHasil1Change = {
-                    air = it
-                },
-                hasil2 = ekonomisair,
-                onHasil2Change = {
-                    ekonomisair = it
-                },
-            )
-
-            DataDua(
-                judul1 = "Lainnya: (kWh)",
-                text1k1 = "Pemakaian Sendiri:",
-                text2k1 = "",
-                text1k2 = "Penjualan:",
-                text2k2 = "",
-
-                hasil1 = maxdam,
-                onHasil1Change = {
-                    maxdam = it
-                },
-                hasil2 = mindam,
-                onHasil2Change = {
-                    mindam = it
-                } ,
-            )
         }
 
     }
-    Column (
-        modifier = Modifier.padding(top = 14.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Total",
-            fontWeight = FontWeight.Normal,
-            fontSize = 21.sp,
-            color = Warna.MerahNormal,
-            modifier = Modifier.padding(bottom = 6.dp)
-        )
 
-        BarisTigaText(
-            text1k1 = "Produksi:",
-            text2k1 = "90.204,45",
-            textcolork1 = Warna.BiruNormal,
+    Column {
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+        ){
+            Text(
+                text = "Keterangan",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Normal,
+                color = Warna.MerahNormal,
+                modifier = Modifier.padding(top = 14.dp)
+            )
+        }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth().height(230.dp),
+            colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+            shape = RoundedCornerShape(10.dp),
+            elevation = CardDefaults.cardElevation(6.dp)
+        ){
+            Column (
+                modifier = Modifier.padding(17.dp)
+            ){
+                Text(
+                    text = stringResource(id = R.string.nim),
+                    color = Warna.MerahNormal,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+                InputPutih(
+                    input = keterangan,
+                    placeholder = stringResource(id = R.string.enter_nim),
+                    onInputChange = { input ->
+                        keterangan = input
+                    },
+                    keyboardType = KeyboardType.Number,
+                    modifier = Modifier.fillMaxWidth().height(200.dp)
 
-            text1k2 = "Pemakaian Sendiri:",
-            text2k2 = "260",
-            textcolork2 = Warna.MerahNormal,
+                )
+            }
 
-            text1k3 = "Pemakaian Air:",
-            text2k3 = "584.525",
-            textcolork3 = Warna.MerahTua,
-        )
-
-        BarisTigaText(
-            text1k1 = "Rata-rata Air:",
-            text2k1 = "6,765",
-            textcolork1 = Warna.MerahTua,
-
-            text1k2 = "Ekonomis Air:",
-            text2k2 = "6.48",
-            textcolork2 = Warna.MerahTua,
-
-            text1k3 = "Penjualan Air:",
-            text2k3 = "89.944,45",
-            textcolork3 = Warna.MerahNormal,
-        )
+        }
 
         ButtonMerah(
             onClick = {
@@ -252,6 +219,10 @@ fun MainContentProduksi(
         )
         Spacer(modifier = Modifier.height(150.dp))
     }
+
+
+
+
 
 }
 

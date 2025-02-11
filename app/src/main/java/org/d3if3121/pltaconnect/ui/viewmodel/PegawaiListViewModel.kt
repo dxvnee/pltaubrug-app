@@ -1,8 +1,11 @@
 package org.d3if3121.pltaconnect.ui.viewmodel
 
 import android.util.Log
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,12 +26,20 @@ import org.d3if3121.pltaconnect.data.repository.interfaces.LoginResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.UpdatePegawaiResponse
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class PegawaiListViewModel @Inject constructor(
     private val repo: PegawaiListInterface
 ): ViewModel() {
+
+
+    var tanggal by mutableStateOf<String>("")
+        private set
+
     var pegawaiListResponse by mutableStateOf<PegawaiListResponse>(Response.Loading)
         private set
     var addPegawaiResponse by mutableStateOf<AddPegawaiResponse>(Response.Loading)
@@ -76,6 +87,10 @@ class PegawaiListViewModel @Inject constructor(
         repo.getPegawaiList().collect() {
             pegawaiListResponse = it
         }
+    }
+
+    fun changeTanggal(selectedDate: String){
+        tanggal = selectedDate
     }
 
     fun addUser(pegawai: Pegawai) = viewModelScope.launch {

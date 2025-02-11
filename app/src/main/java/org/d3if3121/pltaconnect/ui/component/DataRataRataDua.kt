@@ -24,6 +24,7 @@ fun DataDua(
     ratacond: Boolean = false,
     tigacond: Boolean = false,
     duaratacond: Boolean = false,
+    judul1cond: Boolean = true,
 
     judul1: String = "",
     judul2: String = "",
@@ -53,12 +54,15 @@ fun DataDua(
     Column (
         modifier = Modifier.padding(bottom = 24.dp)
     ) {
-        Text(
-            text = judul1,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Warna.MerahNormal,
-        )
+        if (judul1cond){
+            Text(
+                text = judul1,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Warna.MerahNormal,
+            )
+
+        }
 
         if (ratacond){
             Row(

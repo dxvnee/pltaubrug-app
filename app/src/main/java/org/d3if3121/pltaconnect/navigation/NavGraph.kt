@@ -42,8 +42,14 @@ fun SetupNavGraph(){
             HomePage(navController, pegawailistviewmodel)
         }
 
-        composable(route = Screen.Project.route){
-            ContentPage(navController, pegawailistviewmodel)
+        composable(route ="${Screen.Project.route}/{tanggal}",
+            arguments = listOf(navArgument("tanggal"){
+                type = NavType.StringType
+                nullable = false
+            })
+        ){ backStackEntry ->
+            val tanggal = backStackEntry.arguments?.getString("tanggal")
+            ContentPage(navController, pegawailistviewmodel, tanggal = tanggal)
         }
 
         composable(route = Screen.Profile.route){

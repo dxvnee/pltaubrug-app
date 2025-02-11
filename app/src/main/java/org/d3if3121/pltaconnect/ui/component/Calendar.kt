@@ -1,5 +1,6 @@
 package org.d3if3121.pltaconnect.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,28 +39,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.d3if3121.pltaconnect.ui.theme.Warna
+import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Calendar() {
-    val datePickerState = rememberDatePickerState()
-    val selectedMillis = datePickerState.selectedDateMillis
+fun Calendar(
+    selectedDate: (String) -> Unit,
+    pegawaiListViewModel: PegawaiListViewModel
+) {
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = System.currentTimeMillis()
+    )
+
+    val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
     var selectedDate by remember { mutableStateOf("") }
 
-    if (selectedMillis != null) {
-        val localDate = Instant.ofEpochMilli(selectedMillis)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
-
-        val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
-        selectedDate = localDate.format(dateFormatter)
+    LaunchedEffect(datePickerState.selectedDateMillis) {
+        datePickerState.selectedDateMillis?.let { millis ->
+            val newDate = Instant.ofEpochMilli(millis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(dateFormatter)
+            selectedDate = newDate  // Update selectedDate
+            selectedDate(newDate)   // Kirim ke parameter selectedDate
+            pegawaiListViewModel.changeTanggal(newDate)  // Perbarui ViewModel
+        }
     }
 
 
-        Box (
+    Box (
             modifier = Modifier
                 .height(400.dp)
                 .width(4000.dp)

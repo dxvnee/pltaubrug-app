@@ -1,6 +1,5 @@
 package org.d3if3121.pltaconnect.ui.screen.content
 
-import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.d3if3121.pltaconnect.ui.component.BarisTigaText
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
@@ -37,17 +35,18 @@ import org.d3if3121.pltaconnect.ui.theme.Warna
 
 
 @Composable
-fun ContentProduksi(
+fun ContentPemakaian(
     tanggal: String,
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
 ){
+    var kva by remember { mutableStateOf("50 kVA") }
     var judul2 by remember { mutableStateOf("(Jam 24)") }
 
-    var unit by remember { mutableStateOf("Unit 1") }
     JudulUtama(
-        judul1 = "Produksi",
+        judul1 = "Pemakaian Sendiri",
+        judul1size = 20,
         judul2 = judul2,
         tanggal = tanggal,
         onClickBack =  onClickBack,
@@ -76,36 +75,47 @@ fun ContentProduksi(
 
                 ButtonTiga(
                     onClick1 = {
-                        unit = "Unit 1"
+                        kva = "50 kVA"
                     },
                     onClick2 = {
-                        unit = "Unit 2"
+                        kva = "160 kVA"
                     },
                     onClick3 = {
-                        unit = "Unit 3"
-                    }
+                        kva = "2 x 250 kVA"
+                    },
+
+                    text1 = "50 kVA",
+                    text2 = "160 kVA",
+                    text3 = "2 x 250 kVA",
+
+                    text3size = 11
                 )
 
                 Row (
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                     horizontalArrangement = Arrangement.Center
                 ){
-                   PindahUnit(unit)
+                    PindahUnit(
+                        unit =  kva,
+                        cond1 = "50 kVA",
+                        cond2 = "160 kVA",
+                        cond3 = "2 x 250 kVA",
+                    )
                 }
             }
-            MainContentProduksi()
+            MainContentPemakaian()
         }
 
     }
 }
 
 @Composable
-fun MainContentProduksi(
+fun MainContentPemakaian(
 ){
     var sesudah by remember { mutableStateOf("") }
     var sebelum by remember { mutableStateOf("") }
-    var selisih by remember { mutableStateOf("32,04") }
-    var kwh by remember { mutableStateOf("90.118,54") }
+    var kwh by remember { mutableStateOf("32,04") }
+    var kwhkumulatif by remember { mutableStateOf("90.118,54") }
 
     var rataair by remember { mutableStateOf("7776") }
     var air by remember { mutableStateOf("") }
@@ -121,7 +131,7 @@ fun MainContentProduksi(
 
     Card(
         modifier = Modifier
-            .fillMaxWidth().height(560.dp),
+            .fillMaxWidth().height(230.dp),
         colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(6.dp)
@@ -133,17 +143,17 @@ fun MainContentProduksi(
             DataDua(
                 ratacond = true,
                 duaratacond = true,
-                judul1 = "Produksi:",
-                judul2 = "Selisih:",
+                judul1 = "Stand Meter:",
+                judul2 = "kWh:",
                 warnarata2 = Warna.BiruNormal,
-                ratarata = selisih,
+                ratarata = kwh,
                 text1k1 = "Sesudah:",
                 text2k1 = "11 Januari 2025",
                 text1k2 = "Sebelum:",
                 text2k2 = "10 Januari 2025",
 
-                judul2k2 = "kWh:",
-                ratarata2 = kwh,
+                judul2k2 = "kWh Kumulatif:",
+                ratarata2 = kwhkumulatif,
                 hasil1 = sesudah,
                 onHasil1Change = {
                     sesudah = it
@@ -154,86 +164,36 @@ fun MainContentProduksi(
                 },
                 besartext2 = 12
             )
-
-            DataDua(
-                ratacond = true,
-                judul1 = "Data Air:",
-                judul2 = "Rata-rata penggunaan air:",
-                ratarata = rataair,
-                warnarata1 = Warna.MerahTua,
-                text1k1 = "Penggunaan Air:",
-                text2k1 = "",
-                text1k2 = "Ekonomis Air:",
-                text2k2 = "",
-
-                hasil1 = air,
-                onHasil1Change = {
-                    air = it
-                },
-                hasil2 = ekonomisair,
-                onHasil2Change = {
-                    ekonomisair = it
-                },
-            )
-
-            DataDua(
-                judul1 = "Lainnya: (kWh)",
-                text1k1 = "Pemakaian Sendiri:",
-                text2k1 = "",
-                text1k2 = "Penjualan:",
-                text2k2 = "",
-
-                hasil1 = maxdam,
-                onHasil1Change = {
-                    maxdam = it
-                },
-                hasil2 = mindam,
-                onHasil2Change = {
-                    mindam = it
-                } ,
-            )
         }
-
     }
     Column (
-        modifier = Modifier.padding(top = 14.dp),
+        modifier = Modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ){
         Text(
             text = "Total",
             fontWeight = FontWeight.Normal,
             fontSize = 21.sp,
             color = Warna.MerahNormal,
-            modifier = Modifier.padding(bottom = 6.dp)
+            modifier = Modifier.padding(bottom = 4.dp)
         )
+        Text(
+            text = "kWh:",
+            fontWeight = FontWeight.Normal,
+            fontSize = 15.sp,
+            color = Warna.MerahNormal,
+            modifier = Modifier.padding(bottom = 4.dp)
 
-        BarisTigaText(
-            text1k1 = "Produksi:",
-            text2k1 = "90.204,45",
-            textcolork1 = Warna.BiruNormal,
 
-            text1k2 = "Pemakaian Sendiri:",
-            text2k2 = "260",
-            textcolork2 = Warna.MerahNormal,
-
-            text1k3 = "Pemakaian Air:",
-            text2k3 = "584.525",
-            textcolork3 = Warna.MerahTua,
         )
+        Text(
+            text = "90.204,45",
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp,
+            color = Warna.BiruNormal,
+            modifier = Modifier.padding(bottom = 4.dp)
 
-        BarisTigaText(
-            text1k1 = "Rata-rata Air:",
-            text2k1 = "6,765",
-            textcolork1 = Warna.MerahTua,
-
-            text1k2 = "Ekonomis Air:",
-            text2k2 = "6.48",
-            textcolork2 = Warna.MerahTua,
-
-            text1k3 = "Penjualan Air:",
-            text2k3 = "89.944,45",
-            textcolork3 = Warna.MerahNormal,
         )
 
         ButtonMerah(

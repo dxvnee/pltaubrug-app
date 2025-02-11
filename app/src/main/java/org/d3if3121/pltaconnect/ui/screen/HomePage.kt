@@ -33,8 +33,10 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -79,6 +81,9 @@ import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.Calendar
 import org.d3if3121.pltaconnect.ui.component.DisplayTag
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 val TOP_BAR_HEIGHT = 70.dp
@@ -124,9 +129,7 @@ fun HomePage(
 
         },
         bottomBar = {
-            BottomBar(navController = navController, home = true){
-//                viewModel.markProject(user.nim)
-            }
+            BottomBar(navController = navController, home = true, pegawaiListViewModel = viewModel)
         },
         contentColor = Warna.PutihNormal
     )
@@ -201,7 +204,7 @@ fun MainContentHome(
 
                     )
                 }
-                ProjectListHome()
+                ProjectListHome(pegawaiListViewModel = viewmodel, navController = navController)
 
 
             }
@@ -213,10 +216,14 @@ fun MainContentHome(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectListHome(
-
+    pegawaiListViewModel: PegawaiListViewModel,
+    navController: NavHostController
 ){
+    var selecteddate by remember { mutableStateOf("") }
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -224,7 +231,15 @@ fun ProjectListHome(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(6.dp)
     ){
-        Calendar()
+        Calendar(
+            pegawaiListViewModel = pegawaiListViewModel,
+            selectedDate = {
+                selecteddate = it
+            }
+        )
+
+
+
         Column (
             modifier = Modifier.padding(17.dp).fillMaxWidth().fillMaxHeight()
         ){
@@ -251,7 +266,8 @@ fun ProjectListHome(
 
                 ButtonMerah(
                     onClick = {
-
+                        pegawaiListViewModel.changeTanggal(selecteddate)
+                        navController.navigate("ProjectPage/$selecteddate")
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
                     content = {

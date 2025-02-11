@@ -2,62 +2,27 @@ package org.d3if3121.pltaconnect.ui.screen
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.d3if3121.pltaconnect.ui.theme.Warna
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.min
 import androidx.hilt.navigation.compose.hiltViewModel
-import org.d3if3121.pltaconnect.R
 import org.d3if3121.pltaconnect.components.LoadingIndicator
 import org.d3if3121.pltaconnect.core.printError
 import org.d3if3121.pltaconnect.data.model.Pegawai
@@ -70,14 +35,9 @@ import org.d3if3121.pltaconnect.ui.component.TopBar
 import org.d3if3121.pltaconnect.ui.component.cekScroll
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
-import org.d3if3121.pltaconnect.ui.component.ButtonMerah
-import org.d3if3121.pltaconnect.ui.component.ButtonTiga
-import org.d3if3121.pltaconnect.ui.component.Calendar
-import org.d3if3121.pltaconnect.ui.component.DataDua
-import org.d3if3121.pltaconnect.ui.component.InputPutih
-import org.d3if3121.pltaconnect.ui.component.InputPutihKeterangan
-import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.screen.content.ContentDebit
+import org.d3if3121.pltaconnect.ui.screen.content.ContentMasuk
+import org.d3if3121.pltaconnect.ui.screen.content.ContentPemakaian
 import org.d3if3121.pltaconnect.ui.screen.content.ContentProduksi
 import org.d3if3121.pltaconnect.ui.screen.content.DebitSungaiResponse
 
@@ -87,7 +47,8 @@ import org.d3if3121.pltaconnect.ui.screen.content.DebitSungaiResponse
 fun ContentPage(
     navController: NavHostController,
     viewModel: PegawaiListViewModel = hiltViewModel(),
-    projectviewmodel: ProjectListViewModel = hiltViewModel()
+    projectviewmodel: ProjectListViewModel = hiltViewModel(),
+    tanggal: String?
 ) {
     val lazyListState = rememberLazyListState()
     var user = viewModel.user
@@ -114,7 +75,8 @@ fun ContentPage(
                                 projectviewmodel = projectviewmodel,
                                 projectList = projectList!!,
                                 user = user,
-                                context = context
+                                context = context,
+                                tanggal = tanggal ?: "5 Juli 2004"
                             )
                         }
 
@@ -124,9 +86,7 @@ fun ContentPage(
 
         },
         bottomBar = {
-            BottomBar(navController = navController, home = true){
-//                viewModel.markProject(user.nim)
-            }
+            BottomBar(navController = navController, home = true, pegawaiListViewModel = viewModel)
         },
         contentColor = Warna.PutihNormal
     )
@@ -143,10 +103,11 @@ fun MainContent(
     projectList: List<Project>,
     viewModel: PegawaiListViewModel = hiltViewModel(),
     user: Pegawai,
-    context: Context = LocalContext.current
+    context: Context = LocalContext.current,
+    tanggal: String
 ) {
 
-    var contentnow by  remember { mutableStateOf("Debit") }
+    var contentnow by  remember { mutableStateOf("Pemakaian") }
     val padding by animateDpAsState(
         targetValue = if (cekScroll(lazyListState)) 0.dp else TOP_BAR_HEIGHT,
         animationSpec = tween(
@@ -160,24 +121,50 @@ fun MainContent(
         when(contentnow){
             "Debit" -> {
                 ContentDebit(
+                    tanggal = tanggal,
                     lazyListState = lazyListState,
                     onClickNext = {
                         contentnow = "Produksi"
                     },
                     onClickBack = {
-                        contentnow = "Debit"
+                        contentnow = "Masuk"
                     }
                 )
                 DebitSungaiResponse(context, projectviewmodel)
             }
             "Produksi" -> {
                 ContentProduksi(
+                    tanggal = tanggal,
+                    lazyListState = lazyListState,
+                    onClickNext = {
+                        contentnow = "Pemakaian"
+                    },
+                    onClickBack = {
+                        contentnow = "Debit"
+                    }
+                )
+            }
+            "Pemakaian" -> {
+                ContentPemakaian(
+                    tanggal = tanggal,
+                    lazyListState = lazyListState,
+                    onClickNext = {
+                        contentnow = "Masuk"
+                    },
+                    onClickBack = {
+                        contentnow = "Produksi"
+                    }
+                )
+            }
+            "Masuk" -> {
+                ContentMasuk(
+                    tanggal = tanggal,
                     lazyListState = lazyListState,
                     onClickNext = {
                         contentnow = "Debit"
                     },
                     onClickBack = {
-                        contentnow = "Produksi"
+                        contentnow = "Pemakaian"
                     }
                 )
             }

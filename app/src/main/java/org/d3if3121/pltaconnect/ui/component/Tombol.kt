@@ -63,7 +63,13 @@ fun ButtonMerah(
 fun ButtonTiga(
     onClick1: () -> Unit,
     onClick2: () -> Unit,
-    onClick3: () -> Unit
+    onClick3: () -> Unit,
+
+    text1: String = "Unit 1",
+    text2: String = "Unit 2",
+    text3: String = "Unit 3",
+
+    text3size: Int = 15
 ){
     Row {
         ButtonMerah(
@@ -74,7 +80,7 @@ fun ButtonTiga(
                 .size(33.dp).weight(1f),
             content = {
                 Text(
-                    text = "Unit 1",
+                    text = text1,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 15.sp,
                     color = Warna.PutihNormal
@@ -94,7 +100,7 @@ fun ButtonTiga(
                 .size(33.dp).weight(1f),
             content = {
                 Text(
-                    text = "Unit 2",
+                    text = text2,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 15.sp,
                     color = Warna.PutihNormal
@@ -114,9 +120,9 @@ fun ButtonTiga(
                 .size(33.dp).weight(1f),
             content = {
                 Text(
-                    text = "Unit 3",
+                    text = text3,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 15.sp,
+                    fontSize = text3size.sp,
                     color = Warna.PutihNormal
                 )
             },

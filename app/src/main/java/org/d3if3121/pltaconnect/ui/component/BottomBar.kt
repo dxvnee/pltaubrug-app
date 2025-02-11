@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -23,10 +24,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import org.d3if3121.pltaconnect.navigation.BottomBarScreen
 import org.d3if3121.pltaconnect.ui.theme.Warna
+import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
+import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
 
 
 @Composable
-fun BottomBar(navController: NavHostController, home: Boolean = false, homeAction: () -> Unit = {}){
+fun BottomBar(navController: NavHostController, home: Boolean = false, homeAction: () -> Unit = {}, pegawaiListViewModel: PegawaiListViewModel = hiltViewModel()){
     val screens = listOf(
         BottomBarScreen.BottomMenuPage,
         BottomBarScreen.BottomSkillPage,
@@ -40,7 +43,7 @@ fun BottomBar(navController: NavHostController, home: Boolean = false, homeActio
         modifier = Modifier.height(70.dp)
     ){
         screens.forEach{ screen ->
-            AddItem(screen = screen, currentDestination = currentDestination, navController = navController, home, homeAction)
+            AddItem(screen = screen, currentDestination = currentDestination, navController = navController, home, homeAction, pegawaiListViewModel)
         }
     }
 
@@ -52,7 +55,8 @@ fun RowScope.AddItem(
     currentDestination: NavDestination?,
     navController: NavHostController,
     home: Boolean = false,
-    homeAction: () -> Unit
+    homeAction: () -> Unit,
+    pegawaiListViewModel: PegawaiListViewModel = hiltViewModel()
 ){
     BottomNavigationItem (
         modifier = Modifier.padding(top = 10.dp, bottom = 36.dp),
@@ -77,10 +81,19 @@ fun RowScope.AddItem(
         } == true,
         unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
         onClick = {
-            navController.navigate(screen.route){
-                popUpTo(navController.graph.findStartDestination().id)
-                launchSingleTop = true
+            if (screen is BottomBarScreen.BottomSkillPage) {
+                val tanggal = pegawaiListViewModel.tanggal
+                navController.navigate("ProjectPage/$tanggal") {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
+            } else {
+                navController.navigate(screen.route) {
+                    popUpTo(navController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
             }
+
 
             if (home) {
                 homeAction()
