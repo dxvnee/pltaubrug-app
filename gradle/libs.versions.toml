@@ -18,6 +18,7 @@ junitVersion = "1.1.5"
 navigationRuntimeKtx = "2.8.3"
 navigationCompose = "2.8.3"
 firebaseStorageKtx = "21.0.1"
+firebaseAuthKtx = "23.2.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
@@ -56,4 +57,5 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 

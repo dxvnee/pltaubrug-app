@@ -8,3 +8,8 @@ data class AppsScriptResponse(
 data class ResponseData(
     val result: String
 )
+
+data class ScriptRequest(
+    val function: String
+)
+

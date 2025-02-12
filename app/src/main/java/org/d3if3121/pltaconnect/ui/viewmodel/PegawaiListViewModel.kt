@@ -20,6 +20,7 @@ import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.PegawaiLogin
 import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.repository.getFirebaseToken
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddDebitResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddPegawaiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.DeletePegawaiResponse
@@ -181,6 +182,11 @@ class PegawaiListViewModel @Inject constructor(
     fun addDebit(debit: Debit) = viewModelScope.launch {
         addDebitResponse = repo.addDebit(debit)
     }
+    fun addDebitResponseReset() {
+        addDebitResponse = Response.Loading
+    }
+
+
 
 
 }

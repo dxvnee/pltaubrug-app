@@ -230,8 +230,9 @@ fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel){
         is Loading -> {
         }
         is Success -> {
-            ImportData()
+            ImportData(viewmodel)
             Log.e("firestore", addRequestResponse.toString())
+
         }
 
         is Failure -> Log.e("firestore", addRequestResponse.e.toString())
