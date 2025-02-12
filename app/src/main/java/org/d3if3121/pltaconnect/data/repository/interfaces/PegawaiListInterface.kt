@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
+import org.d3if3121.pltaconnect.data.model.data.Debit
 
 
 typealias PegawaiListResponse = Response<List<Pegawai>>
@@ -14,6 +15,8 @@ typealias DeletePegawaiResponse = Response<Void>
 typealias PegawaiByNimResponse = Response<Pegawai>
 
 typealias LoginResponse = Response<Pegawai>
+//
+typealias AddDebitResponse = Response<String>
 
 interface PegawaiListInterface {
     fun getPegawaiList(): Flow<PegawaiListResponse>
@@ -29,6 +32,7 @@ interface PegawaiListInterface {
     suspend fun getPegawaiByNim(nim: String): Pegawai
     suspend fun checkRequestProject(id: String, nim: String): Boolean
     suspend fun markProject(nim: String, projectId: List<String>)
-
+    //
+    suspend fun addDebit(debit: Debit): AddDebitResponse
 
 }

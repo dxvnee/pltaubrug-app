@@ -25,7 +25,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import org.d3if3121.pltaconnect.navigation.BottomBarScreen
 import org.d3if3121.pltaconnect.ui.theme.Warna
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
-import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
 
 
 @Composable

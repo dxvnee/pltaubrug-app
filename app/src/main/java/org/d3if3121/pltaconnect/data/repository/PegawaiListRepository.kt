@@ -10,10 +10,15 @@ import kotlinx.coroutines.tasks.await
 import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
+import org.d3if3121.pltaconnect.data.model.data.Debit
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 
 class PegawaiListRepository (
-    private val pegawaiRef: CollectionReference
+    private val pegawaiRef: CollectionReference,
+    private val debitRef: CollectionReference,
+    private val masukRef: CollectionReference,
+    private val pemakaianRef: CollectionReference,
+    private val produksiRef: CollectionReference
 ): PegawaiListInterface {
     override fun getPegawaiList() = callbackFlow {
         val listener = pegawaiRef
@@ -171,6 +176,21 @@ class PegawaiListRepository (
     } catch (e: Exception){
         Response.Failure(e)
     }
+
+
+    override suspend fun addDebit(debit: Debit) = try {
+        val debitsama = debitRef.whereEqualTo("id", debit.id).get().await()
+
+        if (debitsama.isEmpty){
+            val id = debitRef.add(debit).await().id
+            Response.Success(id + " berhasil dinput!")
+        } else {
+            Response.Failure(Exception("Data hari ini sudah terinput."))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
+
 
 }
 

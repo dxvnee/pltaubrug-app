@@ -26,12 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.component.PindahUnit
 import org.d3if3121.pltaconnect.ui.theme.Warna
+import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
 
 @Composable
@@ -40,6 +42,8 @@ fun ContentPemakaian(
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
+    viewmodel: PegawaiListViewModel = hiltViewModel()
+
 ){
     var kva by remember { mutableStateOf("50 kVA") }
     var judul2 by remember { mutableStateOf("(Jam 24)") }
@@ -66,7 +70,7 @@ fun ContentPemakaian(
 
             Column {
                 Text(
-                    text = "Pilih Unit: ",
+                    text = "Pilih kVA: ",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
                     color = Warna.MerahNormal,

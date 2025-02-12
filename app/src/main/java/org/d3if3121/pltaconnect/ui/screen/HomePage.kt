@@ -70,17 +70,14 @@ import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.ui.component.BottomBar
-import org.d3if3121.pltaconnect.ui.component.KartuKonten
 import org.d3if3121.pltaconnect.ui.component.TopBar
 import org.d3if3121.pltaconnect.ui.component.cekScroll
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
-import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
 import org.d3if3121.pltaconnect.R
 import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.Calendar
-import org.d3if3121.pltaconnect.ui.component.DisplayTag
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -93,38 +90,25 @@ val TOP_BAR_HEIGHT = 70.dp
 fun HomePage(
     navController: NavHostController,
     viewModel: PegawaiListViewModel = hiltViewModel(),
-    projectviewmodel: ProjectListViewModel = hiltViewModel()
 ) {
     val lazyListState = rememberLazyListState()
     var user = viewModel.user
     var context = LocalContext.current
 
-    LaunchedEffect(user.nim) {
-        projectviewmodel.getProjectListUser(user.nim)
-    }
+
 
     Scaffold(
         topBar = {
             TopBar(lazyListState = lazyListState, helloActive = true, navController = navController, user = user)
         },
         content = { paddingValues ->
-            when(val projectListUserResponse = projectviewmodel.projectListUserResponse){
-                is Loading -> LoadingIndicator()
-                is Success -> projectListUserResponse.data.let { projectList ->
-                        Column(modifier = Modifier.background(color = Warna.PutihNormal)){
-                            MainContentHome(
-                                navController = navController,
-                                lazyListState = lazyListState,
-                                paddingValues = paddingValues,
-                                viewmodel = viewModel,
-                                projectviewmodel = projectviewmodel,
-                                projectList = projectList!!,
-                                user = user
-                            )
-                        }
-
-                }
-                is Failure -> printError(projectListUserResponse.e)
+            Column(modifier = Modifier.background(color = Warna.PutihNormal)){
+                MainContentHome(
+                    navController = navController,
+                    lazyListState = lazyListState,
+                    paddingValues = paddingValues,
+                    viewmodel = viewModel,
+                )
             }
 
         },
@@ -133,32 +117,32 @@ fun HomePage(
         },
         contentColor = Warna.PutihNormal
     )
-    ResponseHome(context, projectviewmodel)
+    ResponseHome(context)
 }
 
 @Composable
-fun ResponseHome(context: Context, projectviewmodel: ProjectListViewModel){
+fun ResponseHome(context: Context){
 
-    when(val addRequestResponse = projectviewmodel.addRequestResponse){
-        is Loading -> {
-
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetAddRequestResponse()
-        }
-        is Failure -> printError(addRequestResponse.e)
-    }
-    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
-        is Loading -> {
-
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetDeleteRequestResponse()
-        }
-        is Failure -> printError(deleteRequestResponse.e)
-    }
+//    when(val addRequestResponse = projectviewmodel.addRequestResponse){
+//        is Loading -> {
+//
+//        }
+//        is Success -> {
+//            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
+//            projectviewmodel.resetAddRequestResponse()
+//        }
+//        is Failure -> printError(addRequestResponse.e)
+//    }
+//    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
+//        is Loading -> {
+//
+//        }
+//        is Success -> {
+//            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
+//            projectviewmodel.resetDeleteRequestResponse()
+//        }
+//        is Failure -> printError(deleteRequestResponse.e)
+//    }
 }
 
 @Composable
@@ -166,11 +150,7 @@ fun MainContentHome(
     navController: NavHostController,
     lazyListState: LazyListState,
     paddingValues: PaddingValues,
-    viewmodel: PegawaiListViewModel,
-    projectviewmodel: ProjectListViewModel,
-    projectList: List<Project>,
-    viewModel: PegawaiListViewModel = hiltViewModel(),
-    user: Pegawai
+    viewmodel: PegawaiListViewModel = hiltViewModel(),
 ) {
 
     val padding by animateDpAsState(
@@ -216,7 +196,6 @@ fun MainContentHome(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectListHome(
     pegawaiListViewModel: PegawaiListViewModel,

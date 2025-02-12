@@ -34,7 +34,6 @@ import org.d3if3121.pltaconnect.ui.component.BottomBar
 import org.d3if3121.pltaconnect.ui.component.TopBar
 import org.d3if3121.pltaconnect.ui.component.cekScroll
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
-import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
 import org.d3if3121.pltaconnect.ui.screen.content.ContentDebit
 import org.d3if3121.pltaconnect.ui.screen.content.ContentMasuk
 import org.d3if3121.pltaconnect.ui.screen.content.ContentPemakaian
@@ -47,41 +46,25 @@ import org.d3if3121.pltaconnect.ui.screen.content.DebitSungaiResponse
 fun ContentPage(
     navController: NavHostController,
     viewModel: PegawaiListViewModel = hiltViewModel(),
-    projectviewmodel: ProjectListViewModel = hiltViewModel(),
     tanggal: String?
 ) {
     val lazyListState = rememberLazyListState()
     var user = viewModel.user
     var context = LocalContext.current
 
-    LaunchedEffect(user.nim) {
-        projectviewmodel.getProjectListUser(user.nim)
-    }
-
     Scaffold(
         topBar = {
             TopBar(lazyListState = lazyListState, helloActive = false, TOP_BAR_ZERO = 70, user = user)
         },
         content = { paddingValues ->
-            when(val projectListUserResponse = projectviewmodel.projectListUserResponse){
-                is Loading -> LoadingIndicator()
-                is Success -> projectListUserResponse.data.let { projectList ->
-                        Column(modifier = Modifier.background(color = Warna.PutihNormal)){
-                            MainContent(
-                                navController = navController,
-                                lazyListState = lazyListState,
-                                paddingValues = paddingValues,
-                                viewmodel = viewModel,
-                                projectviewmodel = projectviewmodel,
-                                projectList = projectList!!,
-                                user = user,
-                                context = context,
-                                tanggal = tanggal ?: "5 Juli 2004"
-                            )
-                        }
-
-                }
-                is Failure -> printError(projectListUserResponse.e)
+            Column(modifier = Modifier.background(color = Warna.PutihNormal)){
+                MainContent(
+                    lazyListState = lazyListState,
+                    paddingValues = paddingValues,
+                    viewmodel = viewModel,
+                    context = context,
+                    tanggal = tanggal ?: "5 Juli 2004"
+                )
             }
 
         },
@@ -95,14 +78,9 @@ fun ContentPage(
 
 @Composable
 fun MainContent(
-    navController: NavHostController,
     lazyListState: LazyListState,
     paddingValues: PaddingValues,
-    viewmodel: PegawaiListViewModel,
-    projectviewmodel: ProjectListViewModel,
-    projectList: List<Project>,
-    viewModel: PegawaiListViewModel = hiltViewModel(),
-    user: Pegawai,
+    viewmodel: PegawaiListViewModel = hiltViewModel(),
     context: Context = LocalContext.current,
     tanggal: String
 ) {
@@ -128,9 +106,10 @@ fun MainContent(
                     },
                     onClickBack = {
                         contentnow = "Masuk"
-                    }
+                    },
+                    viewmodel = viewmodel
                 )
-                DebitSungaiResponse(context, projectviewmodel)
+//                DebitSungaiResponse(context, projectviewmodel)
             }
             "Produksi" -> {
                 ContentProduksi(
@@ -141,7 +120,8 @@ fun MainContent(
                     },
                     onClickBack = {
                         contentnow = "Debit"
-                    }
+                    },
+                    viewmodel = viewmodel
                 )
             }
             "Pemakaian" -> {
@@ -153,7 +133,8 @@ fun MainContent(
                     },
                     onClickBack = {
                         contentnow = "Produksi"
-                    }
+                    },
+                    viewmodel = viewmodel
                 )
             }
             "Masuk" -> {
@@ -165,7 +146,8 @@ fun MainContent(
                     },
                     onClickBack = {
                         contentnow = "Pemakaian"
-                    }
+                    },
+                    viewmodel = viewmodel
                 )
             }
         }

@@ -19,6 +19,8 @@ import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.PegawaiLogin
 import org.d3if3121.pltaconnect.data.model.Response
+import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.repository.interfaces.AddDebitResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddPegawaiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.DeletePegawaiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiByNimResponse
@@ -39,15 +41,17 @@ class PegawaiListViewModel @Inject constructor(
 
     var tanggal by mutableStateOf<String>("")
         private set
+    var addPegawaiResponse by mutableStateOf<AddPegawaiResponse>(Response.Loading)
+        private set
 
     var pegawaiListResponse by mutableStateOf<PegawaiListResponse>(Response.Loading)
         private set
-    var addPegawaiResponse by mutableStateOf<AddPegawaiResponse>(Response.Loading)
-        private set
+
     var updatePegawaiResponse by mutableStateOf<UpdatePegawaiResponse>(Response.Loading)
         private set
     var deletePegawaiResponse by mutableStateOf<DeletePegawaiResponse>(Response.Loading)
         private set
+
     var pegawaiByNimResponse by mutableStateOf<PegawaiByNimResponse>(Response.Loading)
         private set
 
@@ -92,6 +96,12 @@ class PegawaiListViewModel @Inject constructor(
     fun changeTanggal(selectedDate: String){
         tanggal = selectedDate
     }
+
+
+    fun addPegawai(pegawai: Pegawai) = viewModelScope.launch {
+        addPegawaiResponse = repo.addPegawai(pegawai)
+    }
+
 
     fun addUser(pegawai: Pegawai) = viewModelScope.launch {
         repo.addUser(pegawai).collect { response ->
@@ -151,10 +161,6 @@ class PegawaiListViewModel @Inject constructor(
         updatePegawaiResponse = Response.Loading
     }
 
-    fun addPegawai(pegawai: Pegawai) = viewModelScope.launch {
-        addPegawaiResponse = repo.addPegawai(pegawai)
-    }
-
     fun loginPegawai(response: PegawaiLogin) = viewModelScope.launch {
         loginResponse = repo.loginPegawai(response.nim, response.password)
     }
@@ -167,8 +173,13 @@ class PegawaiListViewModel @Inject constructor(
         deletePegawaiResponse = repo.deletePegawai(id)
     }
 
-    fun checkRequestProject(id: String, nim: String): Deferred<Boolean> = viewModelScope.async {
-        repo.checkRequestProject(id, nim)
+    //DEBIT
+
+    var addDebitResponse by mutableStateOf<AddDebitResponse>(Response.Loading)
+        private set
+
+    fun addDebit(debit: Debit) = viewModelScope.launch {
+        addDebitResponse = repo.addDebit(debit)
     }
 
 

@@ -9,13 +9,14 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import org.d3if3121.pltaconnect.data.repository.PegawaiListRepository
-import org.d3if3121.pltaconnect.data.repository.ProjectListRepository
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
-import org.d3if3121.pltaconnect.data.repository.interfaces.ProjectListInterface
 import javax.inject.Singleton
 
 const val PEGAWAI = "pegawai"
-const val PROJECT = "reqpost"
+const val DEBIT = "debit"
+const val MASUK = "masuk"
+const val PEMAKAIAN = "pemakaian"
+const val PRODUKSI = "produksi"
 
 
 @Module
@@ -24,18 +25,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMahasiswaListRepository(): PegawaiListInterface = PegawaiListRepository(
-        pegawaiRef = Firebase.firestore.collection(PEGAWAI)
+        pegawaiRef = Firebase.firestore.collection(PEGAWAI),
+        debitRef = Firebase.firestore.collection(DEBIT),
+        masukRef = Firebase.firestore.collection(MASUK),
+        pemakaianRef = Firebase.firestore.collection(PEMAKAIAN),
+        produksiRef = Firebase.firestore.collection(PRODUKSI),
     )
 
-    @Provides
-    @Singleton
-    fun provideProjectListRepository(
-        @ApplicationContext context: Context
-    ): ProjectListInterface = ProjectListRepository(
-        pegawaiRef = Firebase.firestore.collection(PEGAWAI),
-        projectRef = Firebase.firestore.collection(PROJECT),
-        context = context
-    )
 
 
 }

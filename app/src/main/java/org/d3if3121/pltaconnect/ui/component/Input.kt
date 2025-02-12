@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import org.d3if3121.pltaconnect.R
 import org.d3if3121.pltaconnect.ui.theme.Warna
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputPutih(
     input: String,
@@ -60,13 +59,18 @@ fun InputPutih(
     var isFocused by remember { mutableStateOf(false) }
 
     OutlinedTextField(
+        textStyle = TextStyle(
+            color = Warna.HitamNormal,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+        ),
         value = input,
         onValueChange = onInputChange,
         placeholder = {
             Text(
                 text = placeholder,
                 color = Warna.AbuTua,
-                fontSize = 17.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.fillMaxWidth()
             )

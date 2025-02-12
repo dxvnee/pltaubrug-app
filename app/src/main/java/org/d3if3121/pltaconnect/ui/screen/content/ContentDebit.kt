@@ -1,6 +1,7 @@
 package org.d3if3121.pltaconnect.ui.screen.content
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,20 +24,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.d3if3121.pltaconnect.core.printError
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Success
+import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.repository.ImportData
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
 import org.d3if3121.pltaconnect.ui.component.InputPutihKeterangan
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.theme.Warna
-import org.d3if3121.pltaconnect.ui.viewmodel.ProjectListViewModel
+import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
 
 @Composable
@@ -45,10 +50,12 @@ fun ContentDebit(
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
+    viewmodel: PegawaiListViewModel = hiltViewModel()
 ){
-
     var judul2 by remember { mutableStateOf("(Jam 24)") }
+    var context = LocalContext.current
 
+    DebitSungaiResponse(context, viewmodel = viewmodel)
     JudulUtama(
         judul1 = "Debit Sungai",
         judul2 = judul2,
@@ -68,16 +75,19 @@ fun ContentDebit(
     ){
         item {
             Spacer(modifier = Modifier.padding(bottom = 6.dp))
-            MainContentDebit()
+            MainContentDebit(viewmodel, tanggal, judul2)
         }
 
     }
 }
 @Composable
 fun MainContentDebit(
+    viewmodel: PegawaiListViewModel = hiltViewModel(),
+    tanggal: String,
+    judul2: String
 ){
-    var maxdebit by remember { mutableStateOf("") }
-    var mindebit by remember { mutableStateOf("") }
+    var maksimal by remember { mutableStateOf("") }
+    var minimal by remember { mutableStateOf("") }
     var ratarata by remember { mutableStateOf("32,04") }
 
     var dam by remember { mutableStateOf("") }
@@ -111,13 +121,13 @@ fun MainContentDebit(
                 text2k1 = "m2/d",
                 text1k2 = "Minimal:",
                 text2k2 = "m2/d",
-                hasil1 = maxdebit,
+                hasil1 = maksimal,
                 onHasil1Change = {
-                    maxdebit = it
+                    maksimal = it
                 },
-                hasil2 = mindebit,
+                hasil2 = minimal,
                 onHasil2Change = {
-                    mindebit = it
+                    minimal= it
                 } ,
             )
 
@@ -177,7 +187,23 @@ fun MainContentDebit(
     }
     ButtonMerah(
         onClick = {
+            val id = tanggal + "_debit_" + judul2
+            viewmodel.addDebit(
 
+                Debit(
+                    id = id,
+                    tanggal = tanggal,
+                    maksimal = maksimal,
+                    minimal = minimal,
+                    dam = dam,
+                    kth = kth,
+                    ph = ph,
+                    maxdam = maxdam,
+                    mindam = mindam,
+                    tma = tma,
+                    rata2 = ratarata
+                )
+            )
         },
         modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
         content = {
@@ -197,26 +223,18 @@ fun MainContentDebit(
 
 
 @Composable
-fun DebitSungaiResponse(context: Context, projectviewmodel: ProjectListViewModel){
+fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel){
+    var response by remember { mutableStateOf("") }
 
-    when(val addRequestResponse = projectviewmodel.addRequestResponse){
+    when(val addRequestResponse = viewmodel.addDebitResponse){
         is Loading -> {
-
         }
         is Success -> {
-            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetAddRequestResponse()
+            ImportData()
+            Log.e("firestore", addRequestResponse.toString())
         }
-        is Failure -> printError(addRequestResponse.e)
-    }
-    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
-        is Loading -> {
 
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetDeleteRequestResponse()
-        }
-        is Failure -> printError(deleteRequestResponse.e)
+        is Failure -> Log.e("firestore", addRequestResponse.e.toString())
     }
+
 }

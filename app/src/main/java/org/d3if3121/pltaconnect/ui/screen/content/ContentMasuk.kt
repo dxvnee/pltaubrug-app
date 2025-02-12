@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.d3if3121.pltaconnect.R
 import org.d3if3121.pltaconnect.ui.component.BarisTigaText
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
@@ -38,6 +39,7 @@ import org.d3if3121.pltaconnect.ui.component.InputPutih
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.component.PindahUnit
 import org.d3if3121.pltaconnect.ui.theme.Warna
+import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
 
 @Composable
@@ -46,6 +48,8 @@ fun ContentMasuk(
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
+    viewmodel: PegawaiListViewModel = hiltViewModel()
+
 ){
     var unit by remember { mutableStateOf("Unit 1") }
 
