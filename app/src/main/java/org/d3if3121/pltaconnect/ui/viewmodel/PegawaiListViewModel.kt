@@ -20,8 +20,10 @@ import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.PegawaiLogin
 import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.data.model.data.Debit
-import org.d3if3121.pltaconnect.data.repository.getFirebaseToken
+import org.d3if3121.pltaconnect.data.model.data.Produksi
+import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddDebitResponse
+import org.d3if3121.pltaconnect.data.repository.interfaces.AddProduksiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddPegawaiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.DeletePegawaiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiByNimResponse
@@ -178,12 +180,21 @@ class PegawaiListViewModel @Inject constructor(
 
     var addDebitResponse by mutableStateOf<AddDebitResponse>(Response.Loading)
         private set
+    var addProduksiResponse by mutableStateOf<AddProduksiResponse>(Response.Loading)
+        private set
 
     fun addDebit(debit: Debit) = viewModelScope.launch {
         addDebitResponse = repo.addDebit(debit)
     }
+    fun addProduksi(produksiRequest: ProduksiRequest) = viewModelScope.launch {
+        addProduksiResponse = repo.addProduksi(produksiRequest)
+    }
+
     fun addDebitResponseReset() {
         addDebitResponse = Response.Loading
+    }
+    fun addProduksiResponseReset() {
+        addProduksiResponse = Response.Loading
     }
 
 

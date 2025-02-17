@@ -11,18 +11,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 interface AppsScriptService {
-    @POST("v1/scripts/AKfycby5wHLznJNNr7KTb5pC_fAkFsqWv-9t7efF0m3_ESRRoGC9zECdeu1RQvBdPdUBHg:run")
-    suspend fun runScript(
-        @Header("Authorization") token: String,
-        @Body request: ScriptRequest
-    ): AppsScriptResponse
+    @POST("macros/s/AKfycbyittQF5xrqMqjp97eTIBE3oQnT-4Gus8og1z0lC6RVYWRrsR5crEk4MCwJ4A42wWQ/exec")
+    suspend fun runScript(): AppsScriptResponse
 
 }
 
 object RetrofitClient {
     val instance: AppsScriptService by lazy {
         Retrofit.Builder()
-            .baseUrl("https://script.googleapis.com/")
+            .baseUrl("https://script.google.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AppsScriptService::class.java)

@@ -29,12 +29,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import org.d3if3121.pltaconnect.components.LoadingIndicator
 import org.d3if3121.pltaconnect.core.printError
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.model.data.Debit
 import org.d3if3121.pltaconnect.data.repository.ImportData
+import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
@@ -50,12 +54,18 @@ fun ContentDebit(
     lazyListState: LazyListState,
     onClickBack: () -> Unit,
     onClickNext: () -> Unit,
-    viewmodel: PegawaiListViewModel = hiltViewModel()
+    viewmodel: PegawaiListViewModel = hiltViewModel(),
+    navController: NavHostController
 ){
     var judul2 by remember { mutableStateOf("(Jam 24)") }
     var context = LocalContext.current
 
-    DebitSungaiResponse(context, viewmodel = viewmodel)
+    DebitSungaiResponse(
+        context = context,
+        viewmodel = viewmodel,
+        navController = navController
+    )
+
     JudulUtama(
         judul1 = "Debit Sungai",
         judul2 = judul2,
@@ -86,6 +96,9 @@ fun MainContentDebit(
     tanggal: String,
     judul2: String
 ){
+
+    var isClicked by remember { mutableStateOf(false) }
+
     var maksimal by remember { mutableStateOf("") }
     var minimal by remember { mutableStateOf("") }
     var ratarata by remember { mutableStateOf("32,04") }
@@ -185,25 +198,29 @@ fun MainContentDebit(
         }
 
     }
+
     ButtonMerah(
         onClick = {
-            val id = tanggal + "_debit_" + judul2
-            viewmodel.addDebit(
-
-                Debit(
-                    id = id,
-                    tanggal = tanggal,
-                    maksimal = maksimal,
-                    minimal = minimal,
-                    dam = dam,
-                    kth = kth,
-                    ph = ph,
-                    maxdam = maxdam,
-                    mindam = mindam,
-                    tma = tma,
-                    rata2 = ratarata
+            if (!isClicked) {
+                isClicked = true
+                val id = tanggal + "_debit_" + judul2
+                viewmodel.addDebit(
+                    Debit(
+                        id = id,
+                        tanggal = tanggal,
+                        maksimal = maksimal,
+                        minimal = minimal,
+                        dam = dam,
+                        kth = kth,
+                        ph = ph,
+                        maxdam = maxdam,
+                        mindam = mindam,
+                        tma = tma,
+                        rata2 = ratarata
+                    )
                 )
-            )
+            }
+
         },
         modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
         content = {
@@ -223,19 +240,20 @@ fun MainContentDebit(
 
 
 @Composable
-fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel){
-    var response by remember { mutableStateOf("") }
-
+fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, navController: NavHostController){
     when(val addRequestResponse = viewmodel.addDebitResponse){
         is Loading -> {
         }
         is Success -> {
+            Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
+            navController.navigate(Screen.Home.route)
             ImportData(viewmodel)
             Log.e("firestore", addRequestResponse.toString())
-
         }
-
-        is Failure -> Log.e("firestore", addRequestResponse.e.toString())
+        is Failure -> {
+            Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
+            Log.e("firestore", addRequestResponse.e.toString())
+        }
     }
 
 }

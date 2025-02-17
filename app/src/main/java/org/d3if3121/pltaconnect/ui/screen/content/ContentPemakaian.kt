@@ -121,17 +121,6 @@ fun MainContentPemakaian(
     var kwh by remember { mutableStateOf("32,04") }
     var kwhkumulatif by remember { mutableStateOf("90.118,54") }
 
-    var rataair by remember { mutableStateOf("7776") }
-    var air by remember { mutableStateOf("") }
-    var ekonomisair by remember { mutableStateOf("") }
-
-
-    var maxdam by remember { mutableStateOf("") }
-    var mindam by remember { mutableStateOf("") }
-
-    var tma by remember { mutableStateOf("") }
-
-
 
     Card(
         modifier = Modifier

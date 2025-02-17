@@ -59,6 +59,7 @@ fun ContentPage(
         content = { paddingValues ->
             Column(modifier = Modifier.background(color = Warna.PutihNormal)){
                 MainContent(
+                    navController = navController,
                     lazyListState = lazyListState,
                     paddingValues = paddingValues,
                     viewmodel = viewModel,
@@ -78,6 +79,7 @@ fun ContentPage(
 
 @Composable
 fun MainContent(
+    navController: NavHostController,
     lazyListState: LazyListState,
     paddingValues: PaddingValues,
     viewmodel: PegawaiListViewModel = hiltViewModel(),
@@ -107,7 +109,8 @@ fun MainContent(
                     onClickBack = {
                         contentnow = "Masuk"
                     },
-                    viewmodel = viewmodel
+                    viewmodel = viewmodel,
+                    navController = navController
                 )
 //                DebitSungaiResponse(context, projectviewmodel)
             }
@@ -121,7 +124,8 @@ fun MainContent(
                     onClickBack = {
                         contentnow = "Debit"
                     },
-                    viewmodel = viewmodel
+                    viewmodel = viewmodel,
+                    navController = navController
                 )
             }
             "Pemakaian" -> {

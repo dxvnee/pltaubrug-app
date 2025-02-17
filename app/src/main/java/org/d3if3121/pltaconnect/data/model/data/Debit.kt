@@ -4,7 +4,6 @@ data class Debit (
     val id: String? = "",
     val tanggal: String? = "",
 
-
     val maksimal: String? = "",
     val minimal: String? = "",
 

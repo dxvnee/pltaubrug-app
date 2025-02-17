@@ -11,6 +11,7 @@ import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 
 class PegawaiListRepository (
@@ -190,6 +191,22 @@ class PegawaiListRepository (
     } catch (e: Exception){
         Response.Failure(e)
     }
+
+
+    override suspend fun addProduksi(produksi: ProduksiRequest) = try {
+        val produksisama = produksiRef.whereEqualTo("id", produksi.id).get().await()
+
+        if (produksisama.isEmpty){
+            val id = produksiRef.add(produksi).await().id
+            Response.Success(id + " berhasil dinput!")
+        } else {
+            Response.Failure(Exception("Data hari ini sudah terinput."))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
+
+
 
 
 }
