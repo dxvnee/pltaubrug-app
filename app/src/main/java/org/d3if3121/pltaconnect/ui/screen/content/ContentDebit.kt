@@ -246,9 +246,15 @@ fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, navCo
         }
         is Success -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            navController.navigate(Screen.Home.route)
-            ImportData(viewmodel)
+            val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
             Log.e("firestore", addRequestResponse.toString())
+
+            if (hasilimport == "Import sukses!"){
+                viewmodel.addDebitResponseReset()
+                navController.navigate(Screen.Home.route)
+            } else {
+                Log.e("firestore", hasilimport)
+            }
         }
         is Failure -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()

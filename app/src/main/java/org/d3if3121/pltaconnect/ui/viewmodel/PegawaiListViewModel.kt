@@ -26,6 +26,7 @@ import org.d3if3121.pltaconnect.data.model.data.Produksi
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddDebitResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddMasukResponse
+import org.d3if3121.pltaconnect.data.repository.interfaces.SheetResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddProduksiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddPemakaianResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddPegawaiResponse
@@ -191,6 +192,9 @@ class PegawaiListViewModel @Inject constructor(
     var addMasukResponse by mutableStateOf<AddMasukResponse>(Response.Loading)
         private set
 
+    var getSheetResponse by mutableStateOf<SheetResponse>(Response.Loading)
+        private set
+
 
     fun addDebit(debit: Debit) = viewModelScope.launch {
         addDebitResponse = repo.addDebit(debit)
@@ -204,6 +208,10 @@ class PegawaiListViewModel @Inject constructor(
     fun addMasuk(masukRequest: MasukRequest) = viewModelScope.launch {
         addMasukResponse = repo.addMasuk(masukRequest)
     }
+    fun getSheet(id: String) = viewModelScope.launch {
+        getSheetResponse = repo.getSheet(id)
+    }
+
     //
     fun addDebitResponseReset() {
         addDebitResponse = Response.Loading
@@ -217,6 +225,11 @@ class PegawaiListViewModel @Inject constructor(
     fun addMasukResponseReset() {
         addMasukResponse = Response.Loading
     }
+    //
+    fun getSheetResponseReset() {
+        getSheetResponse = Response.Loading
+    }
+
 
 
 

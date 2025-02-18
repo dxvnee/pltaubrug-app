@@ -615,10 +615,15 @@ fun ProduksiResponse(context: Context, viewmodel: PegawaiListViewModel, navContr
         }
         is Success -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            ImportData(viewmodel)
+            val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
             Log.e("firestore", addRequestResponse.toString())
-            viewmodel.addProduksiResponseReset()
-            navController.navigate(Screen.Home.route)
+
+            if (hasilimport == "Import sukses!"){
+                viewmodel.addProduksiResponseReset()
+                navController.navigate(Screen.Home.route)
+            } else {
+                Log.e("firestore", hasilimport)
+            }
         }
         is Failure -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
+import org.d3if3121.pltaconnect.data.model.Sheet
 import org.d3if3121.pltaconnect.data.model.data.Debit
 import org.d3if3121.pltaconnect.data.model.data.MasukRequest
 import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
@@ -23,6 +24,7 @@ typealias AddDebitResponse = Response<String>
 typealias AddProduksiResponse = Response<String>
 typealias AddPemakaianResponse = Response<String>
 typealias AddMasukResponse = Response<String>
+typealias SheetResponse = Response<Sheet>
 
 interface PegawaiListInterface {
     fun getPegawaiList(): Flow<PegawaiListResponse>
@@ -44,5 +46,8 @@ interface PegawaiListInterface {
     suspend fun addProduksi(produksi: ProduksiRequest): AddProduksiResponse
     suspend fun addPemakaian(pemakaian: PemakaianRequest): AddPemakaianResponse
     suspend fun addMasuk(masuk: MasukRequest): AddMasukResponse
+    //
+    suspend fun getSheet(id: String): SheetResponse
+
 
 }

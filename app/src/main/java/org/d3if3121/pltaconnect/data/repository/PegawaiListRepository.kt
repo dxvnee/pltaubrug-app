@@ -10,6 +10,8 @@ import kotlinx.coroutines.tasks.await
 import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
+import org.d3if3121.pltaconnect.data.model.Sheet
+import org.d3if3121.pltaconnect.data.model.SuccessResponse
 import org.d3if3121.pltaconnect.data.model.data.Debit
 import org.d3if3121.pltaconnect.data.model.data.MasukRequest
 import org.d3if3121.pltaconnect.data.model.data.Pemakaian
@@ -22,8 +24,10 @@ class PegawaiListRepository (
     private val debitRef: CollectionReference,
     private val masukRef: CollectionReference,
     private val pemakaianRef: CollectionReference,
-    private val produksiRef: CollectionReference
+    private val produksiRef: CollectionReference,
+    private val sheetRef: CollectionReference,
 ): PegawaiListInterface {
+    val id = "1"
     override fun getPegawaiList() = callbackFlow {
         val listener = pegawaiRef
             .orderBy("nama")
@@ -165,6 +169,7 @@ class PegawaiListRepository (
 
     override suspend fun loginPegawai(nim: String, password: String) = try {
         val docpegawai = pegawaiRef.whereEqualTo("nim", nim).get().await()
+
         if (!docpegawai.isEmpty){
             val pegawai = docpegawai.first().toPegawai()
 
@@ -183,12 +188,19 @@ class PegawaiListRepository (
 
     override suspend fun addDebit(debit: Debit) = try {
         val debitsama = debitRef.whereEqualTo("id", debit.id).get().await()
+        val idSheetResponse = getSheet(id)
 
-        if (debitsama.isEmpty){
-            val id = debitRef.add(debit).await().id
-            Response.Success(id + " berhasil dinput!")
+        if(idSheetResponse is Response.Success){
+            val idsheet = idSheetResponse.data!!.link
+
+            if (debitsama.isEmpty){
+                val id = debitRef.add(debit).await().id
+                Response.Success(id + " berhasil dinput!", idsheet)
+            } else {
+                Response.Failure(Exception("Data hari ini sudah terinput."))
+            }
         } else {
-            Response.Failure(Exception("Data hari ini sudah terinput."))
+            Response.Failure(Exception("Gagal mendapatkan sheet"))
         }
     } catch (e: Exception){
         Response.Failure(e)
@@ -196,42 +208,82 @@ class PegawaiListRepository (
 
     override suspend fun addProduksi(produksi: ProduksiRequest) = try {
         val produksisama = produksiRef.whereEqualTo("id", produksi.id).get().await()
+        val idSheetResponse = getSheet(id)
 
-        if (produksisama.isEmpty){
-            val id = produksiRef.add(produksi).await().id
-            Response.Success(id + " berhasil dinput!")
+        if(idSheetResponse is Response.Success){
+            val idsheet = idSheetResponse.data!!.link
+
+            if (produksisama.isEmpty){
+                val id = produksiRef.add(produksi).await().id
+                Response.Success(id + " berhasil dinput!", idsheet)
+            } else {
+                Response.Failure(Exception("Data hari ini sudah terinput."))
+            }
         } else {
-            Response.Failure(Exception("Data hari ini sudah terinput."))
+            Response.Failure(Exception("Gagal mendapatkan sheet"))
         }
+
+
     } catch (e: Exception){
         Response.Failure(e)
     }
-
 
     override suspend fun addPemakaian(pemakaian: PemakaianRequest) = try {
         val pemakaiansama = pemakaianRef.whereEqualTo("id", pemakaian.id).get().await()
+        val idSheetResponse = getSheet(id)
 
-        if (pemakaiansama.isEmpty){
-            val id = pemakaianRef.add(pemakaian).await().id
-            Response.Success(id + " berhasil dinput!")
+        if(idSheetResponse is Response.Success){
+            val idsheet = idSheetResponse.data!!.link
+
+            if (pemakaiansama.isEmpty){
+                val id = pemakaianRef.add(pemakaian).await().id
+                Response.Success("$id berhasil dinput!", idsheet)
+            } else {
+                Response.Failure(Exception("Data hari ini sudah terinput."))
+            }
         } else {
-            Response.Failure(Exception("Data hari ini sudah terinput."))
+            Response.Failure(Exception("Gagal mendapatkan sheet"))
         }
     } catch (e: Exception){
         Response.Failure(e)
     }
 
-
     override suspend fun addMasuk(masuk: MasukRequest) = try {
         val masuksama = masukRef.whereEqualTo("id", masuk.id).get().await()
+        val idSheetResponse = getSheet(id)
 
-        if (masuksama.isEmpty){
-            val id = masukRef.add(masuk).await().id
-            Response.Success(id + " berhasil dinput!")
+        if(idSheetResponse is Response.Success){
+            val idsheet = idSheetResponse.data!!.link
+            if (masuksama.isEmpty){
+                val id = masukRef.add(masuk).await().id
+                Response.Success(id + " berhasil dinput!", idsheet)
+            } else {
+                Response.Failure(Exception("Data hari ini sudah terinput."))
+            }
+        } else if (idSheetResponse is Response.Failure) {
+            Response.Failure(idSheetResponse.e)
         } else {
-            Response.Failure(Exception("Data hari ini sudah terinput."))
+            Response.Failure(Exception("LOADING"))
         }
+
     } catch (e: Exception){
+        Response.Failure(e)
+    }
+
+    override suspend fun getSheet(id: String): Response<Sheet> = try {
+        val snapshot = sheetRef.whereEqualTo("id", id).get().await()
+
+        if (!snapshot.isEmpty) {
+            val sheet = snapshot.documents.first().toObject(Sheet::class.java)
+            if (sheet != null) {
+                Response.Success(sheet)
+            } else {
+                Response.Failure(Exception("Data tidak ditemukan."))
+            }
+        } else {
+            Response.Failure(Exception("Data tidak ditemukan."))
+        }
+    } catch (e: Exception) {
         Response.Failure(e)
     }
 
@@ -250,3 +302,4 @@ fun DocumentSnapshot.toPegawai() = Pegawai(
     requests = get(Pegawai.REQUESTS) as? List<String> ?: emptyList(),
     accept = get(Pegawai.ACCEPT) as? List<String> ?: emptyList(),
 )
+

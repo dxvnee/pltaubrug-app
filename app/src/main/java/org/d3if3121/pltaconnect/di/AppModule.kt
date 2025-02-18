@@ -17,6 +17,7 @@ const val DEBIT = "debit"
 const val MASUK = "masuk"
 const val PEMAKAIAN = "pemakaian"
 const val PRODUKSI = "produksi"
+const val SHEET = "sheet"
 
 
 @Module
@@ -30,6 +31,7 @@ object AppModule {
         masukRef = Firebase.firestore.collection(MASUK),
         pemakaianRef = Firebase.firestore.collection(PEMAKAIAN),
         produksiRef = Firebase.firestore.collection(PRODUKSI),
+        sheetRef = Firebase.firestore.collection(SHEET),
     )
 
 
