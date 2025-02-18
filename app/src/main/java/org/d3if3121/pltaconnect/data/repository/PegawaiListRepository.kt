@@ -11,6 +11,9 @@ import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.model.data.MasukRequest
+import org.d3if3121.pltaconnect.data.model.data.Pemakaian
+import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 
@@ -59,7 +62,6 @@ class PegawaiListRepository (
             listener.remove()
         }
     }
-
 
     override suspend fun addPegawai(pegawai: Pegawai) = try {
         val pegawaiSama = pegawaiRef.whereEqualTo("nim", pegawai.nim).get().await()
@@ -192,7 +194,6 @@ class PegawaiListRepository (
         Response.Failure(e)
     }
 
-
     override suspend fun addProduksi(produksi: ProduksiRequest) = try {
         val produksisama = produksiRef.whereEqualTo("id", produksi.id).get().await()
 
@@ -205,6 +206,36 @@ class PegawaiListRepository (
     } catch (e: Exception){
         Response.Failure(e)
     }
+
+
+    override suspend fun addPemakaian(pemakaian: PemakaianRequest) = try {
+        val pemakaiansama = pemakaianRef.whereEqualTo("id", pemakaian.id).get().await()
+
+        if (pemakaiansama.isEmpty){
+            val id = pemakaianRef.add(pemakaian).await().id
+            Response.Success(id + " berhasil dinput!")
+        } else {
+            Response.Failure(Exception("Data hari ini sudah terinput."))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
+
+
+    override suspend fun addMasuk(masuk: MasukRequest) = try {
+        val masuksama = masukRef.whereEqualTo("id", masuk.id).get().await()
+
+        if (masuksama.isEmpty){
+            val id = masukRef.add(masuk).await().id
+            Response.Success(id + " berhasil dinput!")
+        } else {
+            Response.Failure(Exception("Data hari ini sudah terinput."))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
+
+
 
 
 

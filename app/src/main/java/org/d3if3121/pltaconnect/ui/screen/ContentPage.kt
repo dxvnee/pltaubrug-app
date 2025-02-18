@@ -138,7 +138,8 @@ fun MainContent(
                     onClickBack = {
                         contentnow = "Produksi"
                     },
-                    viewmodel = viewmodel
+                    viewmodel = viewmodel,
+                    navController = navController
                 )
             }
             "Masuk" -> {
@@ -151,7 +152,8 @@ fun MainContent(
                     onClickBack = {
                         contentnow = "Pemakaian"
                     },
-                    viewmodel = viewmodel
+                    viewmodel = viewmodel,
+                    navController = navController
                 )
             }
         }

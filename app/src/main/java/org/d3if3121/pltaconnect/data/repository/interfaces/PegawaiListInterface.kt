@@ -5,6 +5,8 @@ import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.model.data.MasukRequest
+import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 
 
@@ -19,6 +21,8 @@ typealias LoginResponse = Response<Pegawai>
 //
 typealias AddDebitResponse = Response<String>
 typealias AddProduksiResponse = Response<String>
+typealias AddPemakaianResponse = Response<String>
+typealias AddMasukResponse = Response<String>
 
 interface PegawaiListInterface {
     fun getPegawaiList(): Flow<PegawaiListResponse>
@@ -38,5 +42,7 @@ interface PegawaiListInterface {
     //
     suspend fun addDebit(debit: Debit): AddDebitResponse
     suspend fun addProduksi(produksi: ProduksiRequest): AddProduksiResponse
+    suspend fun addPemakaian(pemakaian: PemakaianRequest): AddPemakaianResponse
+    suspend fun addMasuk(masuk: MasukRequest): AddMasukResponse
 
 }

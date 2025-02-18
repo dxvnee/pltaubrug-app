@@ -69,26 +69,27 @@ fun ContentProduksi(
 
     var unit by remember { mutableStateOf("Unit 1") }
 
-    var unit1 by remember { mutableStateOf(Produksi(sesudah = "16393.22", sebelum = "16371.57"))}
+    var unit1 by remember { mutableStateOf(Produksi())}
     var unit2 by remember { mutableStateOf(Produksi())}
     var unit3 by remember { mutableStateOf(Produksi())}
     var unittotal by remember { mutableStateOf(Produksi(pemakaian = "0")) }
 
     var sheetpemakaiansendiri by remember { mutableStateOf("254") }
     var isClicked by remember { mutableStateOf(false) }
-    var checkbox1 by remember { mutableStateOf(false) }
-    var checkbox2 by remember { mutableStateOf(false) }
-    var checkbox3 by remember { mutableStateOf(false) }
+
+    var checkbox1 by remember { mutableStateOf(true) }
+    var checkbox2 by remember { mutableStateOf(true) }
+    var checkbox3 by remember { mutableStateOf(true) }
 
     var errorinfo by remember { mutableStateOf("")}
 
 
-    LaunchedEffect(unit1, unit2, unit3) {
+    LaunchedEffect(unit1, unit2, unit3, checkbox1, checkbox2, checkbox3) {
         unit1 = hitungUnitProduksi(unit1, unittotal, sheetpemakaiansendiri, checkbox1)
         unit2 = hitungUnitProduksi(unit2, unittotal, sheetpemakaiansendiri, checkbox2)
         unit3 = hitungUnitProduksi(unit3, unittotal, sheetpemakaiansendiri, checkbox3)
 
-        unittotal = RumusTambah(unit1, unit2, unit3, sheetpemakaiansendiri)
+        unittotal = totalProduksi(unit1, unit2, unit3, sheetpemakaiansendiri)
     }
 
     ProduksiResponse(
@@ -529,7 +530,7 @@ fun MainContent(
     CheckboxBiru(checked = checkbox, onCheckedChange = onCheckedChange)
 }
 
-fun RumusTambah(
+fun totalProduksi(
     unit1: Produksi,
     unit2: Produksi,
     unit3: Produksi,
