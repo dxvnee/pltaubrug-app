@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tellink</string>
+    <string name="app_name">Admin Absen</string>
     <string name="tellink">Tellink.</string>
     <string name="login">Login</string>
     <string name="nim">NIP :</string>
@@ -18,6 +18,10 @@
     <string name="register">Register!</string>
     <string name="nama">Eigiya Daramuli Kale</string>
     <string name="full_name">Nama Lengkap :</string>
+    <string name="bukti_hadir">Bukti Kehadiran :</string>
+    <string name="deskripsi">Deskripsi :</string>
+    <string name="masuk_deskripsi">Masukkan Deskripsi :</string>
+
 
 
     //Home

@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "org.d3if3121.tellink"
+    namespace = "org.d3if3121.AdminAbsen"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.d3if3121.tellink"
+        applicationId = "org.d3if3121.AdminAbsen"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -54,6 +54,14 @@ dependencies {
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
+    //Material3
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+
+    // upload foto
+    implementation ("com.google.firebase:firebase-storage:20.3.0")
+    implementation ("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.8.2")
 
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
