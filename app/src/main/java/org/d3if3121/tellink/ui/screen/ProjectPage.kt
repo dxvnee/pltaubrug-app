@@ -1,34 +1,28 @@
 package org.d3if3121.tellink.ui.screen
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import org.d3if3121.tellink.R
+import androidx.compose.ui.platform.LocalContext
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,28 +30,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -67,69 +46,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.d3if3121.tellink.navigation.Screen
-import org.d3if3121.tellink.ui.theme.TellinkTheme
 import org.d3if3121.tellink.ui.theme.Warna
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ModifierInfo
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import org.d3if3121.tellink.navigation.BottomBarScreen
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.CardElevation
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import org.d3if3121.tellink.components.LoadingIndicator
 import org.d3if3121.tellink.core.printError
-import org.d3if3121.tellink.data.model.Mahasiswa
 import org.d3if3121.tellink.data.model.Project
 import org.d3if3121.tellink.data.model.Response.Failure
 import org.d3if3121.tellink.data.model.Response.Loading
 import org.d3if3121.tellink.data.model.Response.Success
 import org.d3if3121.tellink.ui.component.BottomBar
-import org.d3if3121.tellink.ui.component.InputPutihSearch
-import org.d3if3121.tellink.ui.component.KartuKonten
+import org.d3if3121.tellink.ui.component.InputPutih
 import org.d3if3121.tellink.ui.component.PilihanPutih
 import org.d3if3121.tellink.ui.component.TambahProjectDialog
 import org.d3if3121.tellink.ui.component.TopBar
 import org.d3if3121.tellink.ui.component.cekScroll
+import org.d3if3121.tellink.ui.component.uploadImageToFirebase
 import org.d3if3121.tellink.ui.viewmodel.MahasiswaListViewModel
 import org.d3if3121.tellink.ui.viewmodel.ProjectListViewModel
+import java.io.File
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -211,6 +160,71 @@ fun MainContentProject(
     var showDialog = remember { mutableStateOf(false) }
     var refreshData = remember { mutableStateOf(false) }
     var secondmode by remember { mutableStateOf(false) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+    }
+    val storage = FirebaseStorage.getInstance().reference
+    val context = LocalContext.current
+
+    @Composable
+    fun UploadImageComponent() {
+        val context = LocalContext.current
+        val storage = FirebaseStorage.getInstance().reference
+        val imageUri = remember { mutableStateOf<Uri?>(null) }
+
+        // Membuat tempat penyimpanan sementara untuk gambar yang diambil
+        val tempUri = remember {
+            FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.provider",
+                File.createTempFile("temp_image", ".jpg", context.cacheDir)
+            )
+        }
+
+        val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                imageUri.value = tempUri
+                uploadImageToFirebase(
+                    tempUri,
+                    onSuccess = { url ->
+                        Log.d("Firebase", "Upload berhasil: $url")
+                        // TODO: Simpan URL ke database atau lakukan tindakan lainnya
+                    },
+                    onFailure = { e ->
+                        Log.e("Firebase", "Gagal mengunggah: ${e.message}")
+                    }
+                )
+            }
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        ) {
+            Button(onClick = { cameraLauncher.launch(tempUri) }) {
+                Text("Ambil Foto")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Menampilkan gambar yang diambil
+            imageUri.value?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = "Gambar yang diunggah",
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(2.dp, Color.Gray, RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+    }
+
+
 
 
     LaunchedEffect(refreshData) {
@@ -228,16 +242,16 @@ fun MainContentProject(
         LazyColumn(
             modifier = Modifier.padding(top = padding).fillMaxWidth().fillMaxHeight(),
             state = lazyListState
-        ){
+        ) {
             item {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "My Project",
+                    text = "Absensi",
                     color = Warna.MerahNormal,
                     fontSize = 21.sp,
                     fontWeight = FontWeight.ExtraBold,
 
-                )
+                    )
             }
 
             item {
@@ -247,102 +261,162 @@ fun MainContentProject(
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 17.dp)
 
-                ){
-                    InputPutihSearch(
-                        input = search,
-                        placeholder = stringResource(id = R.string.search),
-                        onInputChange = { input ->
-                            search = input
-                        },
-                        keyboardType = KeyboardType.Number,
-                        modifier = Modifier.width(297.dp)
-                    )
+                ) {
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End,
                         modifier = Modifier.fillMaxWidth()
-                    ){
-                        Button(
-                            modifier = Modifier.size(49.dp).fillMaxWidth(),
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonColors(
-                                containerColor =  Warna.MerahNormal,
-                                contentColor = Warna.PutihNormal,
-                                disabledContentColor = Warna.MerahNormal,
-                                disabledContainerColor = Warna.PutihNormal
-                            ),
-                            onClick = {
-                                showDialog.value = true
-                            },
-                        ) {
-                            Text(
-                                modifier = Modifier.offset(-5.dp),
-                                text = "+",
-                                color = Warna.PutihNormal,
-                                fontSize = 26.sp,
-                                fontWeight = FontWeight.Normal,
-                            )
-                        }
+                    ) {
                     }
 
 
                 }
 
-                PilihanPutih(
-                    text1 = "My Project",
-                    text2 = "Requested",
-                    condition = secondmode,
-                    color1 = if(secondmode) {
-                        ButtonColors(
-                            containerColor =  Warna.PutihNormal,
-                            contentColor = Warna.MerahNormal,
-                            disabledContentColor = Warna.MerahNormal,
-                            disabledContainerColor = Warna.MerahNormal
-                        )
-                    } else {
-                        ButtonColors(
-                            containerColor =  Warna.MerahNormal,
-                            contentColor = Warna.MerahNormal,
-                            disabledContentColor = Warna.MerahNormal,
-                            disabledContainerColor = Warna.PutihNormal
-                        )
-                    },
-                    color2 = if(secondmode) {
-                        ButtonColors(
-                            containerColor =  Warna.MerahNormal,
-                            contentColor = Warna.MerahNormal,
-                            disabledContentColor = Warna.MerahNormal,
-                            disabledContainerColor = Warna.MerahNormal
-                        )
-                    } else {
-                        ButtonColors(
-                            containerColor =  Warna.PutihNormal,
-                            contentColor = Warna.MerahNormal,
-                            disabledContentColor = Warna.PutihNormal,
-                            disabledContainerColor = Warna.MerahNormal
-                        )
-                    },
-                    onclick1 = {
-                        secondmode = false
-                    },
-                    onclick2 = {
-                        secondmode = true
-                    }
-                )
 
             }
             if (projectList.isEmpty()) {
                 item {
-                    Column (
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(450.dp),
+
+                        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+                        elevation = CardDefaults.cardElevation(20.dp),
+                        shape = RoundedCornerShape(15.dp)
+                    ){
+                        Column(
+                            modifier = Modifier.padding(17.dp)
+                        ){
+                            Text(
+                                text = stringResource(id = R.string.bukti_hadir),
+                                color = Warna.MerahNormal,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                            )
+                            InputPutih(
+                                input = "",
+                                placeholder = stringResource(id = R.string.enter_nim),
+                                onInputChange = { input ->
+
+                                },
+                                keyboardType = KeyboardType.Number,
+                                modifier = Modifier.fillMaxWidth()
+
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            PilihanPutih(
+                                text1 = "Upload Foto",
+                                text2 = "Upload Lokasi",
+                                condition = secondmode,
+                                color1 = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                                color2 = ButtonDefaults.buttonColors(containerColor = Warna.PutihNormal),
+                                onclick1 = {
+                                    launcher.launch("image/*") // Pilih gambar dari galeri
+                                },
+                                onclick2 = {
+                                    secondmode = true
+                                }
+                            )
+
+                            // State untuk menyimpan status yang dipilih
+                            var selectedStatus by remember { mutableStateOf("Pilih Keterangan") }
+
+                            Text(
+                                text = "Keterangan: $selectedStatus",
+                                color = Warna.MerahNormal,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            // Tombol untuk memilih status
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                            ) {
+                                Button(
+                                    onClick = { selectedStatus = "Hadir" },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Warna.Hijau),
+                                    modifier = Modifier.padding(end = 8.dp).weight(1f),
+                                    shape = RoundedCornerShape(7.dp)
+                                ) {
+                                    Text(text = "Hadir")
+                                }
+                                Button(
+                                    onClick = { selectedStatus = "Izin" },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Warna.Kuning),
+                                    modifier = Modifier.padding(end = 8.dp).weight(1f),
+                                    shape = RoundedCornerShape(7.dp)
+
+                                ) {
+                                    Text(text = "Izin")
+                                }
+                                Button(
+                                    onClick = { selectedStatus = "Tidak Masuk" },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Warna.Merah),
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(7.dp)
+                                ) {
+                                    Text(text = "Tidak Masuk")
+                                }
+                            }
+                            Text(
+                                text = stringResource(id = R.string.deskripsi),
+                                color = Warna.MerahNormal,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                            )
+                            InputPutih(
+                                input = "",
+                                placeholder = stringResource(id = R.string.masuk_deskripsi),
+                                onInputChange = { input ->
+
+                                },
+                                keyboardType = KeyboardType.Number,
+                                modifier = Modifier.fillMaxWidth()
+
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            // Menampilkan status yang dipilih
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+// Tombol Kirim
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Button(
+                                    onClick = {
+                                        Toast.makeText(context, "Absen Berhasil", Toast.LENGTH_SHORT).show()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                                    shape = RoundedCornerShape(7.dp),
+                                    modifier = Modifier.width(150.dp) // Atur lebar tombol sesuai kebutuhan
+                                ) {
+                                    Text(text = "Kirim", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                }
+                            }
+
+                        }
+                    }
+
+                    Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.fillMaxSize().height(550.dp)
-                    ){
-                        Row (
+                    )
+                    {
+
+                        Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
-                        ){
+                        ) {
                             Text(
                                 text = "Project doesn't exist!",
                                 color = Warna.MerahNormal,
@@ -352,132 +426,19 @@ fun MainContentProject(
                         }
 
                     }
-                }
-            } else {
-                if(!secondmode){
-                    items(items = projectList){ project ->
 
-                        val mahasiswa = viewmodel.mahasiswaMap[project.nim] ?: Mahasiswa()
-
-                        LaunchedEffect(project.nim) {
-                            viewmodel.getMahasiswaByNim(project.nim)
-                        }
-
-                        KartuKonten(
-                            fotoprofil = R.drawable.photo,
-                            nama = mahasiswa.nama,
-                            jurusan = mahasiswa.jurusan,
-                            hari =  formatRelativeTime(project.date!!),
-                            type = "project",
-                            tag = project.tag,
-                            judul = project.title,
-                            gambar = project.image ?: "",
-                            konten = project.desc,
-                            onclick = {
-                                navController.navigate("${Screen.EditProject.route}/${project.id}")
-                            },
-                            onclicktext = {
-                                navController.navigate("${Screen.ConfirmPage.route}/${project.id}")
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
-                } else {
-                    Log.d("tes1", user.accept!!.toString())
-                    items(
-                        items = user.accept!!
-
-                    ){ projectId ->
-                        Log.d("tes5", "ererer")
-                        projectviewmodel.getProjectById(projectId)
-
-                        var project by remember { mutableStateOf(Project()) }
-                        var mahasiswa by remember { mutableStateOf(Mahasiswa()) }
-                        var requestornot by remember { mutableStateOf(false) }
-
-                        LaunchedEffect(projectId) {
-                            project = projectviewmodel.getProjectByIdSuspend(projectId)
-
-                            mahasiswa = viewmodel.getMahasiswaByNimSuspend(project.nim)
-
-                            requestornot = viewmodel.checkRequestProject(project.id!!, user.nim).await()
-                        }
-
-                        KartuKonten(
-                            fotoprofil = R.drawable.photo,
-                            nama = mahasiswa.nama,
-                            jurusan = mahasiswa.jurusan,
-                            hari = formatRelativeTime(project.date!!),
-                            type = "accept",
-                            judul = project.title,
-                            gambar = project.image ?: "",
-                            konten = project.desc,
-                            requests = project.requests!!,
-                            tag = project.tag,
-
-                            onclick = {
-
-                            },
-                        )
-
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
-                    items(
-                        items = user.requests!!
-                    ){ projectId ->
-                        Log.d("tes3", "ererer")
-                        projectviewmodel.getProjectById(projectId)
-                        val project = projectviewmodel.projectMap[projectId] ?: Project()
-                        val mahasiswa = viewmodel.mahasiswaMap[project.nim] ?: Mahasiswa()
-                        var requestornot by remember { mutableStateOf(false) }
-
-                        LaunchedEffect(projectId, project.nim) {
-                            viewmodel.getMahasiswaByNim(project.nim)
-                            projectviewmodel.getProjectById(projectId)
-                            requestornot = viewmodel.checkRequestProject(project.id!!, user.nim).await()
-                        }
-
-                        KartuKonten(
-                            fotoprofil = R.drawable.photo,
-                            nama = mahasiswa.nama,
-                            jurusan = mahasiswa.jurusan,
-                            hari = formatRelativeTime(project.date!!),
-
-                            judul = project.title,
-                            gambar = project.image ?: "",
-                            konten = project.desc,
-                            request = requestornot,
-                            requests = project.requests!!,
-                            tag = project.tag,
-                            onrequestchangefalse = {
-                                requestornot = false
-                            },
-                            onrequestchangetrue = {
-                                requestornot = true
-
-                            },
-                            onclick = {
-                                projectviewmodel.addRequest(project.id!!, user.nim)
-                            },
-                            onclickcancel = {
-                                projectviewmodel.deleteRequest(project.id!!, user.nim)
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(20.dp))
-                    }
 
                 }
+
 
 
             }
-
-
         }
     }
-
 }
+
+
+
 fun formatRelativeTime(dateTimeString: String): String {
     if (dateTimeString == "") {
         return "unknown time"

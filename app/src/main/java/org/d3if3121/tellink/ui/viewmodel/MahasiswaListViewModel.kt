@@ -30,7 +30,7 @@ import org.d3if3121.tellink.data.repository.interfaces.MahasiswaListResponse
 import org.d3if3121.tellink.data.repository.interfaces.UpdateMahasiswaResponse
 import javax.inject.Inject
 
-@HiltViewModel
+    @HiltViewModel
 class MahasiswaListViewModel @Inject constructor(
     private val repo: MahasiswaListInterface
 ): ViewModel() {

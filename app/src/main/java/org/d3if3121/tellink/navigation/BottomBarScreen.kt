@@ -1,10 +1,9 @@
 package org.d3if3121.tellink.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.HowToReg
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomBarScreen (
@@ -24,7 +23,7 @@ sealed class BottomBarScreen (
     )
     object BottomSkillPage : BottomBarScreen(
         route = "ProjectPage",
-        title = "Project",
-        icon = Icons.Default.Star
+        title = "Absen",
+        icon = Icons.Default.HowToReg
     )
 }

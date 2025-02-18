@@ -18,4 +18,8 @@ object Warna {
     val AbuNormal = Color(0xFFC3C3C3)
     val AbuTua = Color(0xFFB5B5B5)
     val AbuMuda = Color(0xFFE6E6E6)
+    val Merah = Color(0xFFFF0000)
+    val Kuning = Color(0xFFF5D400)
+    val Hijau = Color(0xFF5ED200)
+    val BiruText = Color(0xFF2A2E78)
 }

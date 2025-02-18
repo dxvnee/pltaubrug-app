@@ -30,7 +30,7 @@ fun SetupNavGraph(){
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = Screen.ConfirmPage.route
     ) {
         composable(route = Screen.Login.route){
             LoginPage(navController, mahasiswalistviewmodel)
@@ -51,6 +51,9 @@ fun SetupNavGraph(){
         composable(route = Screen.Profile.route){
             ProfilePage(navController, mahasiswalistviewmodel)
         }
+        composable(route = Screen.ConfirmPage.route){
+            ConfirmPage(navController)
+        }
 
         composable(route ="${Screen.EditProject.route}/{projectId}",
             arguments = listOf(navArgument("projectId"){
@@ -62,14 +65,5 @@ fun SetupNavGraph(){
             EditPage(navController = navController, projectId = projectId)
         }
 
-        composable(route ="${Screen.ConfirmPage.route}/{projectId}",
-            arguments = listOf(navArgument("projectId"){
-                type = NavType.StringType
-                nullable = false
-            })
-        ){ backStackEntry ->
-            val projectId = backStackEntry.arguments?.getString("projectId")
-            ConfirmPage(navController = navController, projectId = projectId)
-        }
     }
 }

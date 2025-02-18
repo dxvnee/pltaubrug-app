@@ -1,39 +1,42 @@
 package org.d3if3121.tellink.ui.screen
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.d3if3121.tellink.R
-import org.d3if3121.tellink.ui.component.BottomBar
-import org.d3if3121.tellink.ui.component.ConfirmKonten
-import org.d3if3121.tellink.ui.component.InputPutihSearchProfile
-import org.d3if3121.tellink.ui.component.KartuKontenEdit
+import org.d3if3121.tellink.navigation.Screen
+import org.d3if3121.tellink.ui.component.ButtonMerah
 import org.d3if3121.tellink.ui.theme.Warna
 
 
@@ -42,72 +45,120 @@ import org.d3if3121.tellink.ui.theme.Warna
 fun ConfirmPage(
     navController: NavHostController,
     projectId: String? = "996GZuXUa03N1JRmSkyM",
-){
+) {
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 10.dp)
-                    ) {
-                        Column (
-                            horizontalAlignment = Alignment.Start,
-                        ){
-                            IconButton(
-                                onClick = {
-                                    navController.popBackStack()
-                                },
-                                modifier = Modifier.offset(x = -12.dp)
-                            ){
-                                Icon(
-                                    modifier = Modifier.size(30.dp),
-                                    imageVector = Icons.Default.ArrowBack,
-                                    contentDescription = "eheh",
-                                    tint = Warna.AbuTua
-                                )
-                            }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Warna.PutihNormal, RectangleShape)
+    ) {
 
-                        }
-                        Column (
-
-                        ){
-                            Text(
-                                text = "Confirm Project",
-                                color = Warna.MerahNormal,
-                                fontSize = 21.sp,
-                                fontWeight = FontWeight.ExtraBold,
-
-                                )
-                        }
-
-
-                    }
-                },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = Warna.PutihNormal,
-                    titleContentColor = Warna.PutihNormal
-                ),
+        Column {
+            Row(
                 modifier = Modifier
-                    .background(color = Warna.PutihNormal).padding(top = 0.dp)
+                    .padding(top = 100.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.pln),
+                    contentDescription = "App logo",
+                    modifier = Modifier
+                        .width(263.dp)
+                        .height(70.dp)
+                )
+            }
 
-            )
-        },
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column(
 
-        bottomBar = {
-            BottomBar(navController = navController)
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ) {
+
+                }
+            }
         }
-    ){ paddingValues ->
-        Column (
-            modifier = Modifier.padding(paddingValues)
-                .background(color = Warna.PutihNormal)
-                .fillMaxSize()
-        ){
-            ConfirmKonten(navController, projectId!!)
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+
+    ) {
+
+        Canvas(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(top = 525.dp)
+                .size(400.dp)
+
+        ) {
+
+            drawCircle(
+                color = Warna.MerahTua,
+                radius = size.minDimension
+            )
+
+
+        }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 280.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .height(450.dp)
+                .width(203.dp),
+
+            colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+            elevation = CardDefaults.cardElevation(20.dp),
+            shape = RoundedCornerShape(15.dp)
+        )
+        {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+
+                ) {
+                Image(
+                    painter = painterResource(id = R.drawable.depositphotos_138297620_stock_illustration_successful_businessman_with_best_thumbs),
+                    contentDescription = "App logo",
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .fillMaxWidth()
+                        .width(99.dp)
+                        .height(234.dp),
+                    contentScale = ContentScale.Fit
+
+                )
+                Text(
+                    text = "Registrasi Anda telah diterima" +
+                            " dan sedang menunggu" +
+                            " persetujuan admin. " +
+                            " Anda akan menerima notifikasi " + "setelah akun " +
+                            "Anda disetujui. ",
+                    fontSize = 14.sp,
+                    color = Warna.BiruText,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight(300),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                )
+
+
+            }
+
+
         }
     }
 }
-
-

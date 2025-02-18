@@ -1,22 +1,10 @@
 package org.d3if3121.tellink.ui.screen
 
 import android.annotation.SuppressLint
-import org.d3if3121.tellink.R
-import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,105 +12,49 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.Placeholder
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.d3if3121.tellink.navigation.Screen
-import org.d3if3121.tellink.ui.theme.TellinkTheme
 import org.d3if3121.tellink.ui.theme.Warna
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ModifierInfo
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import org.d3if3121.tellink.navigation.BottomBarScreen
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.CardElevation
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.Icon
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.firestore
 import org.d3if3121.tellink.components.LoadingIndicator
 import org.d3if3121.tellink.core.printError
 import org.d3if3121.tellink.data.model.Mahasiswa
@@ -130,14 +62,17 @@ import org.d3if3121.tellink.data.model.Project
 import org.d3if3121.tellink.data.model.Response.Success
 import org.d3if3121.tellink.data.model.Response.Loading
 import org.d3if3121.tellink.data.model.Response.Failure
-import org.d3if3121.tellink.data.model.Response
+import org.d3if3121.tellink.navigation.Screen
 import org.d3if3121.tellink.ui.component.BottomBar
-import org.d3if3121.tellink.ui.component.InputPutihSearch
 import org.d3if3121.tellink.ui.component.KartuKonten
 import org.d3if3121.tellink.ui.component.TopBar
 import org.d3if3121.tellink.ui.component.cekScroll
 import org.d3if3121.tellink.ui.viewmodel.MahasiswaListViewModel
 import org.d3if3121.tellink.ui.viewmodel.ProjectListViewModel
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 
 
 @Preview(showBackground = true)
@@ -160,6 +95,7 @@ fun HomePage(
 ) {
     val lazyListState = rememberLazyListState()
     var user = viewModel.user
+    var context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -213,30 +149,9 @@ fun MainContentHome(
     user: Mahasiswa
 ) {
 
+
     var context = LocalContext.current
     var request = remember { mutableStateOf(false) }
-    when(val addRequestResponse = projectviewmodel.addRequestResponse){
-        is Loading -> {
-
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetAddRequestResponse()
-        }
-        is Failure -> printError(addRequestResponse.e)
-    }
-    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
-        is Loading -> {
-
-        }
-        is Success -> {
-            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
-            projectviewmodel.resetDeleteRequestResponse()
-        }
-        is Failure -> printError(deleteRequestResponse.e)
-    }
-
-
     val numbers = remember { List(size = 200){ it } }
     val padding by animateDpAsState(
         targetValue = if (cekScroll(lazyListState)) 0.dp else TOP_BAR_HEIGHT,
@@ -252,106 +167,68 @@ fun MainContentHome(
     ) {
 
         LazyColumn(
-            modifier = Modifier.padding(top = padding).fillMaxWidth().fillMaxHeight()
+            modifier = Modifier.padding(top = 6.dp).fillMaxWidth().fillMaxHeight()
                 .background(color = Warna.PutihNormal),
             state = lazyListState
         ){
             item {
-                Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Welcome to Tellink",
+                    text = "Absensi",
                     color = Warna.MerahNormal,
                     fontSize = 21.sp,
                     fontWeight = FontWeight.ExtraBold,
+                    modifier = Modifier.padding(bottom = 4.dp)
 
                     )
             }
+
             item {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 17.dp)
 
                 ){
-//                    InputPutihSearch(
-//                        input = search,
-//                        placeholder = stringResource(id = R.string.search),
-//                        onInputChange = { input ->
-//                            search = input
-//                        },
-//                        keyboardType = KeyboardType.Number,
-//                        modifier = Modifier.fillMaxWidth()
-//                    )
                 }
             }
-            if (projectList.isEmpty()) {
+
+
                 item {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize().height(550.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "You're up to date!",
-                                color = Warna.MerahNormal,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Normal,
+                    Column {
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        DatePickerUI()
+
+                            KeteranganAbsen(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp)
                             )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 80.dp), // Mengatur posisi tombol agar tidak menutupi BottomBar
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Button(
+                                onClick = {
+                                    navController.navigate(Screen.Project.route)
+
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                                modifier = Modifier
+                                    .fillMaxWidth() // Mengatur lebar tombol agar tidak terlalu besar
+                                    .height(80.dp).padding(top = 10.dp)
+                            ) {
+                                Text(text = "Absen", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            }
                         }
 
                     }
-                }
-            } else {
-                items(
-                    items = projectList,
-                ){ project ->
-                    val mahasiswa = viewmodel.mahasiswaMap[project.nim] ?: Mahasiswa()
-                    var requestornot by remember { mutableStateOf(false) }
 
-                    LaunchedEffect(project.id, user.nim) {
-                        requestornot = viewmodel.checkRequestProject(project.id!!, user.nim).await()
-                    }
+                    Spacer(modifier = Modifier.height(50.dp))
 
-
-                    LaunchedEffect(project.nim) {
-                        viewmodel.getMahasiswaByNim(project.nim)
-                        viewmodel.addViewedProject(project.id!!)
-
-                    }
-
-                    KartuKonten(
-                        fotoprofil = R.drawable.photo,
-                        nama = mahasiswa.nama,
-                        jurusan = mahasiswa.jurusan,
-                        hari = formatRelativeTime(project.date!!),
-
-                        judul = project.title,
-                        gambar = project.image ?: "",
-                        konten = project.desc,
-                        request = requestornot,
-                        requests = project.requests!!,
-                        tag = project.tag,
-                        onrequestchangefalse = {
-                            requestornot = false
-
-                        },
-                        onrequestchangetrue = {
-                            requestornot = true
-
-                        },
-                        onclick = {
-                            projectviewmodel.addRequest(project.id!!, user.nim)
-                        },
-                        onclickcancel = {
-                            projectviewmodel.deleteRequest(project.id!!, user.nim)
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
 
@@ -359,7 +236,175 @@ fun MainContentHome(
 
         }
     }
+// Kalender
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerUI() {
+    val datePickerState = rememberDatePickerState()
+    var selectedDate by remember { mutableStateOf("Belum dipilih") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp).padding(top = 0.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Mengatur posisi/ukuran kalender
+        DatePicker(
+            state = datePickerState,
+            modifier = Modifier.fillMaxWidth()
+                .scale(0.7f)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Menampilkan tanggal yang dipilih secara otomatis
+        LaunchedEffect(datePickerState.selectedDateMillis) {
+            datePickerState.selectedDateMillis?.let { millis ->
+                val localDate = Instant.ofEpochMilli(millis)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+                selectedDate = localDate.format(dateFormatter)
+            }
+        }
+
+        // Teks "Tanggal" yang diperbarui otomatis saat user memilih di kalender
+        Text(
+            text = "Tanggal: $selectedDate",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color(0xFF0797DA),
+        )
+    }
 }
 
+@Composable
+fun KeteranganAbsen(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .height(80.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // **Bagian kiri (Absensi Masuk)**
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(80.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(RoundedCornerShape(50.dp))
+                        .background(Warna.Hijau)
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = "Check",
+                            modifier = Modifier.size(45.dp),
+                            tint = Warna.PutihNormal
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(start = 10.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "HADIR",
+                    color = Warna.Hijau,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                )
+                Text(
+                    text = "Absensi Masuk",
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(
+                    text = "07.20",  // **Ganti dengan waktu masuk yang sesuai**
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        // **Bagian kanan (Absensi Pulang)**
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End // Mengatur elemen ke kanan
+        ) {
+            // Ikon check (sebelah kiri)
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(50.dp))
+                    .background(Warna.Hijau)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = "Check",
+                        modifier = Modifier.size(45.dp),
+                        tint = Warna.PutihNormal
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(10.dp)) // Beri jarak antara ikon dan teks
+
+            // Kolom teks (di sebelah kanan ikon)
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start // Pastikan teks rata kiri
+            ) {
+                Text(
+                    text = "HADIR",
+                    color = Warna.Hijau,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                )
+                Text(
+                    text = "Absensi Pulang",
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Text(
+                    text = "16.30",  // **Ganti dengan waktu pulang yang sesuai**
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
 
