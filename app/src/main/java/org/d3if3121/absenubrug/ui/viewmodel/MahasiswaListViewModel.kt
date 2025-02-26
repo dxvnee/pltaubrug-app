@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ import org.d3if3121.absenubrug.data.repository.interfaces.AddAbsenResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.LoginResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 import org.d3if3121.absenubrug.data.repository.interfaces.AbsenListResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListResponse
 import javax.inject.Inject
 import kotlin.math.log
 
@@ -34,6 +36,13 @@ class MahasiswaListViewModel @Inject constructor(
 
     var absenList by mutableStateOf<List<Absen>>(emptyList())
         private set
+
+    var mahasiswaList by mutableStateOf<List<Mahasiswa>>(emptyList())
+        private set
+
+    var mahasiswaListResponse by mutableStateOf<MahasiswaListResponse>(Response.Loading)
+        private set
+
 
     var addMahasiswaResponse by mutableStateOf<AddMahasiswaResponse>(Response.Loading)
         private set
@@ -75,6 +84,14 @@ class MahasiswaListViewModel @Inject constructor(
             Log.d("hew", it.toString())
 
         }
+    }
+
+    fun changeMahasiswaList(list: List<Mahasiswa>) = viewModelScope.launch {
+        mahasiswaList = list
+    }
+
+    fun getMahasiswaList() = viewModelScope.launch {
+        mahasiswaListResponse = repo.getMahasiswaList()
     }
 
     fun addUser(mahasiswa: Mahasiswa) {

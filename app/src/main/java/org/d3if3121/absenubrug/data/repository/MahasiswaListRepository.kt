@@ -24,7 +24,7 @@ class MahasiswaListRepository (
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
         Log.d("user", user.nim)
-        val absenRef = absenRef.document(user.nim).collection("tanggal")
+        val absenRef = absenRef.document().collection("tanggal")
 
         val listener = absenRef
             .addSnapshotListener { snapshot, e ->
@@ -41,6 +41,23 @@ class MahasiswaListRepository (
         awaitClose {
             listener.remove()
         }
+    }
+
+
+
+    override suspend fun getMahasiswaList() = try {
+        val mahasiswaSama = mahasiswaRef.get(Source.SERVER).await()
+
+        if (!mahasiswaSama.isEmpty){
+            val mahasiswaList = mahasiswaSama.documents.map{
+                it.toMahasiswa()
+            }
+            Response.Success(mahasiswaList)
+        } else {
+            Response.Failure(Exception("Tidak ada data!"))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
     }
 
 

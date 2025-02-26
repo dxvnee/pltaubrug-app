@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.d3if3121.absenubrug.components.LoadingIndicator
 import org.d3if3121.absenubrug.data.model.Absen
+import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.data.model.Response
 import org.d3if3121.absenubrug.navigation.Screen
 import org.d3if3121.absenubrug.ui.component.BottomBar
@@ -103,7 +104,8 @@ fun MainContentHome(
     viewmodel: MahasiswaListViewModel = hiltViewModel(),
 ) {
     LaunchedEffect (Unit){
-        viewmodel.getAbsenList(viewmodel.user)
+        viewmodel.getMahasiswaList()
+        viewmodel.getAbsenList(Mahasiswa(nim = "1"))
     }
 
     DialogLoading(viewmodel)
@@ -142,6 +144,7 @@ fun ProjectListHome(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel
 ){
+
     HomeResponse(viewmodel)
 
     if(viewmodel.absenList.isNotEmpty()){
@@ -188,12 +191,6 @@ fun ProjectListHome(
         ){
             Log.d("absenlist", viewmodel.absenList.toString())
 
-            KeteranganAbsen(
-                hadir1 = viewmodel.keteranganhome,
-                hadir2 =  viewmodel.keteranganhome2,
-                jam1 = viewmodel.jamhome,
-                jam2 = viewmodel.jamhome2,
-            )
 
             Button(
                 onClick = {
@@ -221,10 +218,26 @@ fun HomeResponse(
     when(val response = viewmodel.absenListResponse){
         is Response.Loading -> {}
         is Response.Success -> response.data?.let {
-            Log.d("kenapa", it.toString())
+
             viewmodel.changeLoading(false)
             viewmodel.changeList(it)
             viewmodel.changeAbsenListResponse()
+        }
+        is Response.Failure -> {
+            Log.d("error", response.e.toString())
+        }
+    }
+
+    when(val response = viewmodel.mahasiswaListResponse){
+        is Response.Loading -> {}
+        is Response.Success -> response.data?.let {
+            viewmodel.changeMahasiswaList(it)
+            viewmodel.mahasiswaList.let { list ->
+                list.forEach { mahasiswa ->
+                    viewmodel.getAbsenList(mahasiswa)
+                }
+            }
+
         }
         is Response.Failure -> {
             Log.d("error", response.e.toString())

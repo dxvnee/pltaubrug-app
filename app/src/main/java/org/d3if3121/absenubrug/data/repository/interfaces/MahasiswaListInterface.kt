@@ -8,6 +8,7 @@ import org.d3if3121.absenubrug.data.model.Response
 
 
 typealias AbsenListResponse = Response<List<Absen>>
+typealias MahasiswaListResponse = Response<List<Mahasiswa>>
 typealias AddMahasiswaResponse = Response<String>
 typealias AddUserResponse = Response<Mahasiswa>
 typealias LoginResponse = Response<Mahasiswa>
@@ -16,6 +17,7 @@ typealias AddAbsenResponse = Response<String>
 
 interface MahasiswaListInterface {
     fun getAbsenList(user: Mahasiswa): Flow<AbsenListResponse>
+    suspend fun getMahasiswaList(): MahasiswaListResponse
 
     suspend fun addMahasiswa(mahasiswa: Mahasiswa): AddMahasiswaResponse
     fun addUser(mahasiswa: Mahasiswa): Flow<AddUserResponse>
