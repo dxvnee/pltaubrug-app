@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "314267859494",
+    "project_id": "pltaubrug-377bd",
+    "storage_bucket": "pltaubrug-377bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314267859494:android:f0218f727ad28be53a84e7",
+        "android_client_info": {
+          "package_name": "org.d3if3121.AdminAbsen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqtgjiw9ghzQY5nHyW4cNK62bhUTRkBa4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314267859494:android:a161795b0f819bd43a84e7",
+        "android_client_info": {
+          "package_name": "org.d3if3121.absenubrug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqtgjiw9ghzQY5nHyW4cNK62bhUTRkBa4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314267859494:android:f8cb4ef5ed0578e63a84e7",
+        "android_client_info": {
+          "package_name": "org.d3if3121.pltaconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqtgjiw9ghzQY5nHyW4cNK62bhUTRkBa4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
