@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "org.d3if3121.tellink"
+    namespace = "org.d3if3121.absenubrug"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.d3if3121.tellink"
+        applicationId = "org.d3if3121.absenubrug"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -48,6 +48,7 @@ dependencies {
     //Hilt
     implementation(libs.hilt)
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.play.services.location)
     ksp(libs.hilt.compiler)
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     ksp("androidx.hilt:hilt-compiler:1.1.0")

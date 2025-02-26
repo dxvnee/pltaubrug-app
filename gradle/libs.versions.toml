@@ -18,6 +18,7 @@ junitVersion = "1.1.5"
 navigationRuntimeKtx = "2.8.3"
 navigationCompose = "2.8.3"
 firebaseStorageKtx = "21.0.1"
+playServicesLocation = "21.3.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle" }
@@ -56,4 +57,5 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
