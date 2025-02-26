@@ -76,8 +76,8 @@ fun InputPutih(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(
-                max = if(expand) Int.MAX_VALUE.dp else 50.dp,
-                min = if(expand) 180.dp else 50.dp
+                max = if(expand) Int.MAX_VALUE.dp else 55.dp,
+                min = if(expand) 180.dp else 55.dp
             )
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
@@ -227,7 +227,6 @@ fun InputPutihSearch(
         )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputPassword(
     input: String,
@@ -256,7 +255,7 @@ fun InputPassword(
 
         shape = RoundedCornerShape(10.dp),
         modifier = modifiers
-            .height(50.dp)
+            .height(55.dp)
             .onFocusChanged { focusState ->
                 isFocused = focusState.isFocused
             },

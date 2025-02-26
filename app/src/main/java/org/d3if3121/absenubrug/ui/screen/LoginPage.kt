@@ -223,7 +223,8 @@ fun LoginPage(
                                 nim = input
                             },
                             keyboardType = KeyboardType.Number,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+
 
                         )
 

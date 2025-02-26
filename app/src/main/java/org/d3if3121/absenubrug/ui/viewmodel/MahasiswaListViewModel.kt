@@ -118,6 +118,7 @@ class MahasiswaListViewModel @Inject constructor(
 
     fun addMahasiswa(mahasiswa: Mahasiswa) = viewModelScope.launch {
         addMahasiswaResponse = repo.addMahasiswa(mahasiswa)
+        repo.addAbsen(Absen(tanggal = "5 July 2004", nip = mahasiswa.nim))
     }
 
     fun addAbsen(absen: Absen) = viewModelScope.launch {
