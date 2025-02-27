@@ -110,7 +110,6 @@ class MahasiswaListRepository (
 
     override suspend fun addAbsenPulang(absen: Absen) = try {
         val idRef = absenRef.document(absen.nip)
-        Log.d("hehe", absen.tanggal)
 
         val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
@@ -126,7 +125,7 @@ class MahasiswaListRepository (
 
         if (absen.foto2 != null) {
             val imageUrl = uploadImagetoFirebase(absen.foto2.uri, "${absen.tanggal}_${absen.nip}_Pulang")
-            pegawaiRef.update("image", imageUrl).await()
+            pegawaiRef.update("image2", imageUrl).await()
         }
 
         Response.Success(absen.nip)
