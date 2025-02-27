@@ -236,6 +236,7 @@ fun DocumentSnapshot.toAbsen(): Absen = Absen(
 
     lokasi = getString("lokasi") ?: "",
     image =  getString("image") ?: "",
+    image2 =  getString("image2") ?: "",
     keterangan2 = getString("keterangan2") ?: "Belum Absen",
     deskripsi2 = getString("deskripsi2") ?: "",
     jam2 = getString("jam2") ?: "-",

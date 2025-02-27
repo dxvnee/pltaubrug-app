@@ -13,6 +13,7 @@ data class Absen(
     val telat: String = "",
     val jamtelat: String? = "",
     val image: String? = "",
+    val image2: String? = "",
 
     val lokasi: String = "",
     val foto: ImageUpload? = null,
@@ -25,6 +26,6 @@ data class Absen(
     val telat2: String = "",
     val jamtelat2: String? = "",
 ){
-    constructor() : this("", "", "", "", "", "", "", "", "", "", "", "", null, "", "", "", "", null, "", "")
+    constructor() : this("", "", "", "", "", "", "", "", "", "", "", "","", null, "", "", "", "", null, "", "")
 }
 

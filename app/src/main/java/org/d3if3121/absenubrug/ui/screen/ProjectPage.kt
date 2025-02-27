@@ -231,7 +231,7 @@ fun ProjectContent(
                     currentJam = viewmodel.currentAbsen.jam2,
                     currentKeterangan = viewmodel.currentAbsen.keterangan2,
                     currentDeskripsi = viewmodel.currentAbsen.deskripsi2,
-                    imagePath = viewmodel.currentAbsen.image ?: "",
+                    imagePath = viewmodel.currentAbsen.image2 ?: "",
                     telat = { jamsebelum, jamsesudah ->
                         isLebihCepat(jamsesudah, jamsebelum)
                     },
@@ -316,22 +316,22 @@ fun ProjectTambah(
                     selectedStatus = selectedStatus,
                     absenpulang = isPulang
                 )
+                ButtonTiga(
+                    onClick1 = { selectedStatus = "Hadir"},
+                    onClick2 = { selectedStatus = "Izin"},
+                    onClick3 = { selectedStatus = "Cuti"},
+                    warna1 = Warna.Hijau,
+                    warna2 = Warna.Kuning,
+                    warna3 = Warna.Merah,
+                    text1 = "Hadir",
+                    text2 = "Izin",
+                    text3 = "Tidak Hadir",
+                    modifier = Modifier.weight(1f),
+                    absenpulang = isPulang
+                )
 
-                if(belumabsenmasuk){
-                    ButtonTiga(
-                        onClick1 = { selectedStatus = "Hadir"},
-                        onClick2 = { selectedStatus = "Izin"},
-                        onClick3 = { selectedStatus = "Cuti"},
-                        warna1 = Warna.Hijau,
-                        warna2 = Warna.Kuning,
-                        warna3 = Warna.Merah,
-                        text1 = "Hadir",
-                        text2 = "Izin",
-                        text3 = "Tidak Hadir",
-                        modifier = Modifier.weight(1f),
-                        absenpulang = isPulang
-                    )
-                }
+
+
 
             }
 
@@ -354,6 +354,7 @@ fun ProjectTambah(
                 },
                 sudahabsen = if (belumabsenmasuk) true else false
             )
+
             Text(
                 text = "Ganti Jam Masuk :",
                 color = Warna.MerahNormal,
@@ -511,6 +512,7 @@ fun AbsenResponse(context: Context, viewmodel: MahasiswaListViewModel, navContro
             Toast.makeText(context, "Berhasil Edit!", Toast.LENGTH_SHORT).show()
             viewmodel.addAbsenResponseReset()
             viewmodel.changeLoading(false)
+            viewmodel.editAbsenResponseReset()
             navController.navigate(Screen.Home.route)
         }
         is Response.Failure -> {
@@ -537,26 +539,4 @@ fun AbsenResponse(context: Context, viewmodel: MahasiswaListViewModel, navContro
         }
     }
 }
-
-@Composable
-fun ImageResponse(
-    viewmodel: MahasiswaListViewModel,
-    onUriChange: (Uri?) -> Unit
-){
-    when(val response = viewmodel.fetchImageResponse){
-        is Response.Success ->{
-            onUriChange(response.data)
-            viewmodel.changeLoading(false)
-        }
-        is Response.Failure -> {
-            Log.e("EROR", response.e.toString())
-            viewmodel.changeLoading(false)
-        }
-        Response.Loading -> {
-
-        }
-    }
-
-}
-
 
