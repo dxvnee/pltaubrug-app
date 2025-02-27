@@ -23,6 +23,9 @@ import org.d3if3121.absenubrug.data.repository.interfaces.AddAbsenResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.LoginResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 import org.d3if3121.absenubrug.data.repository.interfaces.AbsenListResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.DeleteAbsenResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.EditAbsenResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.FetchImageResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListResponse
 import javax.inject.Inject
 import kotlin.math.log
@@ -31,10 +34,11 @@ import kotlin.math.log
 class MahasiswaListViewModel @Inject constructor(
     private val repo: MahasiswaListInterface
 ): ViewModel() {
+
     var absenListResponse by mutableStateOf<AbsenListResponse>(Response.Loading)
         private set
 
-    var absenList by mutableStateOf<List<Absen>>(emptyList())
+    var absenList by mutableStateOf<List<Absen>?>(emptyList())
         private set
 
     var mahasiswaList by mutableStateOf<List<Mahasiswa>>(emptyList())
@@ -43,10 +47,19 @@ class MahasiswaListViewModel @Inject constructor(
     var mahasiswaListResponse by mutableStateOf<MahasiswaListResponse>(Response.Loading)
         private set
 
+    var fetchImageResponse by mutableStateOf<FetchImageResponse>(Response.Loading)
+        private set
+
 
     var addMahasiswaResponse by mutableStateOf<AddMahasiswaResponse>(Response.Loading)
         private set
     var addAbsenResponse by mutableStateOf<AddAbsenResponse>(Response.Loading)
+        private set
+
+    var editAbsenResponse by mutableStateOf<EditAbsenResponse>(Response.Loading)
+        private set
+
+    var deleteAbsenResponse by mutableStateOf<DeleteAbsenResponse>(Response.Loading)
         private set
 
     var loginResponse by mutableStateOf<LoginResponse>(Response.Loading)
@@ -79,9 +92,10 @@ class MahasiswaListViewModel @Inject constructor(
 
 
     fun getAbsenList(user: Mahasiswa) = viewModelScope.launch {
-        repo.getAbsenList(user).collect() {
-            absenListResponse = it
-            Log.d("hew", it.toString())
+        repo.getAbsenList(user).collect() { data ->
+            val absenbaru = (data as Response.Success).data!!.toMutableList()
+            absenList = absenList?.plus(absenbaru)
+            Log.d("BERHASILL3", absenList.toString())
 
         }
     }
@@ -91,13 +105,32 @@ class MahasiswaListViewModel @Inject constructor(
     }
 
     fun getMahasiswaList() = viewModelScope.launch {
+        changeLoading(true)
+
         mahasiswaListResponse = repo.getMahasiswaList()
+        when(val response = mahasiswaListResponse){
+            is Response.Success -> {
+                absenListReset()
+                mahasiswaList = response.data!!
+                mahasiswaList.forEach {
+                    getAbsenList(it)
+                }
+                changeLoading(false)
+                mahasiswaListResponseReset()
+            }
+            is Response.Failure -> {}
+            is Response.Loading -> {}
+        }
     }
 
+    fun absenListReset(){
+        absenList = emptyList()
+    }
     fun addUser(mahasiswa: Mahasiswa) {
         user = mahasiswa
     }
     fun changeLoading(input: Boolean){
+        Log.d("keganti", input.toString())
         loading = input
     }
 
@@ -111,6 +144,11 @@ class MahasiswaListViewModel @Inject constructor(
         tanggalSeharusnya = selectedDate
         Log.d("tanggalSeharusnya", tanggalSeharusnya)
 
+    }
+
+    fun getImage(filePath: String) = viewModelScope.launch {
+        changeLoading(true)
+        fetchImageResponse = repo.fetchImageFromFirebase(filePath)
     }
 
     fun changeAbsen(input: Absen){
@@ -146,8 +184,23 @@ class MahasiswaListViewModel @Inject constructor(
         addAbsenResponse = repo.addAbsenPulang(absen)
     }
 
+    fun editAbsenPulang(absen: Absen) = viewModelScope.launch {
+        changeLoading(true)
+        editAbsenResponse = repo.editAbsen(absen)
+    }
+
+    fun deleteAbsenPulang(absen: Absen) = viewModelScope.launch {
+        changeLoading(true)
+        deleteAbsenResponse = repo.deleteAbsen(absen)
+    }
+
+
     fun addAbsenResponseReset() {
         addAbsenResponse = Response.Loading
+    }
+
+    fun mahasiswaListResponseReset() {
+       mahasiswaListResponse = Response.Loading
     }
 
     fun loginResponseReset() {

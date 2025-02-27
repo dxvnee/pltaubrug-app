@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import org.d3if3121.absenubrug.components.LoadingIndicator
@@ -45,7 +46,7 @@ import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 fun DialogGambar(
     showDialog: Boolean,
     onDismissRequest: () -> Unit,
-    imageUri: Uri,
+    imageUrl: String,
     onClick: () -> Unit,
 ){
     AlertDialog(
@@ -59,15 +60,14 @@ fun DialogGambar(
             }
         },
         text = {
-            imageUri?.let { uri ->
-                Image(
-                    painter = rememberAsyncImagePainter(uri),
-                    contentDescription = "Gambar",
-                    modifier = Modifier
-                        .size(350.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                )
-            }
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "Bukti Hadir",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(350.dp)
+                    .clip(RoundedCornerShape(10.dp))
+            )
         },
         confirmButton = {
             Button(

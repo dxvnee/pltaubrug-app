@@ -105,7 +105,6 @@ fun MainContentHome(
 ) {
     LaunchedEffect (Unit){
         viewmodel.getMahasiswaList()
-        viewmodel.getAbsenList(Mahasiswa(nim = "1"))
     }
 
     DialogLoading(viewmodel)
@@ -147,10 +146,10 @@ fun ProjectListHome(
 
     HomeResponse(viewmodel)
 
-    if(viewmodel.absenList.isNotEmpty()){
+    if(viewmodel.absenList!!.isEmpty()){
         LaunchedEffect(viewmodel.tanggal) {
             val absenList = viewmodel.absenList
-            val absen = absenList.firstOrNull { it.tanggal == viewmodel.tanggal }
+            val absen = absenList?.firstOrNull { it.tanggal == viewmodel.tanggal }
 
             if (absen != null) {
                 viewmodel.changeAbsen(absen)
@@ -163,11 +162,8 @@ fun ProjectListHome(
             }
         }
     } else {
-        viewmodel.changeLoading(true)
-        DialogLoading(viewmodel){
-            viewmodel.loginResponseReset()
-            navController.navigate(Screen.Login.route)
-        }
+
+
     }
 
     var selecteddate by remember { mutableStateOf("") }
@@ -191,11 +187,10 @@ fun ProjectListHome(
         ){
             Log.d("absenlist", viewmodel.absenList.toString())
 
-
             Button(
                 onClick = {
                     pegawaiListViewModel.changeTanggal(selecteddate)
-                    navController.navigate("ProjectPage/$selecteddate")
+                    navController.navigate(Screen.Employee.route)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
                 shape = RoundedCornerShape(7.dp),
@@ -231,12 +226,6 @@ fun HomeResponse(
     when(val response = viewmodel.mahasiswaListResponse){
         is Response.Loading -> {}
         is Response.Success -> response.data?.let {
-            viewmodel.changeMahasiswaList(it)
-            viewmodel.mahasiswaList.let { list ->
-                list.forEach { mahasiswa ->
-                    viewmodel.getAbsenList(mahasiswa)
-                }
-            }
 
         }
         is Response.Failure -> {

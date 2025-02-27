@@ -24,13 +24,15 @@ class MahasiswaListRepository (
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
         Log.d("user", user.nim)
-        val absenRef = absenRef.document().collection("tanggal")
+        val absenRef = absenRef.document(user.nim).collection("tanggal")
 
         val listener = absenRef
             .addSnapshotListener { snapshot, e ->
                 val absenListResponse =
                     if (snapshot != null) {
                         val absenList = snapshot.map { it.toAbsen() }
+                        Log.d("leole", absenList.toString())
+
                         Response.Success(absenList)
                     } else {
                         Response.Failure(e)
@@ -108,6 +110,15 @@ class MahasiswaListRepository (
             ""
         }
     }
+    override suspend fun fetchImageFromFirebase(filePath: String) = try {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference.child("images/$filePath") // Perbaiki path ke file spesifik
+        val imageUrl = storageRef.downloadUrl.await() // Dapatkan URL file
+        Response.Success(imageUrl)
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
 
     override suspend fun addAbsen(absen: Absen) = try {
         val idRef = absenRef.document(absen.nip)
@@ -150,6 +161,34 @@ class MahasiswaListRepository (
     } catch (e: Exception) {
         Response.Failure(e)
     }
+
+    override suspend fun editAbsen(absen: Absen) = try {
+        val idRef = absenRef.document(absen.nip)
+        val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
+
+        pegawaiRef.update("keterangan", absen.keterangan).await()
+        pegawaiRef.update("deskripsi", absen.deskripsi).await()
+        pegawaiRef.update("jam", absen.jam).await()
+        pegawaiRef.update("telat", absen.telat).await()
+        pegawaiRef.update("jamtelat", absen.jamtelat).await()
+
+        Response.Success(absen.nip)
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
+
+    override suspend fun deleteAbsen(absen: Absen) = try {
+        val idRef = absenRef.document(absen.nip)
+        val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
+
+        pegawaiRef.delete().await()
+        Response.Success(absen.nip)
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
+
 
 
 

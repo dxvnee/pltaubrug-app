@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import org.d3if3121.absenubrug.ui.screen.EmployeePage
 import org.d3if3121.absenubrug.ui.screen.HomePage
 import org.d3if3121.absenubrug.ui.screen.LoginPage
 import org.d3if3121.absenubrug.ui.screen.ProfilePage
@@ -42,14 +43,12 @@ fun SetupNavGraph(){
             ProfilePage(navController, mahasiswalistviewmodel)
         }
 
-        composable(route ="${Screen.Project.route}/{tanggal}",
-            arguments = listOf(navArgument("tanggal"){
-                type = NavType.StringType
-                nullable = false
-            })
-        ){ backStackEntry ->
-            val tanggal = backStackEntry.arguments?.getString("tanggal")
-            ProjectPage(navController, mahasiswalistviewmodel, tanggal = tanggal!!)
+        composable(route = Screen.Employee.route){
+            EmployeePage(navController, mahasiswalistviewmodel)
+        }
+
+        composable(route = Screen.Project.route){
+            ProjectPage(navController, mahasiswalistviewmodel)
         }
 
         composable(route = Screen.Profile.route){

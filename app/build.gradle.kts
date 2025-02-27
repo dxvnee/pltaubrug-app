@@ -79,6 +79,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+
 
 
     //Cloudinary

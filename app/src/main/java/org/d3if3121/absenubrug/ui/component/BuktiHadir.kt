@@ -44,9 +44,9 @@ import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 fun BuktiHadir(
     viewmodel: MahasiswaListViewModel = hiltViewModel(),
     absen: String,
-    onUriChange: (Uri?) -> Unit,
+    onUrlChange: (String?) -> Unit,
     onLokasiChange: (Double, Double) -> Unit,
-    imageUri: Uri?,
+    imageUrl: String?,
     onImageChange: (Uri) -> Unit,
     onClickDialogLokasi: () -> Unit,
     lokasi: String,
@@ -57,9 +57,7 @@ fun BuktiHadir(
 
     //GAMBAR
     var tombolGambar by remember { mutableStateOf(false) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        onUriChange(uri)
-    }
+
     var showDialogGambar by remember { mutableStateOf(false) }
 
 
@@ -83,19 +81,21 @@ fun BuktiHadir(
 
     var konfirmasilokasi by remember { mutableStateOf(false) }
 
-
-    if(showDialogGambar){
-        DialogGambar(
-            showDialog = showDialogGambar,
-            onDismissRequest = {
-                showDialogGambar = false
-            },
-            imageUri = imageUri!!,
-            onClick = {
-                showDialogGambar = false
-            }
-        )
+    if(!imageUrl.isNullOrEmpty()){
+        tombolGambar = true
     }
+
+    if (showDialogGambar) {
+        imageUrl?.let {
+            DialogGambar(
+                showDialog = showDialogGambar,
+                onDismissRequest = { showDialogGambar = false },
+                imageUrl = it,
+                onClick = { showDialogGambar = false }
+            )
+        }
+    }
+
 
     if(showDialogLokasi){
         konfirmasilokasi = isInsideRadiusAndroid(lokasilat,  lokasilon)
@@ -160,61 +160,6 @@ fun BuktiHadir(
         Spacer(modifier = Modifier.height(10.dp))
 
 
-        if (sudahabsen){
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = {
-
-                        if (ContextCompat.checkSelfPermission(
-                                context, Manifest.permission.ACCESS_FINE_LOCATION
-                            ) == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            getCurrentLocation(context, fusedLocationClient) { lat, lon ->
-                                location.value = Pair(lat, lon)
-                            }
-                        } else {
-                            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
-                    shape = RoundedCornerShape(7.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(end = 5.dp)
-                ) {
-                    Text(text = "Lokasi", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
-                location.value?.let { (lat, lon) ->
-                    lokasilat = lat
-                    lokasilon = lon
-                    showDialogLokasi = true
-                    onLokasiChange(lat, lon)
-                }
-
-                Button(
-                    onClick = {
-                        launcher.launch("image/*")
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
-                    shape = RoundedCornerShape(7.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(start = 5.dp, bottom = 16.dp)
-                ) {
-                    Text(text = "Foto", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
-
-                imageUri?.let {
-                    onImageChange(it)
-                    tombolGambar = true
-                }
-            }
-        }
 
     }
 }

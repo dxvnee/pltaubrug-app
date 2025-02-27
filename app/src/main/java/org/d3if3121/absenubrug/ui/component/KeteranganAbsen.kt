@@ -1,11 +1,13 @@
 package org.d3if3121.absenubrug.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +23,17 @@ import androidx.compose.material.icons.filled.LinearScale
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.d3if3121.absenubrug.ui.theme.Warna
@@ -39,120 +46,94 @@ fun KeteranganAbsen(
     hadir2: String,
     jam1: String,
     jam2: String,
+    telat: String = "",
+    telat2: String = ""
 ) {
+
     Row(
         modifier = modifier
-            .height(80.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth().fillMaxHeight(),
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier.weight(1f).padding(end = 3.dp),
-
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(RoundedCornerShape(50.dp))
-                    .background(KondisiWarna(hadir1))
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Icon(
-                        imageVector = KondisiIkon(hadir1),
-                        contentDescription = "Check",
-                        modifier = Modifier.size(35.dp),
-                        tint = Warna.PutihNormal
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(7.dp))
-
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = hadir1,
-                    color = KondisiWarna(hadir1),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                )
-                Text(
-                    text = "Absensi Masuk",
-                    color = Warna.MerahNormal,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                )
-                Text(
-                    text = jam1,
-                    color = Warna.MerahNormal,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.weight(1f).padding(start = 3.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(RoundedCornerShape(50.dp))
-                    .background(KondisiWarna(hadir2))
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Icon(
-                        imageVector =  KondisiIkon(hadir2),
-                        contentDescription = "Check",
-                        modifier = Modifier.size(35.dp),
-                        tint = Warna.PutihNormal
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(7.dp))
-
-            Column(
-
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = hadir2,
-                    color = KondisiWarna(hadir2),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                )
-                Text(
-                    text = "Absensi Pulang",
-                    color = Warna.MerahNormal,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                )
-                Text(
-                    text = jam2,
-                    color = Warna.MerahNormal,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Normal,
-                )
-            }
-        }
+        KeteranganAbsenComponent(hadir1, telat, jam1, modifier.weight(1f))
+        KeteranganAbsenComponent(hadir2, telat2, jam2, modifier.weight(1f))
     }
 }
+
+
+@Composable
+fun KeteranganAbsenComponent(
+    hadir1 : String,
+    telat : String,
+    jam1: String,
+    modifier: Modifier = Modifier
+){
+
+    var telatCon by remember { mutableStateOf(telat == "TELAT") }
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxHeight()
+            .padding(end = 3.dp)
+
+        ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .background(KondisiWarna(hadir1))
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Icon(
+                    imageVector = KondisiIkon(hadir1),
+                    contentDescription = "Check",
+                    modifier = Modifier.size(35.dp),
+                    tint = Warna.PutihNormal
+                )
+            }
+        }
+
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+        ) {
+
+
+            Text(
+                text = if(hadir1 == "Belum Absen") "Belum" else hadir1,
+                color = KondisiWarna(hadir1),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = jam1,
+                    color = if (telatCon) Color.Red else Warna.MerahNormal,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center,
+                )
+
+            }
+        }
+
+    }
+
+}
+
 
 fun KondisiWarna(keterangan: String): Color {
     var warna: Color = Warna.BiruText

@@ -37,7 +37,7 @@ fun HeaderContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 20.dp),
+            .padding(top = 20.dp, bottom = 10.dp),
         horizontalArrangement = Arrangement.Center
     ){
         Column(horizontalAlignment = Alignment.CenterHorizontally){

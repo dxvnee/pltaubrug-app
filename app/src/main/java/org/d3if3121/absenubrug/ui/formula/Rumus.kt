@@ -191,4 +191,16 @@ fun createAbsen(
 }
 
 
+fun filterAbsen(
+    viewmodel: MahasiswaListViewModel,
+    unit: (Absen) -> Boolean
+): List<Absen>? {
+    return viewmodel.absenList?.filter { absen ->
+        unit(absen)
+    }
+}
+
+
+
+
 
