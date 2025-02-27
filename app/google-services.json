@@ -45,6 +45,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:314267859494:android:4438e93c3da5abf33a84e7",
+        "android_client_info": {
+          "package_name": "org.d3if3121.absenubrugadmin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqtgjiw9ghzQY5nHyW4cNK62bhUTRkBa4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:314267859494:android:f8cb4ef5ed0578e63a84e7",
         "android_client_info": {
           "package_name": "org.d3if3121.pltaconnect"

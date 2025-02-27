@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "org.d3if3121.absenubrug"
+    namespace = "org.d3if3121.absenubrugadmin"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.d3if3121.absenubrug"
+        applicationId = "org.d3if3121.absenubrugadmin"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
