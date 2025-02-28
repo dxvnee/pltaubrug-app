@@ -158,15 +158,23 @@ class MahasiswaListRepository (
         Response.Failure(e)
     }
 
-    override suspend fun editAbsen(absen: Absen) = try {
+    override suspend fun editAbsen(absen: Absen, isPulang: Boolean) = try {
         val idRef = absenRef.document(absen.nip)
         val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
-        pegawaiRef.update("keterangan", absen.keterangan).await()
-        pegawaiRef.update("deskripsi", absen.deskripsi).await()
-        pegawaiRef.update("jam", absen.jam).await()
-        pegawaiRef.update("telat", absen.telat).await()
-        pegawaiRef.update("jamtelat", absen.jamtelat).await()
+        if (!isPulang){
+            pegawaiRef.update("keterangan", absen.keterangan).await()
+            pegawaiRef.update("deskripsi", absen.deskripsi).await()
+            pegawaiRef.update("jam", absen.jam).await()
+            pegawaiRef.update("telat", absen.telat).await()
+            pegawaiRef.update("jamtelat", absen.jamtelat).await()
+        } else {
+            pegawaiRef.update("keterangan2", absen.keterangan).await()
+            pegawaiRef.update("deskripsi2", absen.deskripsi).await()
+            pegawaiRef.update("jam2", absen.jam).await()
+            pegawaiRef.update("telat2", absen.telat).await()
+            pegawaiRef.update("jamtelat2", absen.jamtelat).await()
+        }
 
         Response.Success(absen.nip)
     } catch (e: Exception) {

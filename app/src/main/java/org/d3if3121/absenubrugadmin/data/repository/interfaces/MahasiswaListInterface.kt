@@ -28,7 +28,7 @@ interface MahasiswaListInterface {
 
     suspend fun addAbsen(absen: Absen): AddAbsenResponse
     suspend fun addAbsenPulang(absen: Absen): AddAbsenResponse
-    suspend fun editAbsen(absen: Absen): EditAbsenResponse
+    suspend fun editAbsen(absen: Absen, isPulang: Boolean): EditAbsenResponse
     suspend fun deleteAbsen(absen: Absen): DeleteAbsenResponse
 
     suspend fun loginMahasiswa(nim: String, password: String): LoginResponse

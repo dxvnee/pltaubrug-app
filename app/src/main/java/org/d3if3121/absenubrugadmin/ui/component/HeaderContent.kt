@@ -29,6 +29,10 @@ import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 fun HeaderContent(
     viewmodel: MahasiswaListViewModel,
     masukpergi: String,
+    judul: String,
+    matikantanggal: Boolean = false,
+    dropdowntext1: String = "Masuk",
+    dropdowntext2: String = "Pulang",
     onclick1: () -> Unit,
     onclick2: () -> Unit
 ){
@@ -42,20 +46,24 @@ fun HeaderContent(
     ){
         Column(horizontalAlignment = Alignment.CenterHorizontally){
             Text(
-                text = "Absensi",
+                text = judul,
                 color = Warna.MerahNormal,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.ExtraBold,
 
                 )
-            Text(
-                text = viewmodel.tanggal,
-                color = Warna.MerahNormal,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                fontStyle = FontStyle.Italic
 
-            )
+            if(!matikantanggal){
+                Text(
+                    text = viewmodel.tanggal,
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontStyle = FontStyle.Italic
+
+                )
+            }
+
 
             Box(
                 modifier = Modifier.clickable {
@@ -78,7 +86,7 @@ fun HeaderContent(
                     DropdownMenuItem(
                         content = {
                             Text(
-                                text = "Masuk",
+                                text = dropdowntext1,
                                 color = Warna.MerahNormal,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Normal,
@@ -93,7 +101,7 @@ fun HeaderContent(
                     DropdownMenuItem(
                         content = {
                             Text(
-                                text = "Pulang",
+                                text = dropdowntext2,
                                 color = Warna.MerahNormal,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Normal,

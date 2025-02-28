@@ -50,12 +50,21 @@ fun ProfilePage(
             TopBar(lazyListState = lazyListState, helloActive = false, TOP_BAR_ZERO = 70, user = user)
         },
         content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Warna.PutihNormal)
+
+            Box(
+                modifier = Modifier.background(color = Warna.PutihNormal).fillMaxHeight()
             ) {
-                ProfilePageContent(paddingValues, viewmodel, navController)
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            top = paddingValues.calculateTopPadding() - 10.dp,
+                            start = 17.dp,
+                            end = 17.dp
+                        )
+                ) {
+                    ProfilePageContent(paddingValues, viewmodel, navController)
+                }
+
             }
         },
         bottomBar = {
@@ -73,7 +82,6 @@ fun ProfilePageContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
             .padding(paddingValues).padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

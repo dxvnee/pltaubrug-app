@@ -13,17 +13,17 @@ sealed class BottomBarScreen (
 ){
     object BottomMenuPage : BottomBarScreen(
         route = "HomePage",
-        title = "Home",
+        title = "Absen",
         icon = Icons.Default.Home
     )
     object BottomProfilePage : BottomBarScreen(
         route = "ProfilePage",
-        title = "Profile",
+        title = "Profil",
         icon = Icons.Default.Person
     )
     object BottomSkillPage : BottomBarScreen(
-        route = "ProjectPage",
-        title = "Absen",
+        route = "EmployeeDetailPage",
+        title = "Pegawai",
         icon = Icons.Default.HowToReg
     )
 }

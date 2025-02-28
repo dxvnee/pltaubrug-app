@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -76,14 +77,29 @@ fun ProjectPage(
             TopBar(lazyListState = lazyListState, helloActive = false, TOP_BAR_ZERO = 70, user = user)
         },
         content = { paddingValues ->
-            Column(modifier = Modifier.background(color = Warna.PutihNormal)){
-                MainContentProject(
-                    lazyListState = lazyListState,
-                    paddingValues = paddingValues,
-                    viewmodel = viewmodel,
-                    navController = navController
-                )
+
+            Box(
+                modifier = Modifier.background(color = Warna.PutihNormal).fillMaxHeight()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            top = paddingValues.calculateTopPadding() - 10.dp,
+                            start = 17.dp,
+                            end = 17.dp
+                        )
+                ) {
+                    MainContentProject(
+                        lazyListState = lazyListState,
+                        paddingValues = paddingValues,
+                        viewmodel = viewmodel,
+                        navController = navController
+                    )
+                }
+
+
             }
+
         },
         bottomBar = {
             BottomBar(navController = navController)
@@ -145,7 +161,8 @@ fun ProjectContent(
         },
         onclick2 = {
             masukpergi = "(Pulang)"
-        }
+        },
+        judul = "Absensi"
     )
 
     when(masukpergi){
@@ -164,7 +181,7 @@ fun ProjectContent(
                 jamtelat = { jamsebelum, jamsesudah ->
                     selisihJam(jamsebelum, jamsesudah)
                 },
-                viewmodeledit = { viewmodel.editAbsenPulang(it) },
+                viewmodeledit = { absen, ispulang -> viewmodel.editAbsenPulang(absen, ispulang) },
                 viewmodeldelete = { viewmodel.deleteAbsenPulang(it) },
                 isPulang = false
             )
@@ -197,7 +214,7 @@ fun ProjectContent(
                     jamtelat = { jamsebelum, jamsesudah ->
                         selisihJam(jamsesudah, jamsebelum)
                     },
-                    viewmodeledit = { viewmodel.editAbsenPulang(it) },
+                    viewmodeledit = { absen, ispulang -> viewmodel.editAbsenPulang(absen, ispulang) },
                     viewmodeldelete = { viewmodel.deleteAbsenPulang(it) },
                     isPulang = true
                 )
@@ -218,7 +235,7 @@ fun ProjectTambah(
     imagePath: String,
     telat: (String, String) -> Boolean,
     jamtelat: (String, String) -> String,
-    viewmodeledit: (Absen) -> Unit,
+    viewmodeledit: (Absen, Boolean) -> Unit,
     viewmodeldelete: (Absen) -> Unit,
     isPulang: Boolean,
 ){
@@ -388,7 +405,7 @@ fun ProjectTambah(
                                 jamtelat = jamtelat,
                             )
 
-                            viewmodeledit(absensi)
+                            viewmodeledit(absensi, isPulang)
                             peringatan = false
                             konfirmasikirim = false
                             absen = ""

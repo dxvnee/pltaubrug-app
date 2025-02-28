@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.d3if3121.absenubrugadmin.R
 import org.d3if3121.absenubrugadmin.data.model.Absen
+import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 
 
@@ -92,6 +93,68 @@ fun CardList(
                 telat = absen.telat,
                 telat2 = absen.telat2
             )
+
+
+        }
+    }
+}
+@Composable
+fun CardListPegawai(
+    pegawai: Mahasiswa,
+    onClick: () -> Unit
+){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(135.dp).padding(top = 10.dp, bottom = 9.dp)
+            .clickable {
+                onClick()
+            },
+        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+        elevation = CardDefaults.cardElevation(5.dp),
+        shape = RoundedCornerShape(15.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxSize()
+                .padding(17.dp)
+        ) {
+            Column(
+                modifier = Modifier.width(200.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.photo),
+                        contentDescription = "App logo",
+                        modifier = Modifier
+                            .size(45.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier.padding(start = 10.dp)
+                    ) {
+                        Text(
+                            text = pegawai.nama,
+                            color = Warna.MerahNormal,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+
+                            )
+                        Text(
+                            text = pegawai.nim,
+                            color = Warna.HitamNormal,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            fontStyle = FontStyle.Italic
+
+                        )
+                    }
+                }
+            }
+
 
 
         }

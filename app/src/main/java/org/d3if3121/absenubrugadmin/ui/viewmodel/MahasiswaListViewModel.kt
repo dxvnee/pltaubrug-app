@@ -177,9 +177,9 @@ class MahasiswaListViewModel @Inject constructor(
         addAbsenResponse = repo.addAbsenPulang(absen)
     }
 
-    fun editAbsenPulang(absen: Absen) = viewModelScope.launch {
+    fun editAbsenPulang(absen: Absen, ispulang: Boolean) = viewModelScope.launch {
         changeLoading(true)
-        editAbsenResponse = repo.editAbsen(absen)
+        editAbsenResponse = repo.editAbsen(absen, ispulang)
     }
 
     fun deleteAbsenPulang(absen: Absen) = viewModelScope.launch {

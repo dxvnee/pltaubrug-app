@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.d3if3121.absenubrugadmin.ui.screen.EmployeeDetailPage
 import org.d3if3121.absenubrugadmin.ui.screen.EmployeePage
 import org.d3if3121.absenubrugadmin.ui.screen.HomePage
 import org.d3if3121.absenubrugadmin.ui.screen.LoginPage
@@ -50,6 +51,10 @@ fun SetupNavGraph(){
 
         composable(route = Screen.Profile.route){
             ProfilePage(navController, mahasiswalistviewmodel)
+        }
+
+        composable(route = Screen.EmployeeDetail.route){
+            EmployeeDetailPage(navController, mahasiswalistviewmodel)
         }
 
     }

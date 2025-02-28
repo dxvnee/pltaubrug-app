@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -64,14 +65,25 @@ fun HomePage(
             TopBar(lazyListState = lazyListState, helloActive = true, navController = navController, user = user)
         },
         content = { paddingValues ->
-            Column(modifier = Modifier.background(color = Warna.PutihNormal)){
 
-                MainContentHome(
-                    navController = navController,
-                    lazyListState = lazyListState,
-                    paddingValues = paddingValues,
-                    viewmodel = viewModel,
-                )
+            Box(
+                modifier = Modifier.background(color = Warna.PutihNormal).fillMaxHeight()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            top = paddingValues.calculateTopPadding() - 50.dp,
+                            start = 17.dp,
+                            end = 17.dp
+                        )
+                ) {
+                    MainContentHome(
+                        navController = navController,
+                        lazyListState = lazyListState,
+                        paddingValues = paddingValues,
+                        viewmodel = viewModel,
+                    )
+                }
 
             }
         },
@@ -107,7 +119,7 @@ fun MainContentHome(
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 20.dp, bottom = 17.dp).fillMaxWidth()
+                    modifier = Modifier.padding( bottom = 17.dp).fillMaxWidth()
                 ){
                     Text(
                         text = "Lihat Data",

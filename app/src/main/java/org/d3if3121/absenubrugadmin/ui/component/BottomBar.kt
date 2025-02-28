@@ -80,20 +80,10 @@ fun RowScope.AddItem(
         } == true,
         unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
         onClick = {
-            if (screen is BottomBarScreen.BottomSkillPage) {
-                val tanggal = mahasiswaListViewModel.tanggal
-                navController.navigate("ProjectPage/$tanggal") {
-                    popUpTo(navController.graph.findStartDestination().id)
-                    launchSingleTop = true
-                }
-            } else {
-                navController.navigate(screen.route) {
-                    popUpTo(navController.graph.findStartDestination().id)
-                    launchSingleTop = true
-                }
+            navController.navigate(screen.route) {
+                popUpTo(navController.graph.findStartDestination().id)
+                launchSingleTop = true
             }
-
-
             if (home) {
                 homeAction()
             }

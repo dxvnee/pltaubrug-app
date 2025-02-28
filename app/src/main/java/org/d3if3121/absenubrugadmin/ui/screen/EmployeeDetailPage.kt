@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.navigation.Screen
 import org.d3if3121.absenubrugadmin.ui.component.CardList
+import org.d3if3121.absenubrugadmin.ui.component.CardListPegawai
 import org.d3if3121.absenubrugadmin.ui.component.DataKosong
 import org.d3if3121.absenubrugadmin.ui.component.HeaderContent
 import org.d3if3121.absenubrugadmin.ui.formula.filterAbsen
@@ -40,7 +42,7 @@ import org.d3if3121.absenubrugadmin.ui.formula.filterAbsen
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun EmployeePage(
+fun EmployeeDetailPage(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel,
     tanggal: String = ""
@@ -55,16 +57,12 @@ fun EmployeePage(
         content = { paddingValues ->
             Box(
                 modifier = Modifier.background(color = Warna.PutihNormal).fillMaxHeight()
-            ) {
+            ){
                 Column(
                     modifier = Modifier
-                        .padding(
-                            top = paddingValues.calculateTopPadding() - 10.dp,
-                            start = 17.dp,
-                            end = 17.dp
-                        )
-                ) {
-                    MainContentEmployee(
+                        .padding(top = paddingValues.calculateTopPadding() -10.dp, start = 17.dp, end = 17.dp)
+                ){
+                    MainContentEmployeeDetail(
                         viewmodel = viewmodel,
                         navController = navController
                     )
@@ -74,60 +72,62 @@ fun EmployeePage(
         },
         bottomBar = {
             BottomBar(navController = navController)
-        }
+        },
     )
 
 }
 
 
 @Composable
-fun MainContentEmployee(
+fun MainContentEmployeeDetail(
     viewmodel: MahasiswaListViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
-    var masukpergi by remember { mutableStateOf("(Sudah Absen)") }
+    LaunchedEffect (Unit){
+        viewmodel.getMahasiswaList()
+    }
+
+    var statuspage by remember { mutableStateOf("(Daftar Pegawai)") }
     var sudahabsen by remember { mutableStateOf(listOf<Mahasiswa>()) }
     var absenhariini = filterAbsen(viewmodel){ it.tanggal == viewmodel.tanggal }
     var belumabsen = viewmodel.mahasiswaList.minus(sudahabsen.toSet()).toMutableList()
 
+    var listpegawai by remember { mutableStateOf(viewmodel.mahasiswaList) }
+
 
     HeaderContent(
         viewmodel = viewmodel,
-        masukpergi = masukpergi,
+        masukpergi = statuspage,
         onclick1 = {
-            masukpergi = "(Sudah Absen)"
+            statuspage = "(Daftar Pegawai)"
         },
         onclick2 = {
-            masukpergi = "(Belum Absen)"
+            statuspage = "(Pengajuan)"
         },
-        judul = "Absensi",
-        dropdowntext1 = "Sudah Absen",
-        dropdowntext2 = "Belum Absen"
+        judul = "Pegawai",
+        dropdowntext1 = "Daftar Pegawai",
+        dropdowntext2 = "Pengajuan",
+        matikantanggal = true
     )
 
     LazyColumn {
-        when (masukpergi) {
-            "(Sudah Absen)" -> {
-                if (absenhariini.isNullOrEmpty()) {
+        when (statuspage) {
+            "(Daftar Pegawai)" -> {
+                if (listpegawai.isEmpty()) {
                     item {
                         DataKosong()
                     }
                 } else {
-                    items(absenhariini) { absen ->
-                        CardList(absen){
-                            viewmodel.changeAbsen(absen)
+                    items(listpegawai) { pegawai ->
+                        CardListPegawai(pegawai){
+//                            viewmodel.changeAbsen(pegawai)
                             navController.navigate(Screen.Project.route)
-                        }
-                        viewmodel.mahasiswaList.forEach { mahasiswa ->
-                            if (mahasiswa.nim == absen.nip) {
-                                sudahabsen = sudahabsen.plus(mahasiswa)
-                            }
                         }
                     }
                 }
             }
 
-            "(Belum Absen)" -> {
+            "(Pengajuan)" -> {
                 if (belumabsen.isEmpty()) {
                     item {
                         DataKosong()
