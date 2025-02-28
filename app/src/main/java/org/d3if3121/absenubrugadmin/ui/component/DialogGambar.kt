@@ -1,12 +1,14 @@
 package org.d3if3121.absenubrugadmin.ui.component
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import org.d3if3121.absenubrugadmin.components.LoadingIndicator
+import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
@@ -206,6 +210,93 @@ fun DialogLoading(
 
             },
             confirmButton = {
+
+            },
+            containerColor = Warna.PutihNormal,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+}
+
+
+@Composable
+fun DialogRole(
+    viewmodel: MahasiswaListViewModel,
+    onDismissRequest: () -> Unit,
+    dialogrole: Boolean,
+    pegawai: Mahasiswa,
+){
+    var selectedrole by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    if(dialogrole){
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            title = {
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(text = "Pilih Role (${pegawai.nama})", color = Warna.MerahNormal, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column{
+                    if(selectedrole != ""){
+                        Text(
+                            text = "Role dipilih: $selectedrole",
+                            color = Warna.MerahNormal,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    ButtonTiga(
+                        onClick1 = { selectedrole = "PEGAWAI"},
+                        onClick2 = { selectedrole = "SHEET"},
+                        onClick3 = { selectedrole = "ADMIN"},
+                        warna1 = Warna.Hijau,
+                        warna2 = Warna.Kuning,
+                        warna3 = Warna.Merah,
+                        text1 = "Pegawai",
+                        text2 = "Sheet",
+                        text3 = "Admin",
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    Text(text = when(selectedrole){
+                        "PEGAWAI" -> { "Role yang dapat akses aplikasi Absensi." }
+                        "SHEET" -> { "Role yang dapat akses aplikasi Sheet dan Absensi." }
+                        "ADMIN" -> { "Role yang dapat akses aplikasi Admin." }
+                        else -> { "Pilih Role terlebih dahulu!" }
+                    },
+                        color = Warna.MerahNormal, fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center)
+
+                }
+
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewmodel.editRole(
+                            Mahasiswa(
+                                nama = pegawai.nama,
+                                nip = pegawai.nip,
+                                role = pegawai.role.minus(pegawai.role.toSet()).plus(selectedrole)
+                            )
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                    shape = RoundedCornerShape(7.dp),
+                    modifier = Modifier.fillMaxWidth().padding(end = 5.dp)
+                ) {
+                    Text(text = "Edit", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
 
             },
             containerColor = Warna.PutihNormal,

@@ -11,7 +11,6 @@ import org.d3if3121.absenubrugadmin.ui.screen.HomePage
 import org.d3if3121.absenubrugadmin.ui.screen.LoginPage
 import org.d3if3121.absenubrugadmin.ui.screen.ProfilePage
 import org.d3if3121.absenubrugadmin.ui.screen.ProjectPage
-import org.d3if3121.absenubrugadmin.ui.screen.RegisterPage
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
 
@@ -27,10 +26,6 @@ fun SetupNavGraph(){
     ) {
         composable(route = Screen.Login.route){
             LoginPage(navController, mahasiswalistviewmodel)
-        }
-
-        composable(route = Screen.Register.route){
-            RegisterPage(navController, mahasiswalistviewmodel)
         }
 
         composable(route = Screen.Home.route){

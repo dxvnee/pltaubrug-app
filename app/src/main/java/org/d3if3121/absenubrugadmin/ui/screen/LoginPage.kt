@@ -144,13 +144,13 @@ fun LoginPage(
                         Text(
                             text = "Masuk ke ",
                             color = Warna.MerahNormal,
-                            fontSize = 26.sp,
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.Normal,
                         )
                         Text(
-                            text = "PLTA UBRUG.",
+                            text = "Admin PLTA UBRUG.",
                             color = Warna.MerahNormal,
-                            fontSize = 26.sp,
+                            fontSize = 24.sp,
                             fontWeight = FontWeight.ExtraBold,
                         )
                     }
@@ -283,27 +283,7 @@ fun LoginPage(
                         )
 
 
-                        Row(
 
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Belum punya akun? ",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight(300)
-                            )
-                            ClickableText(
-                                text = AnnotatedString("Silahkan daftar!"),
-                                onClick = {
-                                    navController.navigate(Screen.Register.route)
-                                },
-                                style = TextStyle.Default.copy(
-                                    Warna.MerahNormal,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight(500)
-                                )
-                            )
-                        }
 
                     }
                 }

@@ -19,8 +19,7 @@ class MahasiswaListRepository (
     private val absenRef: CollectionReference
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
-        Log.d("user", user.nim)
-        val absenRef = absenRef.document(user.nim).collection("tanggal")
+        val absenRef = absenRef.document(user.nip).collection("tanggal")
 
         val listener = absenRef
             .addSnapshotListener { snapshot, e ->
@@ -43,25 +42,29 @@ class MahasiswaListRepository (
 
 
 
-    override suspend fun getMahasiswaList() = try {
-        val mahasiswaSama = mahasiswaRef.get(Source.SERVER).await()
+    override fun getMahasiswaList() = callbackFlow {
 
-        if (!mahasiswaSama.isEmpty){
-            val mahasiswaList = mahasiswaSama.documents.map{
-                it.toMahasiswa()
+        val listener = mahasiswaRef
+            .addSnapshotListener { snapshot, e ->
+                val mahasiswaListResponse =
+                    if (snapshot != null) {
+                        val mahasiswaList = snapshot.map { it.toMahasiswa() }
+                        Log.d("leole", mahasiswaList.toString())
+
+                        Response.Success(mahasiswaList)
+                    } else {
+                        Response.Failure(e)
+                    }
+                trySend(mahasiswaListResponse)
             }
-            Response.Success(mahasiswaList)
-        } else {
-            Response.Failure(Exception("Tidak ada data!"))
+
+        awaitClose {
+            listener.remove()
         }
-    } catch (e: Exception){
-        Response.Failure(e)
     }
 
-
-
     override fun addUser(mahasiswa: Mahasiswa) = callbackFlow {
-        val listener = mahasiswaRef.whereEqualTo("nim", mahasiswa.nim)
+        val listener = mahasiswaRef.whereEqualTo("nim", mahasiswa.nip)
             .addSnapshotListener { snapshot, e ->
                 if (snapshot != null && !snapshot.isEmpty) {
                     val updatedMahasiswa = snapshot.documents.first().toMahasiswa()
@@ -80,7 +83,7 @@ class MahasiswaListRepository (
 
 
     override suspend fun addMahasiswa(mahasiswa: Mahasiswa) = try {
-        val mahasiswaSama = mahasiswaRef.whereEqualTo("nim", mahasiswa.nim).get(Source.SERVER).await()
+        val mahasiswaSama = mahasiswaRef.whereEqualTo("nim", mahasiswa.nip).get(Source.SERVER).await()
 
         if (mahasiswaSama.isEmpty){
             val id = mahasiswaRef.add(mahasiswa).await().id
@@ -182,6 +185,20 @@ class MahasiswaListRepository (
     }
 
 
+    override suspend fun editRole(pegawai: Mahasiswa) = try {
+        val query = mahasiswaRef.whereEqualTo("nip", pegawai.nip).get().await()
+
+        if(query.isEmpty){
+            Response.Failure(Exception("Tidak ditemukan data"))
+        } else {
+            query.documents.first().reference.update("role", pegawai.role)
+            Response.Success(pegawai.nip)
+        }
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
+
     override suspend fun deleteAbsen(absen: Absen) = try {
         val idRef = absenRef.document(absen.nip)
         val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
@@ -198,14 +215,16 @@ class MahasiswaListRepository (
 
 
     override suspend fun loginMahasiswa(nim: String, password: String) = try {
-        val docmahasiswa = mahasiswaRef.whereEqualTo("nim", nim).get(Source.SERVER).await()
+        val docmahasiswa = mahasiswaRef.whereEqualTo("nip", nim).get(Source.SERVER).await()
         if (!docmahasiswa.isEmpty){
             val mahasiswa = docmahasiswa.first().toMahasiswa()
 
             if (mahasiswa.password == password){
-                Log.d("lewat", "keren")
-                Response.Success(mahasiswa)
-
+                if("ADMIN" in mahasiswa.role){
+                    Response.Success(mahasiswa)
+                } else {
+                    Response.Failure(Exception("Anda tidak memiliki izin admin!"))
+                }
             } else {
                 Response.Failure(Exception("Incorrect Password."))
             }
@@ -221,10 +240,9 @@ class MahasiswaListRepository (
 fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     nama = getString(Mahasiswa.NAMA) ?: "Default",
     password = getString(Mahasiswa.PASSWORD) ?: "Default",
-    nim = getString(Mahasiswa.NIM)?: "DefaultName",
-    jurusan = getString(Mahasiswa.JURUSAN)?: "DefaultName",
-    requests = get(Mahasiswa.REQUESTS) as? List<String> ?: emptyList(),
-    accept = get(Mahasiswa.ACCEPT) as? List<String> ?: emptyList(),
+    nip = getString(Mahasiswa.NIP)?: "DefaultName",
+    role = get(Mahasiswa.ROLE) as? List<String> ?: emptyList(),
+
 )
 
 fun DocumentSnapshot.toAbsen(): Absen = Absen(

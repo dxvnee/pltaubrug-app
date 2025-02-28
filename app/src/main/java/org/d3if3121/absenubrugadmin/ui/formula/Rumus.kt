@@ -134,7 +134,7 @@ fun createAbsen(
 ): Absen {
     return if (isPulang == "true") {
         Absen(
-            nip = user.nim,
+            nip = user.nip,
             tanggal = tanggal,
             keterangan2 = keterangan,
             lokasi2 = lokasi,
@@ -148,7 +148,7 @@ fun createAbsen(
     } else if (isPulang == "false") {
         Absen(
             nama = user.nama,
-            nip = user.nim,
+            nip = user.nip,
             tanggal = tanggal,
             keterangan = keterangan,
             lokasi = lokasi,
@@ -162,7 +162,7 @@ fun createAbsen(
     } else {
         Absen(
             nama = user.nama,
-            nip = user.nim,
+            nip = user.nip,
             tanggal = tanggal,
             keterangan = keterangan,
             lokasi = lokasi,

@@ -161,7 +161,7 @@ fun TopBar(
                                     modifier = Modifier.offset(y = 5.dp)
                                 )
                                 Text(
-                                    text = currentUser.nim,
+                                    text = currentUser.nip,
                                     color = Warna.AbuTua,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,

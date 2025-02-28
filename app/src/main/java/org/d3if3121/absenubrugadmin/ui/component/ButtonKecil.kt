@@ -62,13 +62,16 @@ fun ButtonTiga(
             onClick = onClick1,
             modifier = modifier,
             text = text1,
-            warna = warna1
+            warna = warna1,
+            fontsize = 9
         )
         ButtonKecil (
             onClick = onClick2,
             modifier = modifier,
             text =text2,
-            warna = warna2
+            warna = warna2,
+            fontsize = 10
+
         )
         if(!absenpulang){
             ButtonKecil (
@@ -76,7 +79,7 @@ fun ButtonTiga(
                 modifier = modifier,
                 text = text3,
                 warna = warna3,
-                fontsize = 10
+                fontsize = 11
             )
         }
 

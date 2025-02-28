@@ -73,8 +73,7 @@ fun HomePage(
                     modifier = Modifier
                         .padding(
                             top = paddingValues.calculateTopPadding() - 50.dp,
-                            start = 17.dp,
-                            end = 17.dp
+
                         )
                 ) {
                     MainContentHome(

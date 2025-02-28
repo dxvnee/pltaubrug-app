@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,6 +28,7 @@ import org.d3if3121.absenubrugadmin.R
 import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
+import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
 
 @Composable
@@ -103,10 +105,11 @@ fun CardListPegawai(
     pegawai: Mahasiswa,
     onClick: () -> Unit
 ){
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(135.dp).padding(top = 10.dp, bottom = 9.dp)
+            .height(120.dp).padding(top = 10.dp, bottom = 9.dp)
             .clickable {
                 onClick()
             },
@@ -144,13 +147,25 @@ fun CardListPegawai(
 
                             )
                         Text(
-                            text = pegawai.nim,
+                            text = pegawai.nip,
                             color = Warna.HitamNormal,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal,
                             fontStyle = FontStyle.Italic
 
                         )
+                        Row{
+                            pegawai.role.forEach {
+                                Text(
+                                    text = "$it ",
+                                    color = Warna.HitamNormal,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    fontStyle = FontStyle.Italic
+                                )
+                            }
+                        }
+
                     }
                 }
             }

@@ -19,6 +19,7 @@ import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListInte
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.AbsenListResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.DeleteAbsenResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditAbsenResponse
+import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditRoleResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.FetchImageResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListResponse
 import javax.inject.Inject
@@ -53,6 +54,9 @@ class MahasiswaListViewModel @Inject constructor(
         private set
 
     var deleteAbsenResponse by mutableStateOf<DeleteAbsenResponse>(Response.Loading)
+        private set
+
+    var editRoleResponse by mutableStateOf<EditRoleResponse>(Response.Loading)
         private set
 
     var loginResponse by mutableStateOf<LoginResponse>(Response.Loading)
@@ -93,27 +97,30 @@ class MahasiswaListViewModel @Inject constructor(
         }
     }
 
-    fun changeMahasiswaList(list: List<Mahasiswa>) = viewModelScope.launch {
-        mahasiswaList = list
-    }
-
     fun getMahasiswaList() = viewModelScope.launch {
         changeLoading(true)
 
-        mahasiswaListResponse = repo.getMahasiswaList()
-        when(val response = mahasiswaListResponse){
-            is Response.Success -> {
-                absenListReset()
-                mahasiswaList = response.data!!
-                mahasiswaList.forEach {
-                    getAbsenList(it)
+        repo.getMahasiswaList().collect(){
+            mahasiswaListResponse = it
+
+            when(val response = mahasiswaListResponse){
+                is Response.Success -> {
+                    Log.d("ew", response.data.toString())
+                    absenListReset()
+                    mahasiswaList = response.data!!
+                    Log.d("ew2", mahasiswaList.toString())
+
+                    mahasiswaList.forEach {
+                        getAbsenList(it)
+                    }
+                    changeLoading(false)
+                    mahasiswaListResponseReset()
                 }
-                changeLoading(false)
-                mahasiswaListResponseReset()
+                is Response.Failure -> {}
+                is Response.Loading -> {}
             }
-            is Response.Failure -> {}
-            is Response.Loading -> {}
         }
+
     }
 
     fun absenListReset(){
@@ -181,6 +188,17 @@ class MahasiswaListViewModel @Inject constructor(
         changeLoading(true)
         editAbsenResponse = repo.editAbsen(absen, ispulang)
     }
+
+    fun editRole(pegawai: Mahasiswa) = viewModelScope.launch {
+        changeLoading(true)
+        editRoleResponse = repo.editRole(pegawai)
+
+    }
+
+    fun editRoleResponseReset(){
+        editRoleResponse = Response.Loading
+    }
+
 
     fun deleteAbsenPulang(absen: Absen) = viewModelScope.launch {
         changeLoading(true)

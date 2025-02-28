@@ -119,7 +119,7 @@ fun MainContentEmployee(
                             navController.navigate(Screen.Project.route)
                         }
                         viewmodel.mahasiswaList.forEach { mahasiswa ->
-                            if (mahasiswa.nim == absen.nip) {
+                            if (mahasiswa.nip == absen.nip) {
                                 sudahabsen = sudahabsen.plus(mahasiswa)
                             }
                         }
@@ -137,7 +137,7 @@ fun MainContentEmployee(
                         CardList(
                             Absen(
                                 nama = mahasiswa.nama,
-                                nip = mahasiswa.nim,
+                                nip = mahasiswa.nip,
                             )
                         ){
 

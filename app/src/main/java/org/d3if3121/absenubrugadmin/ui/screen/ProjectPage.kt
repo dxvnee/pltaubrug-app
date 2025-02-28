@@ -84,9 +84,7 @@ fun ProjectPage(
                 Column(
                     modifier = Modifier
                         .padding(
-                            top = paddingValues.calculateTopPadding() - 10.dp,
-                            start = 17.dp,
-                            end = 17.dp
+                            top = paddingValues.calculateTopPadding() - 70.dp,
                         )
                 ) {
                     MainContentProject(

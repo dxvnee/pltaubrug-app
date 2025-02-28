@@ -17,12 +17,14 @@ typealias AddAbsenResponse = Response<String>
 typealias EditAbsenResponse = Response<String>
 typealias DeleteAbsenResponse = Response<String>
 
+typealias EditRoleResponse = Response<String>
 typealias FetchImageResponse = Response<Uri>
 
 interface MahasiswaListInterface {
     fun getAbsenList(user: Mahasiswa): Flow<AbsenListResponse>
-    suspend fun getMahasiswaList(): MahasiswaListResponse
+    fun getMahasiswaList(): Flow<MahasiswaListResponse>
 
+    suspend fun loginMahasiswa(nim: String, password: String): LoginResponse
     suspend fun addMahasiswa(mahasiswa: Mahasiswa): AddMahasiswaResponse
     fun addUser(mahasiswa: Mahasiswa): Flow<AddUserResponse>
 
@@ -31,9 +33,6 @@ interface MahasiswaListInterface {
     suspend fun editAbsen(absen: Absen, isPulang: Boolean): EditAbsenResponse
     suspend fun deleteAbsen(absen: Absen): DeleteAbsenResponse
 
-    suspend fun loginMahasiswa(nim: String, password: String): LoginResponse
-
+    suspend fun editRole(pegawai: Mahasiswa): EditAbsenResponse
     suspend fun fetchImageFromFirebase(filePath: String): FetchImageResponse
-
-
 }
