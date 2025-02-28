@@ -90,10 +90,10 @@ fun RegisterPage(
             if (password == confirmPassword){
                 viewmodel.addMahasiswa(mahasiswa)
             } else {
-                errorMessage = "Password doesn't match!"
+                errorMessage = "Password tidak cocok!"
             }
         } else {
-            errorMessage = "All fields shouldn't be empty."
+            errorMessage = "Semua field harus diisi!"
         }
     }
     when(val addMahasiswa = viewmodel.addMahasiswaResponse) {
@@ -101,12 +101,12 @@ fun RegisterPage(
         }
         is Success -> {
             Toast.makeText(context, "Register Success!", Toast.LENGTH_SHORT).show()
+            viewmodel.addMahasiswaResponseReset()
             navController.navigate(Screen.Login.route)
         }
         is Failure -> {
             errorMessage = addMahasiswa.e!!.message.toString()
             printError(addMahasiswa.e)
-            Log.d("tes", "masukkkkk")
         }
     }
 
