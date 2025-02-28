@@ -83,7 +83,7 @@ fun RegisterPage(
             nip = nim,
             password = password,
             nama = nama,
-            role = "UNKNOWN"
+            role = listOf("UNKNOWN")
         )
 
         if (nim.isNotEmpty() && nama.isNotEmpty() && password.isNotEmpty()) {
@@ -146,15 +146,15 @@ fun RegisterPage(
                 ) {
                     Row {
                         Text(
-                            text = "Masuk ke ",
+                            text = "Daftar ke ",
                             color = Warna.MerahNormal,
-                            fontSize = 26.sp,
+                            fontSize = 23.sp,
                             fontWeight = FontWeight.Normal,
                         )
                         Text(
-                            text = "PLTA UBRUG.",
+                            text = "ABSEN PLTA UBRUG.",
                             color = Warna.MerahNormal,
-                            fontSize = 26.sp,
+                            fontSize = 23.sp,
                             fontWeight = FontWeight.ExtraBold,
                         )
                     }

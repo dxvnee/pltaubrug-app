@@ -45,7 +45,7 @@ class MahasiswaListRepository (
 
 
 
-    override fun addUser(mahasiswa: Mahasiswa) = callbackFlow {
+    override fun addUser(mahasiswa: Mahasiswa) = callbackFlow  {
         val listener = mahasiswaRef.whereEqualTo("nip", mahasiswa.nip)
             .addSnapshotListener { snapshot, e ->
                 if (snapshot != null && !snapshot.isEmpty) {
@@ -142,14 +142,16 @@ class MahasiswaListRepository (
             val mahasiswa = docmahasiswa.first().toMahasiswa()
 
             if (mahasiswa.password == password){
-                Log.d("lewat", "keren")
-                Response.Success(mahasiswa)
-
+                if("PEGAWAI" in mahasiswa.role ){
+                    Response.Success(mahasiswa)
+                } else {
+                    Response.Failure(Exception("Anda belum menerima perizinan."))
+                }
             } else {
-                Response.Failure(Exception("Incorrect Password."))
+                Response.Failure(Exception("Password Salah."))
             }
         } else {
-            Response.Failure(Exception("nip doesn't exist."))
+            Response.Failure(Exception("NIP tidak terdaftar."))
         }
     } catch (e: Exception){
         Response.Failure(Exception("Error"))
@@ -161,7 +163,7 @@ fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     nama = getString(Mahasiswa.NAMA) ?: "null",
     password = getString(Mahasiswa.PASSWORD) ?: "null",
     nip = getString(Mahasiswa.NIP)?: "null",
-    role = getString(Mahasiswa.ROLE)?: "null",
+    role = get(Mahasiswa.ROLE) as? List<String> ?: emptyList(),
 )
 
 fun DocumentSnapshot.toAbsen(): Absen = Absen(

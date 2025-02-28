@@ -150,13 +150,13 @@ fun LoginPage(
                         Text(
                             text = "Masuk ke ",
                             color = Warna.MerahNormal,
-                            fontSize = 26.sp,
+                            fontSize = 23.sp,
                             fontWeight = FontWeight.Normal,
                         )
                         Text(
-                            text = "PLTA UBRUG.",
+                            text = "ABSEN PLTA UBRUG.",
                             color = Warna.MerahNormal,
-                            fontSize = 26.sp,
+                            fontSize = 23.sp,
                             fontWeight = FontWeight.ExtraBold,
                         )
                     }
