@@ -105,7 +105,7 @@ fun ProfilePageContent(
             color = Color.Black
         )
         Text(
-            text = viewmodel.user.nim,
+            text = viewmodel.user.nip,
             fontSize = 16.sp,
             color = Color.Gray
         )

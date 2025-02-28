@@ -23,8 +23,8 @@ class MahasiswaListRepository (
     private val absenRef: CollectionReference
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
-        Log.d("user", user.nim)
-        val absenRef = absenRef.document(user.nim).collection("tanggal")
+        Log.d("user", user.nip)
+        val absenRef = absenRef.document(user.nip).collection("tanggal")
 
         val listener = absenRef
             .addSnapshotListener { snapshot, e ->
@@ -46,7 +46,7 @@ class MahasiswaListRepository (
 
 
     override fun addUser(mahasiswa: Mahasiswa) = callbackFlow {
-        val listener = mahasiswaRef.whereEqualTo("nim", mahasiswa.nim)
+        val listener = mahasiswaRef.whereEqualTo("nip", mahasiswa.nip)
             .addSnapshotListener { snapshot, e ->
                 if (snapshot != null && !snapshot.isEmpty) {
                     val updatedMahasiswa = snapshot.documents.first().toMahasiswa()
@@ -65,13 +65,13 @@ class MahasiswaListRepository (
 
 
     override suspend fun addMahasiswa(mahasiswa: Mahasiswa) = try {
-        val mahasiswaSama = mahasiswaRef.whereEqualTo("nim", mahasiswa.nim).get(Source.SERVER).await()
+        val mahasiswaSama = mahasiswaRef.whereEqualTo("nip", mahasiswa.nip).get(Source.SERVER).await()
 
         if (mahasiswaSama.isEmpty){
             val id = mahasiswaRef.add(mahasiswa).await().id
             Response.Success(id)
         } else {
-            Response.Failure(Exception("NIM already registered."))
+            Response.Failure(Exception("nip already registered."))
         }
     } catch (e: Exception){
         Response.Failure(e)
@@ -136,8 +136,8 @@ class MahasiswaListRepository (
 
 
 
-    override suspend fun loginMahasiswa(nim: String, password: String) = try {
-        val docmahasiswa = mahasiswaRef.whereEqualTo("nim", nim).get(Source.SERVER).await()
+    override suspend fun loginMahasiswa(nip: String, password: String) = try {
+        val docmahasiswa = mahasiswaRef.whereEqualTo("nip", nip).get(Source.SERVER).await()
         if (!docmahasiswa.isEmpty){
             val mahasiswa = docmahasiswa.first().toMahasiswa()
 
@@ -149,7 +149,7 @@ class MahasiswaListRepository (
                 Response.Failure(Exception("Incorrect Password."))
             }
         } else {
-            Response.Failure(Exception("NIM doesn't exist."))
+            Response.Failure(Exception("nip doesn't exist."))
         }
     } catch (e: Exception){
         Response.Failure(Exception("Error"))
@@ -158,12 +158,10 @@ class MahasiswaListRepository (
 }
 
 fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
-    nama = getString(Mahasiswa.NAMA) ?: "Default",
-    password = getString(Mahasiswa.PASSWORD) ?: "Default",
-    nim = getString(Mahasiswa.NIM)?: "DefaultName",
-    jurusan = getString(Mahasiswa.JURUSAN)?: "DefaultName",
-    requests = get(Mahasiswa.REQUESTS) as? List<String> ?: emptyList(),
-    accept = get(Mahasiswa.ACCEPT) as? List<String> ?: emptyList(),
+    nama = getString(Mahasiswa.NAMA) ?: "null",
+    password = getString(Mahasiswa.PASSWORD) ?: "null",
+    nip = getString(Mahasiswa.NIP)?: "null",
+    role = getString(Mahasiswa.ROLE)?: "null",
 )
 
 fun DocumentSnapshot.toAbsen(): Absen = Absen(
@@ -179,6 +177,7 @@ fun DocumentSnapshot.toAbsen(): Absen = Absen(
 
     lokasi = getString("lokasi") ?: "",
     image =  getString("image") ?: "",
+    image2 =  getString("image2") ?: "",
     keterangan2 = getString("keterangan2") ?: "Belum Absen",
     deskripsi2 = getString("deskripsi2") ?: "",
     jam2 = getString("jam2") ?: "-",

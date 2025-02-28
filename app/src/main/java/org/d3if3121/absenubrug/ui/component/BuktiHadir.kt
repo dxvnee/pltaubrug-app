@@ -1,8 +1,10 @@
 package org.d3if3121.absenubrug.ui.component
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -51,6 +53,9 @@ fun BuktiHadir(
     onClickDialogLokasi: () -> Unit,
     lokasi: String,
     sudahabsen: Boolean,
+    statushadir: Boolean,
+    imageUrl: String?,
+    selectedstatus: String
 ) {
     var context = LocalContext.current
 
@@ -83,17 +88,19 @@ fun BuktiHadir(
 
     var konfirmasilokasi by remember { mutableStateOf(false) }
 
-
+    if(imageUrl != ""){
+        tombolGambar = true
+    }
     if(showDialogGambar){
         DialogGambar(
-            showDialog = showDialogGambar,
             onDismissRequest = {
                 showDialogGambar = false
             },
-            imageUri = imageUri!!,
+            imageUri = imageUri,
             onClick = {
                 showDialogGambar = false
-            }
+            },
+            imageUrl = imageUrl
         )
     }
 
@@ -165,56 +172,64 @@ fun BuktiHadir(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = {
+                if(statushadir){
+                    Button(
+                        onClick = {
 
-                        if (ContextCompat.checkSelfPermission(
-                                context, Manifest.permission.ACCESS_FINE_LOCATION
-                            ) == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            getCurrentLocation(context, fusedLocationClient) { lat, lon ->
-                                location.value = Pair(lat, lon)
+                            if (ContextCompat.checkSelfPermission(
+                                    context, Manifest.permission.ACCESS_FINE_LOCATION
+                                ) == PackageManager.PERMISSION_GRANTED
+                            ) {
+                                getCurrentLocation(context, fusedLocationClient) { lat, lon ->
+                                    location.value = Pair(lat, lon)
+                                }
+                            } else {
+                                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                             }
-                        } else {
-                            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
-                    shape = RoundedCornerShape(7.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(end = 5.dp)
-                ) {
-                    Text(text = "Lokasi", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                }
-                location.value?.let { (lat, lon) ->
-                    lokasilat = lat
-                    lokasilon = lon
-                    showDialogLokasi = true
-                    onLokasiChange(lat, lon)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                        shape = RoundedCornerShape(7.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(end = 5.dp)
+                    ) {
+                        Text(text = "Lokasi", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+                    location.value?.let { (lat, lon) ->
+                        lokasilat = lat
+                        lokasilon = lon
+                        showDialogLokasi = true
+                        onLokasiChange(lat, lon)
+                    }
                 }
 
-                Button(
-                    onClick = {
-                        launcher.launch("image/*")
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
-                    shape = RoundedCornerShape(7.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(start = 5.dp, bottom = 16.dp)
-                ) {
-                    Text(text = "Foto", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                if(selectedstatus != "Pilih Keterangan"){
+                    Button(
+                        onClick = {
+                            launcher.launch("image/*")
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                        shape = RoundedCornerShape(7.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(start = 5.dp, bottom = 16.dp)
+                    ) {
+                        Text(text = "Foto", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+
+
+                    imageUri?.let {
+                        onImageChange(it)
+                        tombolGambar = true
+                    }
                 }
 
-                imageUri?.let {
-                    onImageChange(it)
-                    tombolGambar = true
-                }
+
             }
         }
 
     }
 }
+

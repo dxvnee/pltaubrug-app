@@ -80,11 +80,10 @@ fun RegisterPage(
 
     fun handleRegister(){
         val mahasiswa =  Mahasiswa(
-            nim = nim,
+            nip = nim,
             password = password,
             nama = nama,
-            jurusan = "Unknown",
-            angkatan = "Unknown",
+            role = "UNKNOWN"
         )
 
         if (nim.isNotEmpty() && nama.isNotEmpty() && password.isNotEmpty()) {

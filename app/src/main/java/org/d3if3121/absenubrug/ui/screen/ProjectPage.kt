@@ -327,13 +327,13 @@ fun ProjectTambah(
                     ButtonTiga(
                         onClick1 = { selectedStatus = "Hadir"},
                         onClick2 = { selectedStatus = "Izin"},
-                        onClick3 = { selectedStatus = "Tidak Hadir"},
+                        onClick3 = { selectedStatus = "Cuti"},
                         warna1 = Warna.Hijau,
                         warna2 = Warna.Kuning,
                         warna3 = Warna.Merah,
                         text1 = "Hadir",
                         text2 = "Izin",
-                        text3 = "Tidak Hadir",
+                        text3 = "Cuti",
                         modifier = Modifier.weight(1f),
                         absenpulang = isPulang
                     )
@@ -341,28 +341,32 @@ fun ProjectTambah(
 
             }
 
-            if (selectedStatus == "Hadir"){
-                Log.d("wawww", currentAbsen.absen)
-                BuktiHadir(
-                    absen = if (belumabsenmasuk) absen else currentAbsen.absen,
-                    imageUri = imageUri,
-                    lokasi = lokasi,
-                    onUriChange = { uri ->
-                        imageUri = uri
-                    },
-                    onLokasiChange = { lat, lon ->
-                        lokasi = "Lokasi: $lat, $lon"
-                    },
-                    onImageChange = {
-                        absen = getFileNameFromUri(context, it).toString()
-                    },
-                    onClickDialogLokasi = {
-                        imageUri = null
-                        absen = lokasi
-                    },
-                    sudahabsen = if (belumabsenmasuk) true else false
-                )
-            }
+            BuktiHadir(
+                imageUri = imageUri,
+                lokasi = lokasi,
+                sudahabsen = belumabsenmasuk,
+                selectedstatus = selectedStatus,
+                statushadir = selectedStatus == "Hadir",
+                onUriChange = { uri ->
+                    imageUri = uri
+                },
+                onLokasiChange = { lat, lon ->
+                    lokasi = "Lokasi: $lat, $lon"
+                },
+                onImageChange = {
+                    absen = getFileNameFromUri(context, it).toString()
+                },
+                onClickDialogLokasi = {
+                    imageUri = null
+                    absen = lokasi
+                },
+                absen = if (belumabsenmasuk) absen else {
+                    if (isPulang) currentAbsen.absen2 else currentAbsen.absen
+                },
+                imageUrl = if (belumabsenmasuk) "" else {
+                    if (isPulang) currentAbsen.image2 else currentAbsen.image
+                },
+            )
 
             Text(
                 text = stringResource(id = R.string.deskripsi),

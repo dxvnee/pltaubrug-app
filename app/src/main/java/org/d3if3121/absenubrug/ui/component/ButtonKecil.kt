@@ -77,7 +77,7 @@ fun ButtonTiga(
                 modifier = modifier,
                 text = text3,
                 warna = warna3,
-                fontsize = 10
+                fontsize = 15
             )
         }
 
