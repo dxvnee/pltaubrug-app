@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -87,6 +88,8 @@ fun MainContentEmployee(
 ) {
     var masukpergi by remember { mutableStateOf("(Sudah Absen)") }
     var sudahabsen by remember { mutableStateOf(listOf<Mahasiswa>()) }
+
+    viewmodel.getMahasiswaNip()
     var absenhariini = filterAbsen(viewmodel){ it.tanggal == viewmodel.tanggal }
     var belumabsen = viewmodel.mahasiswaList.minus(sudahabsen.toSet()).toMutableList()
 
@@ -134,14 +137,15 @@ fun MainContentEmployee(
                     }
                 } else {
                     items(belumabsen) { mahasiswa ->
-                        CardList(
-                            Absen(
-                                nama = mahasiswa.nama,
-                                nip = mahasiswa.nip,
-                            )
-                        ){
-
+                        if("UNKNOWN" !in mahasiswa.role){
+                            CardList(
+                                Absen(
+                                    nama = mahasiswa.nama,
+                                    nip = mahasiswa.nip,
+                                )
+                            ){}
                         }
+
                     }
                 }
             }

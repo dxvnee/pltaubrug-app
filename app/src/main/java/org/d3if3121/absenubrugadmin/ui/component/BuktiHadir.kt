@@ -135,12 +135,13 @@ fun BuktiHadir(
 
         if (tombolGambar){
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .clickable {
                         showDialogGambar = true
                     },
                 horizontalArrangement = Arrangement.End,
-            ){
+            ) {
                 Text(
                     text = "Lihat Foto",
                     color = Warna.MerahNormal,

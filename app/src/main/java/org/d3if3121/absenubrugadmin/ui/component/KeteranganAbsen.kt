@@ -140,7 +140,7 @@ fun KondisiWarna(keterangan: String): Color {
         "Izin" -> {
             warna = Warna.Kuning
         }
-        "Tidak Hadir" -> {
+        "Cuti" -> {
             warna = Warna.Merah
         }
         "Belum Absen" -> {
@@ -160,7 +160,7 @@ fun KondisiIkon(keterangan: String): ImageVector {
         "Izin" -> {
             icon = Icons.Filled.LinearScale
         }
-        "Tidak Hadir" -> {
+        "Cuti" -> {
             icon = Icons.Filled.DoNotDisturb
         }
         "Belum Absen" -> {

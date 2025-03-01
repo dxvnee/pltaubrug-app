@@ -129,9 +129,8 @@ fun CardListPegawai(
             ) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.photo),
-                        contentDescription = "App logo",
+                    FotoProfil(
+                        imageUrl = pegawai.foto,
                         modifier = Modifier
                             .size(45.dp)
                     )

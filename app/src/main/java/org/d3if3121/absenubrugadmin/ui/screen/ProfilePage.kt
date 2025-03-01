@@ -1,7 +1,15 @@
 package org.d3if3121.absenubrugadmin.ui.screen
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,7 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +42,10 @@ import org.d3if3121.absenubrugadmin.ui.component.BottomBar
 import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 import org.d3if3121.absenubrugadmin.R
+import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
+import org.d3if3121.absenubrugadmin.ui.component.DialogLoading
+import org.d3if3121.absenubrugadmin.ui.component.FotoProfil
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -79,6 +92,22 @@ fun ProfilePageContent(
     viewmodel: MahasiswaListViewModel,
     navController: NavHostController
 ) {
+    DialogLoading(viewmodel)
+
+
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+        Log.d("WHY", imageUri.toString())
+        imageUri?.let {
+            viewmodel.addFotoProfil(viewmodel.user.nip, imageUri!!)
+        }
+    }
+    val context = LocalContext.current
+    FotoProfilResponse(viewmodel, context)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,18 +115,15 @@ fun ProfilePageContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Foto Profil
-        Box(
+
+        FotoProfil(
+            imageUrl = viewmodel.user.foto,
             modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape).padding(top = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.photo),
-                contentDescription = "Foto Profil",
-                modifier = Modifier.size(80.dp),
-            )
-        }
+                .size(145.dp).clickable {
+                    launcher.launch("image/*")
+                }
+        )
+
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -113,13 +139,26 @@ fun ProfilePageContent(
             fontSize = 16.sp,
             color = Color.Gray
         )
+        viewmodel.user.role.forEach {
+            Row {
+                Text(
+                    text = "$it ",
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    fontStyle = FontStyle.Italic
+                )
+            }
+        }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
                 viewmodel.loginResponseReset()
-                navController.navigate(Screen.Login.route)
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(Screen.Home.route) { inclusive = true }
+                }
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007BFF)),
             modifier = Modifier.clip(RoundedCornerShape(8.dp))
@@ -131,6 +170,21 @@ fun ProfilePageContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+    }
+}
+
+@Composable
+fun FotoProfilResponse(viewmodel: MahasiswaListViewModel, context: Context){
+    when(val response = viewmodel.addFotoProfil){
+        is Response.Success -> {
+            viewmodel.changeLoading(false)
+            viewmodel.addFotoProfilReset()
+            Toast.makeText(context, "Upload foto berhasil!", Toast.LENGTH_SHORT).show()
+        }
+        is Response.Failure -> {
+            Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
+        }
+        is Response.Loading -> {}
     }
 }
 

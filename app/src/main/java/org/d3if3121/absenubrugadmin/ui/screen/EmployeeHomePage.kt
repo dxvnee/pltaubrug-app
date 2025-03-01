@@ -2,11 +2,11 @@ package org.d3if3121.absenubrugadmin.ui.screen
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 
 import androidx.compose.foundation.background
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +46,7 @@ import org.d3if3121.absenubrugadmin.navigation.Screen
 import org.d3if3121.absenubrugadmin.ui.component.BottomBar
 import org.d3if3121.absenubrugadmin.ui.component.Calendar
 import org.d3if3121.absenubrugadmin.ui.component.DialogLoading
+import org.d3if3121.absenubrugadmin.ui.component.KeteranganAbsen
 import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
@@ -53,7 +55,7 @@ import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomePage(
+fun EmployeeHomePage(
     navController: NavHostController,
     viewModel: MahasiswaListViewModel = hiltViewModel(),
 ) {
@@ -65,21 +67,14 @@ fun HomePage(
             TopBar(lazyListState = lazyListState, helloActive = true, navController = navController, user = user)
         },
         content = { paddingValues ->
+            Column(modifier = Modifier.background(color = Warna.PutihNormal)){
 
-            Box(
-                modifier = Modifier.background(color = Warna.PutihNormal).fillMaxHeight()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(top = paddingValues.calculateTopPadding() - 50.dp,)
-                ) {
-                    MainContentHome(
-                        navController = navController,
-                        lazyListState = lazyListState,
-                        paddingValues = paddingValues,
-                        viewmodel = viewModel,
-                    )
-                }
+                MainContentEmployeeHome(
+                    navController = navController,
+                    lazyListState = lazyListState,
+                    paddingValues = paddingValues,
+                    viewmodel = viewModel,
+                )
 
             }
         },
@@ -91,14 +86,16 @@ fun HomePage(
 }
 
 @Composable
-fun MainContentHome(
+fun MainContentEmployeeHome(
     navController: NavHostController,
     lazyListState: LazyListState,
     paddingValues: PaddingValues,
     viewmodel: MahasiswaListViewModel = hiltViewModel(),
 ) {
     LaunchedEffect (Unit){
-        viewmodel.getMahasiswaList()
+        viewmodel.getAbsenListSingle(viewmodel.currentPegawai)
+        Log.d("mantapbos1", viewmodel.absenListSingle.toString())
+
     }
 
     DialogLoading(viewmodel)
@@ -115,7 +112,7 @@ fun MainContentHome(
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding( bottom = 17.dp).fillMaxWidth()
+                    modifier = Modifier.padding(top = 20.dp, bottom = 17.dp).fillMaxWidth()
                 ){
                     Text(
                         text = "Lihat Data",
@@ -124,7 +121,7 @@ fun MainContentHome(
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
-                ProjectListHome(pegawaiListViewModel = viewmodel, navController = navController, viewmodel = viewmodel)
+                ProjectListEmployeeHome(pegawaiListViewModel = viewmodel, navController = navController, viewmodel = viewmodel)
             }
         }
     }
@@ -132,15 +129,38 @@ fun MainContentHome(
 }
 
 @Composable
-fun ProjectListHome(
+fun ProjectListEmployeeHome(
     pegawaiListViewModel: MahasiswaListViewModel,
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel
 ){
+    val context = LocalContext.current
 
-    HomeResponse(viewmodel)
+    getAbsenListResponse(viewmodel)
 
+    if(viewmodel.absenListSingle.isNotEmpty()){
 
+        LaunchedEffect(key1 = viewmodel.tanggal, key2 = viewmodel.absenListSingle) {
+            val absenListSingle = viewmodel.absenListSingle
+            val absen = absenListSingle.firstOrNull { it.tanggal == viewmodel.tanggal }
+
+            if (absen != null) {
+                viewmodel.changeAbsen(absen)
+                viewmodel.changeJamHome(absen.jam, absen.jam2)
+                viewmodel.changeKeteranganHome(absen.keterangan, absen.keterangan2)
+            } else {
+                viewmodel.changeJamHome("-", "-")
+                viewmodel.changeKeteranganHome("Belum Absen", "Belum Absen")
+                viewmodel.changeAbsen(Absen(keterangan = "Belum Absen"))
+            }
+        }
+    } else {
+        viewmodel.changeLoading(true)
+        DialogLoading(viewmodel){
+            viewmodel.loginResponseReset()
+            navController.navigate(Screen.Login.route)
+        }
+    }
 
     var selecteddate by remember { mutableStateOf("") }
 
@@ -161,16 +181,27 @@ fun ProjectListHome(
         Column (
             modifier = Modifier.padding(17.dp).fillMaxWidth().fillMaxHeight()
         ){
-            Log.d("absenlist", viewmodel.absenList.toString())
+
+            KeteranganAbsen(
+                hadir1 = viewmodel.keteranganhome,
+                hadir2 =  viewmodel.keteranganhome2,
+                jam1 = viewmodel.jamhome,
+                jam2 = viewmodel.jamhome2,
+            )
 
             Button(
                 onClick = {
-                    pegawaiListViewModel.changeTanggal(selecteddate)
-                    navController.navigate(Screen.Employee.route)
+                    if(viewmodel.currentAbsen.keterangan == "Belum Absen"){
+                        Toast.makeText(context, "Pegawai belum absen!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        pegawaiListViewModel.changeTanggal(selecteddate)
+                        navController.navigate(Screen.Project.route)
+                    }
+
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
                 shape = RoundedCornerShape(7.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
             ) {
                 Text(text = "LIHAT", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
@@ -181,32 +212,24 @@ fun ProjectListHome(
 
 }
 
-
 @Composable
-fun HomeResponse(
-    viewmodel: MahasiswaListViewModel
-){
-    when(val response = viewmodel.absenListResponse){
-        is Response.Loading -> {}
-        is Response.Success -> response.data?.let {
+fun getAbsenListResponse(viewmodel: MahasiswaListViewModel){
+    LaunchedEffect (viewmodel.absenListResponse){
+        when(val response = viewmodel.absenListResponse){
+            is Response.Success -> {
 
-            viewmodel.changeLoading(false)
-        }
-        is Response.Failure -> {
-            Log.d("error", response.e.toString())
+                viewmodel.changeAbsenListSingle(response.data!!)
+                viewmodel.changeLoading(false)
+            }
+
+            is Response.Failure -> {
+
+            }
+            Response.Loading -> {
+            }
         }
     }
 
-    when(val response = viewmodel.mahasiswaListResponse){
-        is Response.Loading -> {}
-        is Response.Success -> response.data?.let {
-
-        }
-        is Response.Failure -> {
-            Log.d("error", response.e.toString())
-        }
-    }
 }
-
 
 

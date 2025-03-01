@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -126,9 +127,8 @@ fun TopBar(
                         Column (
                             modifier = Modifier.padding(end = 9.dp)
                         ){
-                            Image(
-                                painter = painterResource(id = R.drawable.photo),
-                                contentDescription = "App logo",
+                            FotoProfil(
+                                imageUrl = currentUser.foto,
                                 modifier = Modifier
                                     .size(45.dp)
                             )

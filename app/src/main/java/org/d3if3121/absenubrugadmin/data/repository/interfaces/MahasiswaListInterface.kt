@@ -19,6 +19,7 @@ typealias DeleteAbsenResponse = Response<String>
 
 typealias EditRoleResponse = Response<String>
 typealias FetchImageResponse = Response<Uri>
+typealias AddFotoProfil = Response<String>
 
 interface MahasiswaListInterface {
     fun getAbsenList(user: Mahasiswa): Flow<AbsenListResponse>
@@ -35,4 +36,5 @@ interface MahasiswaListInterface {
 
     suspend fun editRole(pegawai: Mahasiswa): EditAbsenResponse
     suspend fun fetchImageFromFirebase(filePath: String): FetchImageResponse
+    suspend fun addFotoProfil(nip: String, uri: Uri): AddFotoProfil
 }

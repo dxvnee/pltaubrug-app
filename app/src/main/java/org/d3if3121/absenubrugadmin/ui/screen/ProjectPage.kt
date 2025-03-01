@@ -249,8 +249,8 @@ fun ProjectTambah(
     var belumabsenmasuk by remember { mutableStateOf(currentKeterangan == "Belum Absen") }
 
 
-    var telat by remember { mutableStateOf(telat(jamsebelum,jamsesudah)) }
-    var jamtelat by remember { mutableStateOf(jamtelat(jamsebelum, jamsesudah)) }
+    var telat = remember { derivedStateOf { telat(jamsebelum,jamsesudah)  } }
+    var jamtelat = remember { derivedStateOf { jamtelat(jamsebelum, jamsesudah) } }
     var imageUrl by remember { mutableStateOf(currentAbsen.image) }
     var lokasi by remember { mutableStateOf("") }
 
@@ -284,9 +284,10 @@ fun ProjectTambah(
             )
 
             Column {
+
                 TextKeterangan(
-                    telat = telat,
-                    jamtelat = jamtelat,
+                    telat = telat.value,
+                    jamtelat = jamtelat.value,
                     selectedStatus = selectedStatus,
                     absenpulang = isPulang
                 )
@@ -299,7 +300,7 @@ fun ProjectTambah(
                     warna3 = Warna.Merah,
                     text1 = "Hadir",
                     text2 = "Izin",
-                    text3 = "Tidak Hadir",
+                    text3 = "Cuti",
                     modifier = Modifier.weight(1f),
                     absenpulang = isPulang
                 )
@@ -399,8 +400,8 @@ fun ProjectTambah(
                                 keterangan = selectedStatus,
                                 deskripsi = deskripsi,
                                 jam = jamsesudah,
-                                telat = if(telat) "TELAT" else "TIDAK TELAT",
-                                jamtelat = jamtelat,
+                                telat = if(telat.value) "TELAT" else "TIDAK TELAT",
+                                jamtelat = jamtelat.value,
                             )
 
                             viewmodeledit(absensi, isPulang)
@@ -417,7 +418,7 @@ fun ProjectTambah(
                         modifier = Modifier.weight(1f).padding(start = 7.dp),
                         text = "HAPUS"
                     ){
-                        var absensi =  Absen(
+                        var absensi = Absen(
                             nama = currentAbsen.nama,
                             nip = currentAbsen.nip,
                             tanggal = currentAbsen.tanggal,
@@ -502,7 +503,7 @@ fun AbsenResponse(context: Context, viewmodel: MahasiswaListViewModel, navContro
         }
         is Response.Success -> {
             Toast.makeText(context, "Berhasil Hapus!", Toast.LENGTH_SHORT).show()
-            viewmodel.addAbsenResponseReset()
+            viewmodel.deleteAbsenPulangReset()
             viewmodel.changeLoading(false)
             navController.navigate(Screen.Home.route)
         }

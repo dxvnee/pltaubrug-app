@@ -5,15 +5,17 @@ data class Mahasiswa(
     val nip: String = "",
     val password: String = "",
     val nama: String = "",
+    val foto: String? = null,
     val role: List<String> = emptyList(),
 ){
 
-    constructor() : this("", "", "", emptyList())
+    constructor() : this("", "", "", "",emptyList())
 
     companion object {
         const val NIP = "nip"
         const val PASSWORD = "password"
         const val NAMA = "nama"
+        const val FOTO = "foto"
         const val ROLE = "role"
     }
 }

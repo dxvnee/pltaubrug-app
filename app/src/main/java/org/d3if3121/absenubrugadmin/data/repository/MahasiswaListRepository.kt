@@ -95,10 +95,10 @@ class MahasiswaListRepository (
         Response.Failure(e)
     }
 
-    suspend fun uploadImagetoFirebase(uri: Uri, id: String): String {
+    suspend fun uploadImagetoFirebase(uri: Uri, id: String, path: String = "images/"): String {
 
         val storage = FirebaseStorage.getInstance()
-        val storageReference = storage.reference.child("images/" + id)
+        val storageReference = storage.reference.child(path + id)
         val uploadTask = storageReference.putFile(uri)
 
         Log.d("STORAGE", storage.toString())
@@ -119,11 +119,25 @@ class MahasiswaListRepository (
     }
 
 
-    override suspend fun addAbsen(absen: Absen) = try {
-        val idRef = absenRef.document(absen.nip)
-        val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
-        pegawaiRef.set(absen).await()
+    override suspend fun addFotoProfil(nip: String, uri: Uri) = try {
+        val query = mahasiswaRef.whereEqualTo("nip", nip).get().await()
+
+        if (uri != null) {
+            val imageUrl = uploadImagetoFirebase(uri, "${nip}_Foto", "fotoprofil/")
+            query.documents.first().reference.update("foto", imageUrl)
+            Response.Success(imageUrl)
+        } else {
+            Response.Failure(Exception("Tidak dapat mengupload foto."))
+        }
+
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
+    override suspend fun addAbsen(absen: Absen) = try {
+        val idRef = mahasiswaRef.document(absen.nip)
+        val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
         if (absen.foto != null) {
             val imageUrl = uploadImagetoFirebase(absen.foto.uri, "${absen.tanggal}_${absen.nip}_Masuk")
@@ -241,6 +255,7 @@ fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     nama = getString(Mahasiswa.NAMA) ?: "Default",
     password = getString(Mahasiswa.PASSWORD) ?: "Default",
     nip = getString(Mahasiswa.NIP)?: "DefaultName",
+    foto = getString(Mahasiswa.FOTO)?: "DefaultName",
     role = get(Mahasiswa.ROLE) as? List<String> ?: emptyList(),
 
 )

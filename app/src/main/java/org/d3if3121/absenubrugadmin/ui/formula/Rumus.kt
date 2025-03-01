@@ -7,6 +7,7 @@ import android.location.Location
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.collection.emptyObjectList
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import org.d3if3121.absenubrugadmin.data.model.Absen
@@ -185,14 +186,13 @@ fun createAbsen(
     }
 }
 
-
 fun filterAbsen(
     viewmodel: MahasiswaListViewModel,
     unit: (Absen) -> Boolean
-): List<Absen>? {
-    return viewmodel.absenList?.filter { absen ->
-        unit(absen)
-    }
+): List<Absen> {
+    return viewmodel.absenList.values
+        .filterNotNull()
+        .flatMap { list -> list.filter(unit) }
 }
 
 

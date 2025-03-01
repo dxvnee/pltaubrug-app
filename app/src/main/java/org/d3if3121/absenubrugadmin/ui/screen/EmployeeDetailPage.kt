@@ -96,6 +96,8 @@ fun MainContentEmployeeDetail(
     var dialogrole by remember { mutableStateOf(false) }
     var statuspage by remember { mutableStateOf("(Daftar Pegawai)") }
     var sudahabsen by remember { mutableStateOf(listOf<Mahasiswa>()) }
+    viewmodel.getMahasiswaNip()
+
     var absenhariini = filterAbsen(viewmodel){ it.tanggal == viewmodel.tanggal }
     var belumabsen = viewmodel.mahasiswaList.minus(sudahabsen.toSet()).toMutableList()
 
@@ -117,7 +119,11 @@ fun MainContentEmployeeDetail(
         },
         dialogrole = dialogrole,
         pegawai = currentpegawai,
-    )
+    ){  pegawai ->
+        viewmodel.changePegawai(pegawai)
+        dialogrole = false
+        navController.navigate(Screen.EmployeeHome.route)
+    }
 
     HeaderContent(
         viewmodel = viewmodel,
@@ -145,7 +151,8 @@ fun MainContentEmployeeDetail(
                     items(listpegawai) { pegawai ->
                         if("UNKNOWN" !in pegawai.role) {
                             CardListPegawai(pegawai){
-                                navController.navigate(Screen.Project.route)
+                                currentpegawai = pegawai
+                                dialogrole = true
                             }
                         }
                     }
