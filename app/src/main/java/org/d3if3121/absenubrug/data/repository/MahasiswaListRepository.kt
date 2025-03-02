@@ -77,10 +77,10 @@ class MahasiswaListRepository (
         Response.Failure(e)
     }
 
-    suspend fun uploadImagetoFirebase(uri: Uri, id: String): String {
+    suspend fun uploadImagetoFirebase(uri: Uri, id: String, path: String = "images/"): String {
 
         val storage = FirebaseStorage.getInstance()
-        val storageReference = storage.reference.child("images/" + id)
+        val storageReference = storage.reference.child(path + id)
         val uploadTask = storageReference.putFile(uri)
 
         Log.d("STORAGE", storage.toString())
@@ -135,6 +135,22 @@ class MahasiswaListRepository (
 
 
 
+    override suspend fun addFotoProfil(nip: String, uri: Uri) = try {
+        val query = mahasiswaRef.whereEqualTo("nip", nip).get().await()
+
+        if (uri != null) {
+            val imageUrl = uploadImagetoFirebase(uri, "${nip}_Foto", "fotoprofil/")
+            query.documents.first().reference.update("foto", imageUrl)
+            Response.Success(imageUrl)
+        } else {
+            Response.Failure(Exception("Tidak dapat mengupload foto."))
+        }
+
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
+
 
     override suspend fun loginMahasiswa(nip: String, password: String) = try {
         val docmahasiswa = mahasiswaRef.whereEqualTo("nip", nip).get(Source.SERVER).await()
@@ -164,6 +180,7 @@ fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     password = getString(Mahasiswa.PASSWORD) ?: "null",
     nip = getString(Mahasiswa.NIP)?: "null",
     role = get(Mahasiswa.ROLE) as? List<String> ?: emptyList(),
+    foto = getString(Mahasiswa.FOTO)?: "null",
 )
 
 fun DocumentSnapshot.toAbsen(): Absen = Absen(

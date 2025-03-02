@@ -1,5 +1,6 @@
 package org.d3if3121.absenubrug.ui.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,7 @@ import org.d3if3121.absenubrug.data.repository.interfaces.AddAbsenResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.LoginResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 import org.d3if3121.absenubrug.data.repository.interfaces.AbsenListResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.AddFotoProfil
 import javax.inject.Inject
 import kotlin.math.log
 
@@ -32,6 +34,8 @@ class MahasiswaListViewModel @Inject constructor(
     var absenListResponse by mutableStateOf<AbsenListResponse>(Response.Loading)
         private set
 
+    var addFotoProfil by mutableStateOf<AddFotoProfil>(Response.Loading)
+        private set
     var absenList by mutableStateOf<List<Absen>>(emptyList())
         private set
 
@@ -104,6 +108,12 @@ class MahasiswaListViewModel @Inject constructor(
         absenList = absen
     }
 
+    fun addFotoProfil(nip: String, uri: Uri) = viewModelScope.launch {
+        changeLoading(true)
+
+        addFotoProfil = repo.addFotoProfil(nip, uri)
+    }
+
     fun changeKeteranganHome(input: String, input2: String){
         keteranganhome = input
         keteranganhome2 = input2
@@ -142,6 +152,10 @@ class MahasiswaListViewModel @Inject constructor(
         loginResponse = Response.Loading
         user = Mahasiswa()
     }
+    fun addFotoProfilReset() {
+        addFotoProfil = Response.Loading
+    }
+
 
     fun loginMahasiswa(response: MahasiswaLogin) = viewModelScope.launch {
         changeLoading(true)

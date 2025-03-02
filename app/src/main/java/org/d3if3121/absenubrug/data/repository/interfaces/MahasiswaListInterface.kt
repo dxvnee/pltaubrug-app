@@ -1,5 +1,6 @@
 package org.d3if3121.absenubrug.data.repository.interfaces
 
+import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.Mahasiswa
@@ -13,6 +14,8 @@ typealias AddUserResponse = Response<Mahasiswa>
 typealias LoginResponse = Response<Mahasiswa>
 
 typealias AddAbsenResponse = Response<String>
+typealias AddFotoProfil = Response<String>
+
 
 interface MahasiswaListInterface {
     fun getAbsenList(user: Mahasiswa): Flow<AbsenListResponse>
@@ -22,6 +25,8 @@ interface MahasiswaListInterface {
     suspend fun addAbsen(absen: Absen): AddAbsenResponse
     suspend fun addAbsenPulang(absen: Absen): AddAbsenResponse
     suspend fun loginMahasiswa(nim: String, password: String): LoginResponse
+    suspend fun addFotoProfil(nip: String, uri: Uri): AddFotoProfil
+
 
 
 }
