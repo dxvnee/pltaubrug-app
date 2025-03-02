@@ -115,7 +115,7 @@ fun MainContentProject(
     navController: NavHostController
 ) {
 
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     AbsenResponse(context, viewmodel, navController)
 
@@ -165,19 +165,18 @@ fun ProjectContent(
 
     when(masukpergi){
         "(Masuk)" -> {
-            var jamsebelum by remember { mutableStateOf("07:00") }
+            val jamsebelum by remember { mutableStateOf("07:00") }
             ProjectTambah(
                 viewmodel = viewmodel,
                 jamsebelum = jamsebelum,
                 currentJam = viewmodel.currentAbsen.jam,
                 currentKeterangan = viewmodel.currentAbsen.keterangan,
                 currentDeskripsi = viewmodel.currentAbsen.deskripsi,
-                imagePath = viewmodel.currentAbsen.image ?: "",
-                telat = { jamsebelum, jamsesudah ->
-                    isLebihCepat(jamsebelum, jamsesudah)
+                telat = { jamSebelum, jamSesudah ->
+                    isLebihCepat(jamSebelum, jamSesudah)
                 },
-                jamtelat = { jamsebelum, jamsesudah ->
-                    selisihJam(jamsebelum, jamsesudah)
+                jamtelat = { jamSebelum, jamSesudah ->
+                    selisihJam(jamSebelum, jamSesudah)
                 },
                 viewmodeledit = { absen, ispulang -> viewmodel.editAbsenPulang(absen, ispulang) },
                 viewmodeldelete = { viewmodel.deleteAbsenPulang(it) },
@@ -185,7 +184,7 @@ fun ProjectContent(
             )
         }
         "(Pulang)" -> {
-            var jamsebelum by remember { mutableStateOf("17:00") }
+            val jamsebelum by remember { mutableStateOf("17:00") }
 
             Log.d("geg", viewmodel.currentAbsen.keterangan)
             if(viewmodel.currentAbsen.keterangan == "Belum Absen"){
@@ -205,12 +204,11 @@ fun ProjectContent(
                     currentJam = viewmodel.currentAbsen.jam2,
                     currentKeterangan = viewmodel.currentAbsen.keterangan2,
                     currentDeskripsi = viewmodel.currentAbsen.deskripsi2,
-                    imagePath = viewmodel.currentAbsen.image2 ?: "",
-                    telat = { jamsebelum, jamsesudah ->
-                        isLebihCepat(jamsesudah, jamsebelum)
+                    telat = { jamSebelum, jamSesudah ->
+                        isLebihCepat(jamSesudah, jamSebelum)
                     },
-                    jamtelat = { jamsebelum, jamsesudah ->
-                        selisihJam(jamsesudah, jamsebelum)
+                    jamtelat = { jamSebelum, jamSesudah ->
+                        selisihJam(jamSesudah, jamSebelum)
                     },
                     viewmodeledit = { absen, ispulang -> viewmodel.editAbsenPulang(absen, ispulang) },
                     viewmodeldelete = { viewmodel.deleteAbsenPulang(it) },
@@ -230,7 +228,6 @@ fun ProjectTambah(
     currentJam: String,
     currentKeterangan: String,
     currentDeskripsi: String,
-    imagePath: String,
     telat: (String, String) -> Boolean,
     jamtelat: (String, String) -> String,
     viewmodeledit: (Absen, Boolean) -> Unit,
@@ -238,19 +235,18 @@ fun ProjectTambah(
     isPulang: Boolean,
 ){
 
-    var context = LocalContext.current
-    var currentAbsen by remember { mutableStateOf(viewmodel.currentAbsen) }
+    val context = LocalContext.current
+    val currentAbsen by remember { mutableStateOf(viewmodel.currentAbsen) }
     var absen by remember { mutableStateOf("") }
-    var jamsebelum by remember { mutableStateOf(jamsebelum) }
+    val jamsebelum by remember { mutableStateOf(jamsebelum) }
     var jamsesudah by remember { mutableStateOf(currentJam) }
     var selectedStatus by remember { mutableStateOf(currentKeterangan) }
     var deskripsi by remember { mutableStateOf(currentDeskripsi) }
-    var gantijam by remember { mutableStateOf("") }
-    var belumabsenmasuk by remember { mutableStateOf(currentKeterangan == "Belum Absen") }
+    val belumabsenmasuk by remember { mutableStateOf(currentKeterangan == "Belum Absen") }
 
 
     var telat = remember { derivedStateOf { telat(jamsebelum,jamsesudah)  } }
-    var jamtelat = remember { derivedStateOf { jamtelat(jamsebelum, jamsesudah) } }
+    val jamtelat = remember { derivedStateOf { jamtelat(jamsebelum, jamsesudah) } }
     var imageUrl by remember { mutableStateOf(currentAbsen.image) }
     var lokasi by remember { mutableStateOf("") }
 
@@ -302,9 +298,7 @@ fun ProjectTambah(
                     text2 = "Izin",
                     text3 = "Cuti",
                     modifier = Modifier.weight(1f),
-                    absenpulang = isPulang
                 )
-
 
 
 
@@ -327,7 +321,7 @@ fun ProjectTambah(
                     imageUrl = null
                     absen = lokasi
                 },
-                sudahabsen = if (belumabsenmasuk) true else false
+                sudahabsen = belumabsenmasuk
             )
 
             Text(
@@ -390,7 +384,7 @@ fun ProjectTambah(
                         modifier = Modifier.weight(1f).padding(end = 7.dp),
                         text = "KIRIM"
                     ){
-                        konfirmasikirim = if (deskripsi != "" && selectedStatus != "Pilih Keterangan") true else false
+                        konfirmasikirim = deskripsi != "" && selectedStatus != "Pilih Keterangan"
 
                         if(konfirmasikirim){
                             var absensi =  Absen(

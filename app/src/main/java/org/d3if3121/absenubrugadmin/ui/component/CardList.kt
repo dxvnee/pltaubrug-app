@@ -16,7 +16,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,12 +27,12 @@ import org.d3if3121.absenubrugadmin.R
 import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
-import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
 
 @Composable
 fun CardList(
     absen: Absen,
+    pegawai: Mahasiswa,
     onClick: () -> Unit
 ){
     Card(
@@ -59,9 +58,8 @@ fun CardList(
             ) {
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.photo),
-                        contentDescription = "App logo",
+                    FotoProfil(
+                        imageUrl = pegawai.foto,
                         modifier = Modifier
                             .size(45.dp)
                     )

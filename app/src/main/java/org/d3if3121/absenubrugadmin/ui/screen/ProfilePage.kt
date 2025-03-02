@@ -7,12 +7,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -31,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,7 +38,6 @@ import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import org.d3if3121.absenubrugadmin.ui.component.BottomBar
 import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
-import org.d3if3121.absenubrugadmin.R
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
 import org.d3if3121.absenubrugadmin.ui.component.DialogLoading
@@ -54,7 +50,6 @@ fun ProfilePage(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel,
 ) {
-    var search by remember { mutableStateOf("") }
     val lazyListState = rememberLazyListState()
     val user = viewmodel.user
 

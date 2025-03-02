@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
-import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
 import org.d3if3121.absenubrugadmin.ui.component.BottomBar
@@ -58,7 +57,7 @@ fun HomePage(
     viewModel: MahasiswaListViewModel = hiltViewModel(),
 ) {
     val lazyListState = rememberLazyListState()
-    var user  = viewModel.user
+    val user  = viewModel.user
 
     Scaffold(
         topBar = {
@@ -71,7 +70,7 @@ fun HomePage(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(top = paddingValues.calculateTopPadding() - 50.dp,)
+                        .padding(top = paddingValues.calculateTopPadding() - 50.dp)
                 ) {
                     MainContentHome(
                         navController = navController,

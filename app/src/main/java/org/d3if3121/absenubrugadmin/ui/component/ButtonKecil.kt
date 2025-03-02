@@ -48,7 +48,6 @@ fun ButtonTiga(
     text3: String,
 
     modifier: Modifier,
-    absenpulang: Boolean = false
 ){
 
     Row(

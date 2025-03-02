@@ -1,7 +1,6 @@
 package org.d3if3121.absenubrugadmin.ui.component
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,12 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import org.d3if3121.absenubrugadmin.components.LoadingIndicator
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
-import org.d3if3121.absenubrugadmin.navigation.Screen
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 

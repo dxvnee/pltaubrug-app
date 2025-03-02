@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,15 +35,11 @@ import org.d3if3121.absenubrugadmin.ui.formula.filterAbsen
 
 
 
-
-
-
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun EmployeePage(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel,
-    tanggal: String = ""
 ) {
     val lazyListState = rememberLazyListState()
     val user = viewmodel.user
@@ -90,8 +85,9 @@ fun MainContentEmployee(
     var sudahabsen by remember { mutableStateOf(listOf<Mahasiswa>()) }
 
     viewmodel.getMahasiswaNip()
-    var absenhariini = filterAbsen(viewmodel){ it.tanggal == viewmodel.tanggal }
-    var belumabsen = viewmodel.mahasiswaList.minus(sudahabsen.toSet()).toMutableList()
+    val absenhariini = filterAbsen(viewmodel){ it.tanggal == viewmodel.tanggal }
+    val belumabsen = viewmodel.mahasiswaList.minus(sudahabsen.toSet()).toMutableList()
+    val mahasiswaList by remember { mutableStateOf(viewmodel.mahasiswaList) }
 
 
     HeaderContent(
@@ -111,13 +107,18 @@ fun MainContentEmployee(
     LazyColumn {
         when (masukpergi) {
             "(Sudah Absen)" -> {
-                if (absenhariini.isNullOrEmpty()) {
+                if (absenhariini.isEmpty()) {
                     item {
                         DataKosong()
                     }
                 } else {
                     items(absenhariini) { absen ->
-                        CardList(absen){
+
+                        val mahasiswa = mahasiswaList.find { mahasiswa ->
+                            mahasiswa.nip == absen.nip
+                        }
+
+                        CardList(absen, mahasiswa!!){
                             viewmodel.changeAbsen(absen)
                             navController.navigate(Screen.Project.route)
                         }
@@ -142,7 +143,7 @@ fun MainContentEmployee(
                                 Absen(
                                     nama = mahasiswa.nama,
                                     nip = mahasiswa.nip,
-                                )
+                                ), mahasiswa
                             ){}
                         }
 

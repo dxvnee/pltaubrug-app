@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -34,8 +33,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -60,12 +57,12 @@ fun LoginPage(
 ) {
     var nim by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible = remember { mutableStateOf(false) }
+    val passwordVisible = remember { mutableStateOf(false) }
     var mahasiswa by remember { mutableStateOf(MahasiswaLogin(nim = "", password = " ")) }
     var errorMessage by remember { mutableStateOf("") }
     var showloading by remember { mutableStateOf(false) }
 
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     LaunchedEffect (Unit){
         viewmodel.loginResponseReset()

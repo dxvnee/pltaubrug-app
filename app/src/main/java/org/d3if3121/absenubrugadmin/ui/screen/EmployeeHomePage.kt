@@ -60,11 +60,11 @@ fun EmployeeHomePage(
     viewModel: MahasiswaListViewModel = hiltViewModel(),
 ) {
     val lazyListState = rememberLazyListState()
-    var user  = viewModel.user
+    val user  = viewModel.user
 
     Scaffold(
         topBar = {
-            TopBar(lazyListState = lazyListState, helloActive = true, navController = navController, user = user)
+            TopBar(lazyListState = lazyListState, helloActive = true, user = user)
         },
         content = { paddingValues ->
             Column(modifier = Modifier.background(color = Warna.PutihNormal)){
@@ -136,7 +136,7 @@ fun ProjectListEmployeeHome(
 ){
     val context = LocalContext.current
 
-    getAbsenListResponse(viewmodel)
+    GetAbsenListResponse(viewmodel)
 
     if(viewmodel.absenListSingle.isNotEmpty()){
 
@@ -213,7 +213,7 @@ fun ProjectListEmployeeHome(
 }
 
 @Composable
-fun getAbsenListResponse(viewmodel: MahasiswaListViewModel){
+fun GetAbsenListResponse(viewmodel: MahasiswaListViewModel){
     LaunchedEffect (viewmodel.absenListResponse){
         when(val response = viewmodel.absenListResponse){
             is Response.Success -> {

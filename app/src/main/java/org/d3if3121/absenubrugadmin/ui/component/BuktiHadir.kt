@@ -35,7 +35,6 @@ import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
 @Composable
 fun BuktiHadir(
-    viewmodel: MahasiswaListViewModel = hiltViewModel(),
     absen: String,
     onUrlChange: (String?) -> Unit,
     onLokasiChange: (Double, Double) -> Unit,

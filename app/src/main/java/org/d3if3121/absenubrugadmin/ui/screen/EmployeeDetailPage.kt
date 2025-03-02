@@ -1,8 +1,6 @@
 package org.d3if3121.absenubrugadmin.ui.screen
 
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -26,26 +24,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.d3if3121.absenubrugadmin.ui.component.BottomBar
 import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
-import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
-import org.d3if3121.absenubrugadmin.ui.component.CardList
 import org.d3if3121.absenubrugadmin.ui.component.CardListPegawai
 import org.d3if3121.absenubrugadmin.ui.component.DataKosong
 import org.d3if3121.absenubrugadmin.ui.component.DialogRole
 import org.d3if3121.absenubrugadmin.ui.component.HeaderContent
-import org.d3if3121.absenubrugadmin.ui.formula.filterAbsen
-
-
-
 
 
 
@@ -54,7 +45,6 @@ import org.d3if3121.absenubrugadmin.ui.formula.filterAbsen
 fun EmployeeDetailPage(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel,
-    tanggal: String = ""
 ) {
     val lazyListState = rememberLazyListState()
     val user = viewmodel.user
@@ -95,11 +85,8 @@ fun MainContentEmployeeDetail(
 
     var dialogrole by remember { mutableStateOf(false) }
     var statuspage by remember { mutableStateOf("(Daftar Pegawai)") }
-    var sudahabsen by remember { mutableStateOf(listOf<Mahasiswa>()) }
     viewmodel.getMahasiswaNip()
 
-    var absenhariini = filterAbsen(viewmodel){ it.tanggal == viewmodel.tanggal }
-    var belumabsen = viewmodel.mahasiswaList.minus(sudahabsen.toSet()).toMutableList()
 
     val listpegawai by remember { derivedStateOf { (viewmodel.mahasiswaList) }}
     var currentpegawai by remember { mutableStateOf(Mahasiswa()) }
