@@ -158,7 +158,7 @@ class MahasiswaListRepository (
             val mahasiswa = docmahasiswa.first().toMahasiswa()
 
             if (mahasiswa.password == password){
-                if("PEGAWAI" in mahasiswa.role ){
+                if(("PEGAWAI" in mahasiswa.role) || ("SHEET" in mahasiswa.role )){
                     Response.Success(mahasiswa)
                 } else {
                     Response.Failure(Exception("Anda belum menerima perizinan."))
