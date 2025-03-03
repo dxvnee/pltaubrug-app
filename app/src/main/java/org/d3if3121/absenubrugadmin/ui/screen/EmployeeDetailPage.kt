@@ -136,7 +136,7 @@ fun MainContentEmployeeDetail(
                     }
                 } else {
                     items(listpegawai) { pegawai ->
-                        if("UNKNOWN" !in pegawai.role) {
+                        if(("UNKNOWN" !in pegawai.role) && ("ADMIN" !in pegawai.role)) {
                             CardListPegawai(pegawai){
                                 currentpegawai = pegawai
                                 dialogrole = true

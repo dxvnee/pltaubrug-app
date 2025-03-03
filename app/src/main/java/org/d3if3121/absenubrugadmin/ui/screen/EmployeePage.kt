@@ -138,7 +138,7 @@ fun MainContentEmployee(
                     }
                 } else {
                     items(belumabsen) { mahasiswa ->
-                        if("UNKNOWN" !in mahasiswa.role){
+                        if(("UNKNOWN" !in mahasiswa.role) && ("ADMIN" !in mahasiswa.role)){
                             CardList(
                                 Absen(
                                     nama = mahasiswa.nama,
