@@ -99,7 +99,7 @@ fun ProfilePageContent(
         }
     }
 
-    FotoProfilResponse(viewmodel, context)
+    FotoProfilResponse(viewmodel, context, navController)
 
 
     Column(
@@ -165,12 +165,13 @@ fun ProfilePageContent(
 
 
 @Composable
-fun FotoProfilResponse(viewmodel: MahasiswaListViewModel, context: Context){
+fun FotoProfilResponse(viewmodel: MahasiswaListViewModel, context: Context, navController: NavHostController){
     when(val response = viewmodel.addFotoProfil){
         is Response.Success -> {
             viewmodel.changeLoading(false)
-            viewmodel.addFotoProfilReset()
             Toast.makeText(context, "Upload foto berhasil!", Toast.LENGTH_SHORT).show()
+            viewmodel.addFotoProfilReset()
+
         }
         is Response.Failure -> {
             Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()

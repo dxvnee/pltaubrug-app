@@ -12,7 +12,9 @@ import org.d3if3121.absenubrug.ui.theme.TellinkTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         installSplashScreen()
+
         setContent {
             TellinkTheme {
                 SetupNavGraph()

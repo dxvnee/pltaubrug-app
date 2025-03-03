@@ -148,6 +148,7 @@ class MahasiswaListViewModel @Inject constructor(
         addMahasiswaResponse = Response.Loading
     }
 
+
     fun loginResponseReset() {
         loginResponse = Response.Loading
         user = Mahasiswa()

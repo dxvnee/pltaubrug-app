@@ -2,10 +2,13 @@
 <resources>
 
     <style name = "Theme.MySplashScreen" parent = "Theme.SplashScreen">
-        <item name = "windowSplashScreenBackground">@color/white</item>
+    <item name = "windowSplashScreenBackground">#0797DA</item>
         <item name = "windowSplashScreenAnimatedIcon">@drawable/logoapp</item>
         <item name = "postSplashScreenTheme">@style/Theme.Tellink</item>
     </style>
 
-    <style name="Theme.Tellink" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Tellink" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
+
+    </style>
 </resources>

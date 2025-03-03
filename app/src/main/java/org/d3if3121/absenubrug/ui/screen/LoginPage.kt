@@ -57,7 +57,6 @@ import org.d3if3121.absenubrug.ui.theme.Warna
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 
 
-
 @Composable
 fun LoginPage(
     navController: NavHostController,
@@ -75,6 +74,12 @@ fun LoginPage(
 
     DialogLoading(viewmodel)
 
+    LoginResponse(
+        viewmodel = viewmodel,
+        navController = navController
+    ) {
+        errorMessage = it
+    }
 
     fun handleLogin() {
         if(nim.isNotEmpty() && password.isNotEmpty()){
@@ -90,27 +95,7 @@ fun LoginPage(
         }
     }
 
-    when(val response = viewmodel.loginResponse){
-        is Response.Success -> {
 
-            viewmodel.addUser(response.data!!)
-            viewmodel.changeLoading(false)
-            showloading = false
-            navController.navigate(Screen.Home.route)
-            Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
-
-        }
-        is Response.Failure -> {
-            showloading = false
-            viewmodel.changeLoading(false)
-            errorMessage = response.e!!.message.toString()
-        }
-        is Response.Loading -> {
-            if(showloading){
-                viewmodel.changeLoading(true)
-            }
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -321,4 +306,26 @@ fun LoginPage(
         }
     }
 
+}
+
+@Composable
+fun LoginResponse(viewmodel: MahasiswaListViewModel, navController: NavHostController, showError: (String) -> Unit){
+    val context = LocalContext.current
+    when(val response = viewmodel.loginResponse){
+        is Response.Success -> {
+
+            viewmodel.addUser(response.data!!)
+            viewmodel.changeLoading(false)
+            navController.navigate(Screen.Home.route)
+            Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
+
+        }
+        is Response.Failure -> {
+            viewmodel.changeLoading(false)
+            showError(response.e!!.message.toString())
+        }
+        is Response.Loading -> {
+
+        }
+    }
 }
