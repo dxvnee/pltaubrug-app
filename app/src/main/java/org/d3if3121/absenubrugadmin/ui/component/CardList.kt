@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,7 +39,7 @@ fun CardList(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(135.dp).padding(top = 10.dp, bottom = 9.dp)
+            .fillMaxHeight().padding(top = 10.dp, bottom = 9.dp)
             .clickable {
                 onClick()
             },
@@ -107,7 +108,7 @@ fun CardListPegawai(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp).padding(top = 10.dp, bottom = 9.dp)
+            .fillMaxHeight().padding(top = 10.dp, bottom = 9.dp)
             .clickable {
                 onClick()
             },

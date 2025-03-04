@@ -1,37 +1,52 @@
 package org.d3if3121.absenubrugadmin.ui.component
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+
 
 @Composable
 fun ButtonKecil(
     onClick: () -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier, // Tambahkan default Modifier
     text: String,
     warna: Color,
     fontsize: Int = 16
-){
+) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = warna),
         modifier = modifier,
         shape = RoundedCornerShape(7.dp)
     ) {
-        Text(text = text, color = Color.White, fontSize = fontsize.sp, fontWeight = FontWeight.Bold)
+        Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+            Text(
+                text = text,
+                color = Color.White,
+                fontSize = fontsize.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
     }
 }
+
 
 @Composable
 fun ButtonTiga(
@@ -49,6 +64,7 @@ fun ButtonTiga(
 
     modifier: Modifier,
 ){
+
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -68,7 +84,7 @@ fun ButtonTiga(
             modifier = modifier.padding(end = 3.dp),
             text =text2,
             warna = warna2,
-            fontsize = 10
+            fontsize = 9
 
         )
         ButtonKecil (
@@ -76,7 +92,7 @@ fun ButtonTiga(
             modifier = modifier.padding(start = 3.dp),
             text = text3,
             warna = warna3,
-            fontsize = 11
+            fontsize = 9
         )
 
     }
