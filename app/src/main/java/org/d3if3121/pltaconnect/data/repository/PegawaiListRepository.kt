@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -13,10 +14,12 @@ import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.data.model.Sheet
 import org.d3if3121.pltaconnect.data.model.SuccessResponse
 import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.model.data.Masuk
 import org.d3if3121.pltaconnect.data.model.data.MasukRequest
 import org.d3if3121.pltaconnect.data.model.data.Pemakaian
 import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
+import org.d3if3121.pltaconnect.data.model.data.Produksi
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 
 class PegawaiListRepository (
@@ -27,13 +30,14 @@ class PegawaiListRepository (
     private val produksiRef: CollectionReference,
     private val sheetRef: CollectionReference,
 ): PegawaiListInterface {
-    val id = "1"
+    private val sheetid = "1"
+
     override fun getPegawaiList() = callbackFlow {
         val listener = pegawaiRef
             .orderBy("nama")
             .addSnapshotListener { snapshot, e ->
                 val pegawaiListResponse =
-                    if (snapshot != null){
+                    if (snapshot != null) {
                         val pegawaiList = snapshot.map {
                             it.toPegawai()
                         }
@@ -43,14 +47,14 @@ class PegawaiListRepository (
                     }
                 trySend(pegawaiListResponse)
             }
-        awaitClose{
+        awaitClose {
             listener.remove()
         }
     }
 
 
     override fun addUser(pegawai: Pegawai) = callbackFlow {
-        val listener = pegawaiRef.whereEqualTo("nim", pegawai.nim)
+        val listener = pegawaiRef.whereEqualTo("nip", pegawai.nip)
             .addSnapshotListener { snapshot, e ->
                 if (snapshot != null && !snapshot.isEmpty) {
                     val updatedPegawai = snapshot.documents.first().toPegawai()
@@ -68,21 +72,21 @@ class PegawaiListRepository (
     }
 
     override suspend fun addPegawai(pegawai: Pegawai) = try {
-        val pegawaiSama = pegawaiRef.whereEqualTo("nim", pegawai.nim).get().await()
+        val pegawaiSama = pegawaiRef.whereEqualTo("nip", pegawai.nip).get().await()
 
-        if (pegawaiSama.isEmpty){
+        if (pegawaiSama.isEmpty) {
             val id = pegawaiRef.add(pegawai).await().id
             Response.Success(id)
         } else {
             Response.Failure(Exception("NIM already registered."))
         }
-    } catch (e: Exception){
+    } catch (e: Exception) {
         Response.Failure(e)
     }
 
-    override suspend fun markProject(nim: String, projectId: List<String>) {
+    override suspend fun markProject(nip: String, projectId: List<String>) {
         val pegawaiQuery = pegawaiRef
-            .whereEqualTo("nim", nim)
+            .whereEqualTo("nip", nip)
 
         pegawaiQuery.get()
             .addOnSuccessListener { snapshot ->
@@ -91,15 +95,18 @@ class PegawaiListRepository (
                     val pegawaiDoc = snapshot.documents.first()
 
                     // Update viewedProjects dengan menambahkan semua projectId yang diberikan
-                    pegawaiDoc.reference.update("viewedProjects", FieldValue.arrayUnion(*projectId.toTypedArray()))
+                    pegawaiDoc.reference.update(
+                        "viewedProjects",
+                        FieldValue.arrayUnion(*projectId.toTypedArray())
+                    )
                         .addOnSuccessListener {
-                            Log.d("Firestore", "Project(s) $projectId marked as viewed for $nim")
+                            Log.d("Firestore", "Project(s) $projectId marked as viewed for $nip")
                         }
                         .addOnFailureListener { e ->
                             Log.e("Firestore", "Failed to mark project as viewed", e)
                         }
                 } else {
-                    Log.e("Firestore", "No pegawai found with nim $nim")
+                    Log.e("Firestore", "No pegawai found with nip $nip")
                 }
             }
             .addOnFailureListener { e ->
@@ -109,9 +116,9 @@ class PegawaiListRepository (
 
 
     override suspend fun updatePegawai(pegawai: PegawaiEdit) = try {
-        val querySnapshot = pegawaiRef.whereEqualTo("nim", pegawai.nim).get().await()
+        val querySnapshot = pegawaiRef.whereEqualTo("nip", pegawai.nip).get().await()
 
-        if(!querySnapshot.isEmpty){
+        if (!querySnapshot.isEmpty) {
             val pegawaiDocument = querySnapshot.documents.first()
             pegawaiDocument.reference.update(
                 mapOf(
@@ -120,16 +127,17 @@ class PegawaiListRepository (
                 )
             ).await()
             Response.Success("Edit Success.")
-        } else{
+        } else {
             Response.Failure(Exception("Edit Failed."))
         }
-    } catch (e: Exception){
+    } catch (e: Exception) {
         Response.Failure(e)
     }
 
-    override suspend fun checkRequestProject(id: String, nim: String): Boolean {
+
+    override suspend fun checkRequestProject(id: String, nip: String): Boolean {
         return try {
-            val process = pegawaiRef.whereEqualTo("nim", nim).get().await().documents.first()
+            val process = pegawaiRef.whereEqualTo("nip", nip).get().await().documents.first()
             val requests = process.get("requests") as? List<String>
             requests?.contains(id) ?: false
         } catch (e: Exception) {
@@ -145,8 +153,8 @@ class PegawaiListRepository (
         Response.Failure(e)
     }
 
-    override suspend fun getPegawaiByNim(nim: String): Pegawai {
-        val pegawai = pegawaiRef.whereEqualTo("nim", nim).get().await()
+    override suspend fun getPegawaiByNim(nip: String): Pegawai {
+        val pegawai = pegawaiRef.whereEqualTo("nip", nip).get().await()
         if (!pegawai.isEmpty){
             return pegawai.first().toPegawai()
         } else {
@@ -154,21 +162,8 @@ class PegawaiListRepository (
         }
     }
 
-//    override suspend fun getPegawaiByNim3(nim: String): Pegawai? {
-//        return try {
-//            val document = pegawaiRef.document(nim).get().await()
-//            if (document.exists()) {
-//                document.toPegawai()
-//            } else {
-//                null
-//            }
-//        } catch (e: Exception) {
-//            null
-//        }
-//    }
-
-    override suspend fun loginPegawai(nim: String, password: String) = try {
-        val docpegawai = pegawaiRef.whereEqualTo("nim", nim).get().await()
+    override suspend fun loginPegawai(nip: String, password: String) = try {
+        val docpegawai = pegawaiRef.whereEqualTo("nip", nip).get().await()
 
         if (!docpegawai.isEmpty){
             val pegawai = docpegawai.first().toPegawai()
@@ -185,90 +180,50 @@ class PegawaiListRepository (
         Response.Failure(e)
     }
 
+    suspend fun <T : Any> addData(ref: CollectionReference, data: T, id: String): Response<String> {
+        return try {
+            val docRef = ref.document(id)
+            val idSheetResponse = getSheet(sheetid)
 
-    override suspend fun addDebit(debit: Debit) = try {
-        val debitsama = debitRef.whereEqualTo("id", debit.id).get().await()
-        val idSheetResponse = getSheet(id)
-
-        if(idSheetResponse is Response.Success){
-            val idsheet = idSheetResponse.data!!.link
-
-            if (debitsama.isEmpty){
-                val id = debitRef.add(debit).await().id
-                Response.Success(id + " berhasil dinput!", idsheet)
+            if (idSheetResponse is Response.Success) {
+                docRef.set(data).await()
+                Response.Success("Berhasil input!", idSheetResponse.data!!.link)
             } else {
-                Response.Failure(Exception("Data hari ini sudah terinput."))
+                Response.Failure(Exception("Gagal mendapatkan sheet"))
             }
-        } else {
-            Response.Failure(Exception("Gagal mendapatkan sheet"))
+        } catch (e: Exception) {
+            Response.Failure(e)
         }
-    } catch (e: Exception){
-        Response.Failure(e)
     }
 
-    override suspend fun addProduksi(produksi: ProduksiRequest) = try {
-        val produksisama = produksiRef.whereEqualTo("id", produksi.id).get().await()
-        val idSheetResponse = getSheet(id)
+    override suspend fun addDebit(debit: Debit) = addData(debitRef, debit, debit.id)
+    override suspend fun addProduksi(produksi: ProduksiRequest) = addData(produksiRef, produksi, produksi.id)
+    override suspend fun addPemakaian(pemakaian: PemakaianRequest) = addData(pemakaianRef, pemakaian, pemakaian.id)
+    override suspend fun addMasuk(masuk: MasukRequest) = addData(masukRef, masuk, masuk.id)
 
-        if(idSheetResponse is Response.Success){
-            val idsheet = idSheetResponse.data!!.link
 
-            if (produksisama.isEmpty){
-                val id = produksiRef.add(produksi).await().id
-                Response.Success(id + " berhasil dinput!", idsheet)
+    suspend fun <T : Any> getData(ref: CollectionReference,id: String, dataclass: Class<T>): Response<T> {
+        return try {
+            val snapshot = ref.document(id).get().await()
+
+            if (snapshot.exists()) {
+                val data = snapshot.toObject(dataclass)
+                Response.Success(data)
             } else {
-                Response.Failure(Exception("Data hari ini sudah terinput."))
+                Response.Failure(Exception("Data tidak ada!"))
             }
-        } else {
-            Response.Failure(Exception("Gagal mendapatkan sheet"))
+        } catch (e: Exception) {
+            Response.Failure(e)
         }
-
-
-    } catch (e: Exception){
-        Response.Failure(e)
     }
 
-    override suspend fun addPemakaian(pemakaian: PemakaianRequest) = try {
-        val pemakaiansama = pemakaianRef.whereEqualTo("id", pemakaian.id).get().await()
-        val idSheetResponse = getSheet(id)
+    override suspend fun getDebit(id: String) = getData(debitRef, id, Debit::class.java)
+    override suspend fun getMasuk(id: String) = getData(masukRef, id, MasukRequest::class.java)
+    override suspend fun getPemakaian(id: String) = getData(pemakaianRef, id, PemakaianRequest::class.java)
+    override suspend fun getProduksi(id: String) = getData(produksiRef, id, ProduksiRequest::class.java)
 
-        if(idSheetResponse is Response.Success){
-            val idsheet = idSheetResponse.data!!.link
 
-            if (pemakaiansama.isEmpty){
-                val id = pemakaianRef.add(pemakaian).await().id
-                Response.Success("$id berhasil dinput!", idsheet)
-            } else {
-                Response.Failure(Exception("Data hari ini sudah terinput."))
-            }
-        } else {
-            Response.Failure(Exception("Gagal mendapatkan sheet"))
-        }
-    } catch (e: Exception){
-        Response.Failure(e)
-    }
 
-    override suspend fun addMasuk(masuk: MasukRequest) = try {
-        val masuksama = masukRef.whereEqualTo("id", masuk.id).get().await()
-        val idSheetResponse = getSheet(id)
-
-        if(idSheetResponse is Response.Success){
-            val idsheet = idSheetResponse.data!!.link
-            if (masuksama.isEmpty){
-                val id = masukRef.add(masuk).await().id
-                Response.Success(id + " berhasil dinput!", idsheet)
-            } else {
-                Response.Failure(Exception("Data hari ini sudah terinput."))
-            }
-        } else if (idSheetResponse is Response.Failure) {
-            Response.Failure(idSheetResponse.e)
-        } else {
-            Response.Failure(Exception("LOADING"))
-        }
-
-    } catch (e: Exception){
-        Response.Failure(e)
-    }
 
     override suspend fun getSheet(id: String): Response<Sheet> = try {
         val snapshot = sheetRef.whereEqualTo("id", id).get().await()
@@ -289,15 +244,13 @@ class PegawaiListRepository (
 
 
 
-
-
-
 }
+
 
 fun DocumentSnapshot.toPegawai() = Pegawai(
     nama = getString(Pegawai.NAMA) ?: "Default",
     password = getString(Pegawai.PASSWORD) ?: "Default",
-    nim = getString(Pegawai.NIM)?: "DefaultName",
+    nip = getString(Pegawai.NIP)?: "DefaultName",
     jurusan = getString(Pegawai.JURUSAN)?: "DefaultName",
     requests = get(Pegawai.REQUESTS) as? List<String> ?: emptyList(),
     accept = get(Pegawai.ACCEPT) as? List<String> ?: emptyList(),

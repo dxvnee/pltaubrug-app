@@ -2,7 +2,7 @@ package org.d3if3121.pltaconnect.data.model
 
 
 data class Pegawai(
-    val nim: String = "",
+    val nip: String = "",
     val password: String = "",
     val nama: String = "",
     val jurusan: String = "",
@@ -17,7 +17,7 @@ data class Pegawai(
     constructor() : this("", "", "", "", "", emptyList(), emptyList(), emptyList(),0)
 
     companion object {
-        const val NIM = "nim"
+        const val NIP = "nip"
         const val PASSWORD = "password"
         const val NAMA = "nama"
         const val JURUSAN = "jurusan"

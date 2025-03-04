@@ -62,10 +62,16 @@ fun Calendar(
             val newDate = Instant.ofEpochMilli(millis)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
-                .format(dateFormatter)
-            selectedDate = newDate  // Update selectedDate
-            selectedDate(newDate)   // Kirim ke parameter selectedDate
-            pegawaiListViewModel.changeTanggal(newDate)  // Perbarui ViewModel
+
+            val beforeDate = newDate.minusDays(1).format(dateFormatter)
+            val formattedNewDate = newDate.format(dateFormatter)
+
+            selectedDate = formattedNewDate
+
+            selectedDate(formattedNewDate)
+            pegawaiListViewModel.changeTanggal(formattedNewDate)
+            pegawaiListViewModel.changeTanggalBefore(beforeDate)
+
         }
     }
 

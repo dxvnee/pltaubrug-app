@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -133,5 +134,25 @@ fun ButtonTiga(
             )
         )
 
+    }
+}
+
+
+@Composable
+fun ButtonCommon(
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    text: String,
+    warna: Color = Warna.MerahNormal,
+    onClick: () -> Unit,
+){
+    Button(
+        onClick = {
+            onClick()
+        },
+        colors = ButtonDefaults.buttonColors(containerColor = warna),
+        shape = RoundedCornerShape(7.dp),
+        modifier = modifier
+    ) {
+        Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
     }
 }

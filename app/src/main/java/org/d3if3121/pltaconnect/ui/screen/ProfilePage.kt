@@ -122,7 +122,7 @@ fun MainContentProfile(
 
                                     )
                                 Text(
-                                    text = currentuser.nim,
+                                    text = currentuser.nip,
                                     color = Warna.HitamNormal,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,

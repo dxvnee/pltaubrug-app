@@ -6,9 +6,6 @@ import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import org.d3if3121.pltaconnect.data.model.Response.Failure
-import org.d3if3121.pltaconnect.data.model.Response.Loading
-import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.repository.interfaces.RetrofitClient
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel

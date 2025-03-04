@@ -52,7 +52,7 @@ fun EditPegawaiDialog(
     fun handleEditPegawai(){
         if (name != "" && major != ""){
             val pegawai = PegawaiEdit(
-                nim = user.nim,
+                nip = user.nip,
                 nama = name,
                 major = major
             )

@@ -72,7 +72,7 @@ fun RegisterPage(
 
     var context = LocalContext.current
 
-    var nim by remember { mutableStateOf("") }
+    var nip by remember { mutableStateOf("") }
     var nama by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible = remember { mutableStateOf(false) }
@@ -88,14 +88,14 @@ fun RegisterPage(
 
     fun handleRegister(){
         val pegawai =  Pegawai(
-            nim = nim,
+            nip = nip,
             password = password,
             nama = nama,
             jurusan = "Unknown",
             angkatan = "Unknown",
         )
 
-        if (nim.isNotEmpty() && nama.isNotEmpty() && password.isNotEmpty()) {
+        if (nip.isNotEmpty() && nama.isNotEmpty() && password.isNotEmpty()) {
             if (password == confirmPassword){
                 viewmodel.addPegawai(pegawai)
             } else {
@@ -225,10 +225,10 @@ fun RegisterPage(
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                         )
                         InputPutih(
-                            input = nim,
+                            input = nip,
                             placeholder = stringResource(id = R.string.enter_nim),
                             onInputChange = { input ->
-                                nim = input
+                                nip = input
                             },
                             keyboardType = KeyboardType.Number,
                             modifier = Modifier.fillMaxWidth()

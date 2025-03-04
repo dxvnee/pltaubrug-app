@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Success
+import org.d3if3121.pltaconnect.data.model.data.MasukRequest
 import org.d3if3121.pltaconnect.data.model.data.Pemakaian
 import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.repository.ImportData
@@ -43,6 +44,7 @@ import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
+import org.d3if3121.pltaconnect.ui.component.DialogLoading
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.component.PindahUnit
 import org.d3if3121.pltaconnect.ui.theme.Warna
@@ -61,8 +63,17 @@ fun ContentPemakaian(
     navController: NavHostController
 
 ){
-    var kva by remember { mutableStateOf("50 kVA") }
+    DialogLoading(viewmodel)
     var judul2 by remember { mutableStateOf("(Jam 24)") }
+    val id = tanggal + "_pemakaian_" + judul2
+    val idBefore = viewmodel.tanggalBefore + "_pemakaian_" + judul2
+
+    LaunchedEffect(Unit) {
+        viewmodel.getPemakaianBefore(idBefore)
+    }
+
+    var kva by remember { mutableStateOf("50 kVA") }
+
     var context = LocalContext.current
 
     var kva1 by remember { mutableStateOf(Pemakaian()) }
@@ -70,16 +81,62 @@ fun ContentPemakaian(
     var kva3 by remember { mutableStateOf(Pemakaian()) }
     var kvatotal by remember { mutableStateOf(Pemakaian()) }
 
-    var sebelumsheet by remember { mutableStateOf("231617")}
+    var kvasebelum1 by remember { mutableStateOf(Pemakaian()) }
+    var kvasebelum2 by remember { mutableStateOf(Pemakaian()) }
+    var kvasebelum3 by remember { mutableStateOf(Pemakaian()) }
 
-    var checkbox1 by remember { mutableStateOf(true) }
-    var checkbox2 by remember { mutableStateOf(true) }
-    var checkbox3 by remember { mutableStateOf(true) }
+    var checkbox1 by remember { mutableStateOf(false) }
+    var checkbox2 by remember { mutableStateOf(false) }
+    var checkbox3 by remember { mutableStateOf(false) }
+
+    GetPemakaianBeforeResponse(
+        context = context,
+        id = id,
+        viewmodel = viewmodel
+    ) { data ->
+        kvasebelum1 = kvasebelum1.copy(
+            sesudah = data.kwh1_sesudah,
+            sebelum = data.kwh1_sebelum,
+            kwh = data.kwh1
+        )
+        kvasebelum2 = kvasebelum2.copy(
+            sesudah = data.kwh2_sesudah,
+            sebelum = data.kwh2_sebelum,
+            kwh = data.kwh2
+        )
+        kvasebelum3 = kvasebelum3.copy(
+            sesudah = data.kwh3_sesudah,
+            sebelum = data.kwh3_sebelum,
+            kwh = data.kwh3
+        )
+    }
+
+    GetPemakaianResponse(
+        context = context,
+        viewmodel = viewmodel
+    ) { data ->
+        kva1 = kva1.copy(
+            sesudah = data.kwh1_sesudah,
+            sebelum = data.kwh1_sebelum,
+            kwh = data.kwh1
+        )
+        Log.d("hehe", kvasebelum1.sesudah)
+        kva2 = kva2.copy(
+            sesudah = data.kwh2_sesudah,
+            sebelum = data.kwh2_sebelum,
+            kwh = data.kwh2
+        )
+        kva3 = kva3.copy(
+            sesudah = data.kwh3_sesudah,
+            sebelum = data.kwh2_sebelum,
+            kwh = data.kwh3
+        )
+    }
 
     LaunchedEffect(kva1, kva2, kva3, checkbox1, checkbox2, checkbox3){
-        kva1 = hitungPemakaianSendiri(kva = kva1, sebelumsheet = sebelumsheet, checkbox = checkbox1)
-        kva2 = hitungPemakaianSendiri(kva = kva2, sebelumsheet = sebelumsheet, checkbox = checkbox2)
-        kva3 = hitungPemakaianSendiri(kva = kva3, sebelumsheet = sebelumsheet, checkbox = checkbox3)
+        kva1 = hitungPemakaianSendiri(kva = kva1, kvasebelum = kvasebelum1, checkbox = checkbox1)
+        kva2 = hitungPemakaianSendiri(kva = kva2, kvasebelum = kvasebelum2, checkbox = checkbox2)
+        kva3 = hitungPemakaianSendiri(kva = kva3, kvasebelum = kvasebelum3, checkbox = checkbox3)
 
         kvatotal = totalPemakaian(kva1, kva2, kva3)
     }
@@ -154,7 +211,6 @@ fun ContentPemakaian(
                 "50 kVA" -> {
                     MainContentPemakaian1(
                         kwh = kva1.kwh,
-                        kwhkumulatif = kva1.kwhkumulatif,
 
                         sesudah = kva1.sesudah,
                         onSesudahChange = {
@@ -175,7 +231,6 @@ fun ContentPemakaian(
                 "160 kVA" -> {
                     MainContentPemakaian2(
                         kwh = kva2.kwh,
-                        kwhkumulatif = kva2.kwhkumulatif,
 
                         sesudah = kva2.sesudah,
                         onSesudahChange = {
@@ -197,7 +252,6 @@ fun ContentPemakaian(
                 "2 x 250 kVA" -> {
                     MainContentPemakaian3(
                         kwh = kva3.kwh,
-                        kwhkumulatif = kva3.kwhkumulatif,
 
                         sesudah = kva3.sesudah,
                         onSesudahChange = {
@@ -249,13 +303,21 @@ fun ContentPemakaian(
 
                 ButtonMerah(
                     onClick = {
-                        val id = tanggal + "_pemakaian_" + judul2
+
                         viewmodel.addPemakaian(
                             PemakaianRequest(
                                 id = id,
                                 kwh1 = kva1.kwh,
+                                kwh1_sebelum = kva1.sebelum,
+                                kwh1_sesudah = kva1.sesudah,
+
                                 kwh2 = kva2.kwh,
+                                kwh2_sebelum = kva2.sebelum,
+                                kwh2_sesudah = kva2.sesudah,
+
                                 kwh3 = kva3.kwh,
+                                kwh3_sebelum = kva3.sebelum,
+                                kwh3_sesudah = kva3.sesudah,
                             )
                         )
                     },
@@ -280,7 +342,6 @@ fun ContentPemakaian(
 @Composable
 fun MainContentPemakaian1(
     kwh: String,
-    kwhkumulatif: String,
 
     onSesudahChange: (String) -> Unit,
     sesudah: String,
@@ -295,7 +356,6 @@ fun MainContentPemakaian1(
 ){
    MainContent(
        kwh = kwh,
-       kwhkumulatif = kwhkumulatif,
        sesudah = sesudah,
        onSesudahChange = onSesudahChange,
        sebelum = sebelum,
@@ -309,7 +369,6 @@ fun MainContentPemakaian1(
 @Composable
 fun MainContentPemakaian2(
     kwh: String,
-    kwhkumulatif: String,
 
     onSesudahChange: (String) -> Unit,
     sesudah: String,
@@ -324,7 +383,6 @@ fun MainContentPemakaian2(
 ){
     MainContent(
         kwh = kwh,
-        kwhkumulatif = kwhkumulatif,
         sesudah = sesudah,
         onSesudahChange = onSesudahChange,
         sebelum = sebelum,
@@ -339,7 +397,6 @@ fun MainContentPemakaian2(
 @Composable
 fun MainContentPemakaian3(
     kwh: String,
-    kwhkumulatif: String,
 
     onSesudahChange: (String) -> Unit,
     sesudah: String,
@@ -354,7 +411,6 @@ fun MainContentPemakaian3(
 ){
     MainContent(
         kwh = kwh,
-        kwhkumulatif = kwhkumulatif,
         sesudah = sesudah,
         onSesudahChange = onSesudahChange,
         sebelum = sebelum,
@@ -369,7 +425,6 @@ fun MainContentPemakaian3(
 @Composable
 fun MainContent(
     kwh: String,
-    kwhkumulatif: String,
 
     onSesudahChange: (String) -> Unit,
     sesudah: String,
@@ -396,18 +451,15 @@ fun MainContent(
         ){
             DataDua(
                 ratacond = true,
-                duaratacond = true,
                 judul1 = "Stand Meter:",
                 judul2 = "kWh:",
                 warnarata2 = Warna.BiruNormal,
                 ratarata = kwh,
                 text1k1 = "Sesudah:",
-                text2k1 = "11 Januari 2025",
+                text2k1 = viewmodel.tanggal,
                 text1k2 = "Sebelum:",
-                text2k2 = "10 Januari 2025",
+                text2k2 = viewmodel.tanggalBefore,
 
-                judul2k2 = "kWh Kumulatif:",
-                ratarata2 = kwhkumulatif,
                 hasil1 = sesudah,
                 onHasil1Change = onSesudahChange,
                 hasil2 = sebelum,
@@ -425,23 +477,21 @@ fun MainContent(
 }
 
 
-fun hitungPemakaianSendiri(kva : Pemakaian, sebelumsheet: String, checkbox: Boolean): Pemakaian {
+fun hitungPemakaianSendiri(kva : Pemakaian, kvasebelum: Pemakaian, checkbox: Boolean): Pemakaian {
+    var kwhsebelum = kvasebelum.sesudah.toFloatSafe()
     var sebelum = kva.sebelum.toFloatSafe()
     var sesudah = kva.sesudah.toFloatSafe()
 
     var kwh = abs(sebelum - sesudah)
-    var kwhkumulatif = abs(sebelum + kwh)
 
     return if (!checkbox){
         kva.copy(
-            sebelum = sebelumsheet,
+            sebelum = kvasebelum.sesudah,
             kwh = String.format(Locale.US, "%.2f", kwh),
-            kwhkumulatif = String.format(Locale.US, "%.2f", kwhkumulatif)
         )
     } else {
         kva.copy(
             kwh = String.format(Locale.US, "%.2f", kwh),
-            kwhkumulatif = String.format(Locale.US, "%.2f", kwhkumulatif)
         )
     }
 }
@@ -472,18 +522,57 @@ fun PemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, navCont
 
             if (hasilimport == "Import sukses!"){
                 viewmodel.addPemakaianResponseReset()
+                viewmodel.changeLoading(false)
                 navController.navigate(Screen.Home.route)
             } else {
                 Log.e("firestore", hasilimport)
             }
         }
         is Failure -> {
-            Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
             Log.e("firestore", addRequestResponse.e.toString())
             viewmodel.addPemakaianResponseReset()
         }
     }
 
 }
+
+
+@Composable
+fun GetPemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, action: (PemakaianRequest) -> Unit){
+    when(val response = viewmodel.getPemakaianResponse){
+        is Loading -> {
+        }
+        is Success -> {
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
+            action(response.data!!)
+            viewmodel.changeLoading(false)
+            viewmodel.getPemakaianReset()
+        }
+        is Failure -> {
+        }
+    }
+
+}
+
+
+@Composable
+fun GetPemakaianBeforeResponse(context: Context, id: String, viewmodel: PegawaiListViewModel, action: (PemakaianRequest) -> Unit){
+    when(val response = viewmodel.getPemakaianBeforeResponse){
+        is Loading -> {
+        }
+        is Success -> {
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
+            action(response.data!!)
+            viewmodel.getPemakaian(id)
+            viewmodel.changeLoading(false)
+            viewmodel.getPemakaianReset()
+        }
+        is Failure -> {
+        }
+    }
+
+}
+
+
 
 

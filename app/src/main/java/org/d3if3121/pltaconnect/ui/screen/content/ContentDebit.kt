@@ -19,11 +19,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
+import org.d3if3121.pltaconnect.ui.component.DialogLoading
 import org.d3if3121.pltaconnect.ui.component.InputPutihKeterangan
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.theme.Warna
@@ -57,6 +60,8 @@ fun ContentDebit(
     viewmodel: PegawaiListViewModel = hiltViewModel(),
     navController: NavHostController
 ){
+    DialogLoading(viewmodel)
+
     var judul2 by remember { mutableStateOf("(Jam 24)") }
     var context = LocalContext.current
 
@@ -96,12 +101,20 @@ fun MainContentDebit(
     tanggal: String,
     judul2: String
 ){
+    val id = tanggal + "_debit_" + judul2
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewmodel.getDebit(id)
+
+    }
+
 
     var isClicked by remember { mutableStateOf(false) }
 
     var maksimal by remember { mutableStateOf("") }
     var minimal by remember { mutableStateOf("") }
-    var ratarata by remember { mutableStateOf("32,04") }
+    var ratarata by remember { mutableStateOf("") }
 
     var dam by remember { mutableStateOf("") }
     var kth by remember { mutableStateOf("") }
@@ -111,6 +124,22 @@ fun MainContentDebit(
     var mindam by remember { mutableStateOf("") }
 
     var tma by remember { mutableStateOf("") }
+
+    GetDebitSungaiResponse(
+        context = context,
+        viewmodel = viewmodel
+    ){ data ->
+        maksimal = data.maksimal
+        minimal = data.minimal
+        ratarata = data.rata2
+        dam = data.dam
+        kth = data.kth
+        ph = data.ph
+        maxdam = data.maxdam
+        mindam = data.mindam
+        tma = data.tma
+    }
+
 
 
     Card(
@@ -125,15 +154,16 @@ fun MainContentDebit(
             modifier = Modifier.padding(17.dp).fillMaxWidth()
         ){
             DataDua(
-                ratacond = true,
+                tigacond = true,
                 judul1 = "Debit Sungai Cicatih",
                 judul2 = "Rata-rata:",
                 warnarata1 = Warna.MerahNormal,
                 ratarata = ratarata,
                 text1k1 = "Maksimal:",
-                text2k1 = "m2/d",
+                text2k1 = "",
                 text1k2 = "Minimal:",
-                text2k2 = "m2/d",
+                text2k2 = "",
+                text1k3 = "Rata-rata:",
                 hasil1 = maksimal,
                 onHasil1Change = {
                     maksimal = it
@@ -141,6 +171,10 @@ fun MainContentDebit(
                 hasil2 = minimal,
                 onHasil2Change = {
                     minimal= it
+                } ,
+                hasil3 = ratarata,
+                onHasil3Change = {
+                    ratarata= it
                 } ,
             )
 
@@ -203,7 +237,6 @@ fun MainContentDebit(
         onClick = {
             if (!isClicked) {
                 isClicked = true
-                val id = tanggal + "_debit_" + judul2
                 viewmodel.addDebit(
                     Debit(
                         id = id,
@@ -250,6 +283,7 @@ fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, navCo
             Log.e("firestore", addRequestResponse.toString())
 
             if (hasilimport == "Import sukses!"){
+                viewmodel.changeLoading(false)
                 viewmodel.addDebitResponseReset()
                 navController.navigate(Screen.Home.route)
             } else {
@@ -259,6 +293,27 @@ fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, navCo
         is Failure -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
             Log.e("firestore", addRequestResponse.e.toString())
+        }
+    }
+
+}
+
+
+@Composable
+fun GetDebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, action: (Debit) -> Unit){
+    when(val response = viewmodel.getDebitResponse){
+        is Loading -> {
+        }
+        is Success -> {
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
+            response.data?.let {
+                action(it)
+                viewmodel.changeLoading(false)
+            }
+        }
+
+        is Failure -> {
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 

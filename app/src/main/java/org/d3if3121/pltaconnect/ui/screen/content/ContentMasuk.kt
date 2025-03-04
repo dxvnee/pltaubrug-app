@@ -40,6 +40,7 @@ import org.d3if3121.pltaconnect.R
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Success
+import org.d3if3121.pltaconnect.data.model.data.Debit
 import org.d3if3121.pltaconnect.data.model.data.Masuk
 import org.d3if3121.pltaconnect.data.model.data.MasukRequest
 import org.d3if3121.pltaconnect.data.repository.ImportData
@@ -48,6 +49,7 @@ import org.d3if3121.pltaconnect.ui.component.BarisTigaText
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
+import org.d3if3121.pltaconnect.ui.component.DialogLoading
 import org.d3if3121.pltaconnect.ui.component.InputPutih
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.component.PindahUnit
@@ -69,6 +71,15 @@ fun ContentMasuk(
     navController: NavHostController
 
 ){
+    DialogLoading(viewmodel)
+
+    val id = tanggal + "_masuk"
+
+    LaunchedEffect(Unit) {
+        viewmodel.getMasuk(id)
+        viewmodel.getMasuk(id)
+    }
+
     var unit by remember { mutableStateOf("Unit 1") }
 
     var unit1 by remember { mutableStateOf(Masuk())}
@@ -81,6 +92,39 @@ fun ContentMasuk(
         unit1 = unit1.copy(jam = rumusMasuk(unit1))
         unit2 = unit2.copy(jam = rumusMasuk(unit2))
         unit3 = unit3.copy(jam = rumusMasuk(unit3))
+    }
+
+    GetMasukResponse(
+        context = context,
+        viewmodel = viewmodel
+    ){ data ->
+        unit1 = unit1.copy(
+            keterangan = data.keterangan1,
+            masuk1 = data.masuk1_1,
+            keluar1 = data.keluar1_1,
+            masuk2 = data.masuk1_2,
+            keluar2 = data.keluar1_2,
+            masuk3 = data.masuk1_3,
+            keluar3 = data.keluar1_3,
+        )
+        unit2 = unit2.copy(
+            keterangan = data.keterangan2,
+            masuk1 = data.masuk2_1,
+            keluar1 = data.keluar2_1,
+            masuk2 = data.masuk2_2,
+            keluar2 = data.keluar2_2,
+            masuk3 = data.masuk2_3,
+            keluar3 = data.keluar2_3,
+        )
+        unit3 = unit3.copy(
+            keterangan = data.keterangan3,
+            masuk1 = data.masuk3_1,
+            keluar1 = data.keluar3_1,
+            masuk2 = data.masuk3_2,
+            keluar2 = data.keluar3_2,
+            masuk3 = data.masuk3_3,
+            keluar3 = data.keluar3_3,
+        )
     }
 
     MasukResponse(
@@ -574,25 +618,31 @@ fun selisihJam(waktu1: String, waktu2: String): String {
     }
 }
 
-
 fun tambahJam(jam1: String, jam2: String, jam3: String): String {
     val format = DateTimeFormatter.ofPattern("HH:mm")
 
     return try {
-        val jam1konv = parseJam(jam1) ?: return jam1
-        val jam2konv = parseJam(jam2) ?: return jam2
-        val jam3konv = parseJam(jam3) ?: return jam3
+        val jam1konv = parseJam(jam1) ?: return "Format Salah (HH:MM)"
+        val jam2konv = parseJam(jam2) ?: return "Format Salah (HH:MM)"
+        val jam3konv = parseJam(jam3) ?: return "Format Salah (HH:MM)"
 
-        val hasil = jam1konv
-            .plusHours(jam2konv.hour.toLong()).plusMinutes(jam2konv.minute.toLong())
-            .plusHours(jam3konv.hour.toLong()).plusMinutes(jam3konv.minute.toLong())
+        var totalJam = jam1konv.hour + jam2konv.hour + jam3konv.hour
+        var totalMenit = jam1konv.minute + jam2konv.minute + jam3konv.minute
 
-        hasil.format(format)
+        totalJam += totalMenit / 60
+        totalMenit %= 60
+
+        if (totalJam >= 24) {
+            return "Jam tidak boleh melebihi 23:59"
+        }
+
+        String.format(Locale.US, "%02d:%02d", totalJam, totalMenit)
     } catch (e: Exception) {
         Log.d("SALAH", e.toString())
         "Format Salah (HH:MM)"
     }
 }
+
 
 
 @Composable
@@ -608,6 +658,8 @@ fun MasukResponse(context: Context, viewmodel: PegawaiListViewModel, navControll
 
             if (hasilimport == "Import sukses!"){
                 viewmodel.addMasukResponseReset()
+                viewmodel.changeLoading(false)
+
                 navController.navigate(Screen.Home.route)
             } else {
                 Log.e("firestore", hasilimport)
@@ -617,6 +669,26 @@ fun MasukResponse(context: Context, viewmodel: PegawaiListViewModel, navControll
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
             Log.e("firestore", addRequestResponse.e.toString())
             viewmodel.addMasukResponseReset()
+        }
+    }
+
+}
+
+
+@Composable
+fun GetMasukResponse(context: Context, viewmodel: PegawaiListViewModel, action: (MasukRequest) -> Unit){
+    when(val response = viewmodel.getMasukResponse){
+        is Loading -> {
+        }
+        is Success -> {
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
+            action(response.data!!)
+            viewmodel.changeLoading(false)
+            viewmodel.getMasukReset()
+
+        }
+        is Failure -> {
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
