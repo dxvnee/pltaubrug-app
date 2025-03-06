@@ -125,9 +125,8 @@ fun TopBar(
                         Column (
                             modifier = Modifier.padding(end = 9.dp)
                         ){
-                            Image(
-                                painter = painterResource(id = R.drawable.photo),
-                                contentDescription = "App logo",
+                            FotoProfil(
+                                imageUrl = currentUser.foto,
                                 modifier = Modifier
                                     .size(45.dp)
                             )

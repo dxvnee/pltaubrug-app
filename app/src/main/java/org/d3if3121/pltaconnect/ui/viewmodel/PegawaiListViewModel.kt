@@ -1,5 +1,6 @@
 package org.d3if3121.pltaconnect.ui.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDatePickerState
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.d3if3121.pltaconnect.data.datastore.UserPreferences
 import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
 import org.d3if3121.pltaconnect.data.model.PegawaiLogin
@@ -40,6 +42,7 @@ import org.d3if3121.pltaconnect.data.repository.interfaces.LoginResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.UpdatePegawaiResponse
+import org.d3if3121.pltaconnect.data.repository.interfaces.AddFotoProfil
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -49,6 +52,7 @@ import javax.inject.Inject
 class PegawaiListViewModel @Inject constructor(
     private val repo: PegawaiListInterface
 ): ViewModel() {
+
     var loading by mutableStateOf(false)
         private set
 
@@ -93,6 +97,11 @@ class PegawaiListViewModel @Inject constructor(
     var viewedProjects by mutableStateOf(listOf<String>())
         private set
 
+    var addFotoProfil by mutableStateOf<AddFotoProfil>(Response.Loading)
+        private set
+
+    var usermasuk by mutableStateOf(false)
+        private set
 
     fun addViewedProject(projectId: String) {
         viewedProjects = viewedProjects + projectId // Membuat salinan baru dari List dengan menambah proyek
@@ -121,6 +130,20 @@ class PegawaiListViewModel @Inject constructor(
     fun changeTanggalBefore(selectedDate: String){
         tanggalBefore = selectedDate
     }
+
+//    fun login(userId: String) {
+//        viewModelScope.launch {
+//            userPreferences.saveuser(userId)
+//            usermasuk = true
+//        }
+//    }
+//
+//    fun logout() {
+//        viewModelScope.launch {
+//            userPreferences.clearuser()
+//            usermasuk = false
+//        }
+//    }
 
 
     fun addPegawai(pegawai: Pegawai) = viewModelScope.launch {
@@ -175,17 +198,6 @@ class PegawaiListViewModel @Inject constructor(
     }
 
 
-
-
-
-    fun editUser(nama: String, jurusan: String){
-        user = user.copy(
-            nama = nama,
-            jurusan = jurusan
-        )
-        updatePegawaiResponse = Response.Loading
-    }
-
     fun loginPegawai(response: PegawaiLogin) = viewModelScope.launch {
         changeLoading(true)
         loginResponse = repo.loginPegawai(response.nim, response.password)
@@ -214,6 +226,8 @@ class PegawaiListViewModel @Inject constructor(
     var getDebitResponse by mutableStateOf<GetDebitResponse>(Response.Loading)
         private set
     var getProduksiResponse by mutableStateOf<GetProduksiResponse>(Response.Loading)
+        private set
+    var getProduksiBeforeResponse by mutableStateOf<GetProduksiResponse>(Response.Loading)
         private set
     var getPemakaianResponse by mutableStateOf<GetPemakaianResponse>(Response.Loading)
         private set
@@ -250,10 +264,16 @@ class PegawaiListViewModel @Inject constructor(
         changeLoading(true)
         getDebitResponse = repo.getDebit(id)
     }
+
     fun getProduksi(id: String) = viewModelScope.launch {
         changeLoading(true)
         getProduksiResponse = repo.getProduksi(id)
     }
+    fun getProduksiBefore(id: String) = viewModelScope.launch {
+        changeLoading(true)
+        getProduksiBeforeResponse = repo.getProduksi(id)
+    }
+
     fun getPemakaian(id: String) = viewModelScope.launch {
         changeLoading(true)
         getPemakaianResponse = repo.getPemakaian(id)
@@ -270,9 +290,19 @@ class PegawaiListViewModel @Inject constructor(
     fun getMasukReset() {
         getMasukResponse = Response.Loading
     }
+    fun getPemakaianBeforeReset() {
+        getPemakaianBeforeResponse = Response.Loading
+    }
     fun getPemakaianReset() {
         getPemakaianResponse = Response.Loading
     }
+    fun getProduksiBeforeReset() {
+        getProduksiBeforeResponse = Response.Loading
+    }
+    fun getProduksiReset() {
+        getProduksiResponse = Response.Loading
+    }
+
 
 
 
@@ -300,6 +330,20 @@ class PegawaiListViewModel @Inject constructor(
     //
     fun getSheetResponseReset() {
         getSheetResponse = Response.Loading
+    }
+
+    fun addFotoProfil(nip: String, uri: Uri) = viewModelScope.launch {
+        changeLoading(true)
+
+        addFotoProfil = repo.addFotoProfil(nip, uri)
+    }
+
+    fun loginResponseReset() {
+        loginResponse = Response.Loading
+        user = Pegawai()
+    }
+    fun addFotoProfilReset() {
+        addFotoProfil = Response.Loading
     }
 
 

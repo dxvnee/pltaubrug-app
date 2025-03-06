@@ -54,6 +54,7 @@ fun InputPutihKeterangan(
                         fontSize = besarhuruf.sp,
                         fontWeight = FontWeight.Normal,
                         color = Warna.MerahNormal,
+
                     )
                 }
 

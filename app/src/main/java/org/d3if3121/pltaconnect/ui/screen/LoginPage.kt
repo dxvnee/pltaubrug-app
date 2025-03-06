@@ -24,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,6 +68,12 @@ fun LoginPage(
     navController: NavHostController,
     viewmodel: PegawaiListViewModel = hiltViewModel()
 ) {
+    val sudahlogin = viewmodel.usermasuk
+    LaunchedEffect(Unit) {
+        if (sudahlogin){
+            navController.navigate(Screen.Home.route)
+        }
+    }
     var nim by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible = remember { mutableStateOf(false) }
@@ -122,8 +129,8 @@ fun LoginPage(
                     painter = painterResource(id = R.drawable.pln),
                     contentDescription = "App logo",
                     modifier = Modifier
-                        .width(263.dp)
-                        .height(70.dp)
+                        .width(463.dp)
+                        .height(95.dp)
                 )
             }
 
@@ -279,28 +286,6 @@ fun LoginPage(
                             }
                         )
 
-
-                        Row(
-
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Belum punya akun? ",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight(300)
-                            )
-                            ClickableText(
-                                text = AnnotatedString("Silahkan daftar!"),
-                                onClick = {
-                                    navController.navigate(Screen.Register.route)
-                                },
-                                style = TextStyle.Default.copy(
-                                    Warna.MerahNormal,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight(500)
-                                )
-                            )
-                        }
 
                     }
                 }

@@ -34,11 +34,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.trace
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Success
+import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.Produksi
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.repository.ImportData
@@ -47,6 +49,7 @@ import org.d3if3121.pltaconnect.ui.component.BarisTigaText
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.ButtonTiga
 import org.d3if3121.pltaconnect.ui.component.DataDua
+import org.d3if3121.pltaconnect.ui.component.DialogLoading
 import org.d3if3121.pltaconnect.ui.component.JudulUtama
 import org.d3if3121.pltaconnect.ui.component.PindahUnit
 import org.d3if3121.pltaconnect.ui.theme.Warna
@@ -64,32 +67,120 @@ fun ContentProduksi(
     navController: NavHostController
 
 ){
-    var judul2 by remember { mutableStateOf("(Jam 10)") }
-    var context = LocalContext.current
+    DialogLoading(viewmodel)
 
+    var judul2 by remember { mutableStateOf("(Jam 10)") }
+    val id = tanggal + "_produksi_" + judul2
+    val idbefore = viewmodel.tanggalBefore + "_produksi_" + judul2
+
+    LaunchedEffect(Unit) {
+        viewmodel.getProduksiBefore(idbefore)
+    }
+
+
+    var context = LocalContext.current
     var unit by remember { mutableStateOf("Unit 1") }
+    var process by remember { mutableStateOf("") }
+
+    var tracedata1 by remember { mutableStateOf(false) }
+    var tracedata2 by remember { mutableStateOf(false) }
+    var tracedata3 by remember { mutableStateOf(false) }
 
     var unit1 by remember { mutableStateOf(Produksi())}
     var unit2 by remember { mutableStateOf(Produksi())}
     var unit3 by remember { mutableStateOf(Produksi())}
+
+    var unitsebelum1 by remember { mutableStateOf(Produksi())}
+    var unitsebelum2 by remember { mutableStateOf(Produksi())}
+    var unitsebelum3 by remember { mutableStateOf(Produksi())}
+
     var unittotal by remember { mutableStateOf(Produksi(pemakaian = "0")) }
 
     var sheetpemakaiansendiri by remember { mutableStateOf("254") }
     var isClicked by remember { mutableStateOf(false) }
 
-    var checkbox1 by remember { mutableStateOf(true) }
-    var checkbox2 by remember { mutableStateOf(true) }
-    var checkbox3 by remember { mutableStateOf(true) }
+    var checkbox1 by remember { mutableStateOf(false) }
+    var checkbox2 by remember { mutableStateOf(false) }
+    var checkbox3 by remember { mutableStateOf(false) }
 
-    var errorinfo by remember { mutableStateOf("")}
+    GetProduksiBeforeResponse(
+        context = context,
+        id = id,
+        viewmodel = viewmodel
+    ) { data ->
+        unitsebelum1 = unitsebelum1.copy(
+            sesudah = data.sesudah1,
+            sebelum = data.sebelum1,
+            kwh = data.kwh1
+        )
+        unitsebelum2 = unitsebelum2.copy(
+            sesudah = data.sesudah2,
+            sebelum = data.sebelum2,
+            kwh = data.kwh2
+        )
+        unitsebelum3 = unitsebelum3.copy(
+            sesudah = data.sesudah3,
+            sebelum = data.sebelum3,
+            kwh = data.kwh3
+        )
+        Log.d("keter4", unitsebelum1.sesudah)
+
+        viewmodel.getProduksi(id)
+    }
 
 
-    LaunchedEffect(unit1, unit2, unit3, checkbox1, checkbox2, checkbox3) {
-        unit1 = hitungUnitProduksi(unit1, unittotal, sheetpemakaiansendiri, checkbox1)
-        unit2 = hitungUnitProduksi(unit2, unittotal, sheetpemakaiansendiri, checkbox2)
-        unit3 = hitungUnitProduksi(unit3, unittotal, sheetpemakaiansendiri, checkbox3)
+    GetProduksiResponse(
+        context = context,
+        viewmodel = viewmodel,
+        onProcessChange = {
+            process = "currentdata_notavailable"
+        }
+    ) { data ->
+        unit1 = unit1.copy(
+            sesudah = data.sesudah1,
+            sebelum = data.sebelum1,
+            selisih = data.selisih1,
+            kwh = data.kwh1,
+            rataair = data.rataair1,
+            air = data.air1,
+            ekonomisair = data.ekonomisair1,
+            pemakaian = data.pemakaian1,
+            penjualan = data.penjualan1,
 
-        unittotal = totalProduksi(unit1, unit2, unit3, sheetpemakaiansendiri)
+        )
+        unit2 = unit2.copy(
+            sesudah = data.sesudah2,
+            sebelum = data.sebelum2,
+            selisih = data.selisih2,
+            kwh = data.kwh2,
+            rataair = data.rataair2,
+            air = data.air2,
+            ekonomisair = data.ekonomisair2,
+            pemakaian = data.pemakaian2,
+            penjualan = data.penjualan2,
+        )
+        unit3 = unit3.copy(
+            sesudah = data.sesudah3,
+            sebelum = data.sebelum3,
+            selisih = data.selisih3,
+            kwh = data.kwh3,
+            rataair = data.rataair3,
+            air = data.air3,
+            ekonomisair = data.ekonomisair3,
+            pemakaian = data.pemakaian3,
+            penjualan = data.penjualan3,
+        )
+        process = "currentdata_available"
+    }
+
+    if(process != ""){
+        LaunchedEffect(unit1, unit2, unit3, checkbox1, checkbox2, checkbox3) {
+            unit1 = hitungUnitProduksi(unit1, unitsebelum1, unittotal, sheetpemakaiansendiri, checkbox1, process, tracedata1, onTracedataChange = {tracedata1 = true})
+            unit2 = hitungUnitProduksi(unit2, unitsebelum2, unittotal, sheetpemakaiansendiri, checkbox2, process, tracedata2, onTracedataChange = {tracedata2 = true})
+            unit3 = hitungUnitProduksi(unit3, unitsebelum3, unittotal, sheetpemakaiansendiri, checkbox3, process, tracedata3, onTracedataChange = {tracedata3 = true})
+
+            unittotal = totalProduksi(unit1, unit2, unit3, sheetpemakaiansendiri)
+        }
     }
 
     ProduksiResponse(
@@ -271,8 +362,6 @@ fun ContentProduksi(
                     onClick = {
                         isClicked = true
                         if(isClicked){
-
-                            val id = tanggal + "_produksi_" + judul2
                             viewmodel.addProduksi(
                                 ProduksiRequest(
                                     id = id,
@@ -528,6 +617,7 @@ fun MainContent(
         }
     }
     CheckboxBiru(checked = checkbox, onCheckedChange = onCheckedChange)
+
 }
 
 fun totalProduksi(
@@ -565,9 +655,13 @@ fun String.toFloatSafe(): Float = this.toFloatOrNull() ?: 0f
 
 fun hitungUnitProduksi(
     unit: Produksi,
+    unitsebelum: Produksi,
     unittotal: Produksi,
     sheetpemakaiansendiri: String,
-    checkbox: Boolean
+    checkbox: Boolean,
+    process: String,
+    tracedata: Boolean,
+    onTracedataChange: () -> Unit
 ): Produksi {
     val sebelum = unit.sebelum.toFloatSafe()
     val sesudah = unit.sesudah.toFloatSafe()
@@ -587,22 +681,47 @@ fun hitungUnitProduksi(
     val rumuspemakaian = if (totalKwh == 0f) 0f else abs((kwh / totalKwh) * totalPemakaian)
     val rumuspenjualan = abs(kwh - sheetpemakaiansendiri.toFloatSafe())
 
-    return if(checkbox) {
-        unit.copy(
-            selisih = String.format(Locale.US, "%.2f", selisihkonv),
-            kwh = String.format(Locale.US, "%.2f", kali),
-            rataair = String.format(Locale.US, "%.9f", rumusrataair),
+    if(checkbox) {
+
+        return unit.copy(
+            sebelum =  if(unit.sebelum == "") unitsebelum.sesudah else unit.sebelum,
+
         )
     } else {
-        return unit.copy(
-            selisih = String.format(Locale.US, "%.2f", selisihkonv),
-            kwh = String.format(Locale.US, "%.2f", kali),
-            rataair = String.format(Locale.US, "%.9f", rumusrataair),
-            ekonomisair = String.format(Locale.US, "%.2f", rumusekonomisair),
-            air = String.format(Locale.US, "%.0f", rumusair),
-            pemakaian = String.format(Locale.US, "%.1f", rumuspemakaian),
-            penjualan = String.format(Locale.US, "%.0f", rumuspenjualan)
-        )
+        if(process ==  "currentdata_notavailable"){
+            return unit.copy(
+                sebelum =  if(unit.sebelum == "") unitsebelum.sesudah else unit.sebelum,
+                selisih = String.format(Locale.US, "%.2f", selisihkonv),
+                kwh = String.format(Locale.US, "%.2f", kali),
+                rataair = String.format(Locale.US, "%.9f", rumusrataair),
+                ekonomisair = String.format(Locale.US, "%.2f", rumusekonomisair),
+                air = String.format(Locale.US, "%.0f", rumusair),
+                pemakaian = String.format(Locale.US, "%.1f", rumuspemakaian),
+                penjualan = String.format(Locale.US, "%.0f", rumuspenjualan)
+            )
+        } else {
+            if(!tracedata){
+                onTracedataChange()
+                Log.d("keter99", tracedata.toString())
+                return unit.copy(
+                    sebelum =  if(unit.sebelum == "") unitsebelum.sesudah else unit.sebelum,
+                )
+            } else {
+                Log.d("keter99", tracedata.toString())
+
+                return unit.copy(
+                    sebelum =  if(unit.sebelum == "") unitsebelum.sesudah else unit.sebelum,
+                    selisih = String.format(Locale.US, "%.2f", selisihkonv),
+                    kwh = String.format(Locale.US, "%.2f", kali),
+                    rataair = String.format(Locale.US, "%.9f", rumusrataair),
+                    ekonomisair = String.format(Locale.US, "%.2f", rumusekonomisair),
+                    air = String.format(Locale.US, "%.0f", rumusair),
+                    pemakaian = String.format(Locale.US, "%.1f", rumuspemakaian),
+                    penjualan = String.format(Locale.US, "%.0f", rumuspenjualan)
+                )
+            }
+        }
+
     }
 
 
@@ -631,7 +750,54 @@ fun ProduksiResponse(context: Context, viewmodel: PegawaiListViewModel, navContr
             viewmodel.addProduksiResponseReset()
         }
     }
+}
+
+
+@Composable
+fun GetProduksiBeforeResponse(
+    context: Context,
+    id: String,
+    viewmodel: PegawaiListViewModel,
+    action: (ProduksiRequest) -> Unit,
+){
+    when(val response = viewmodel.getProduksiBeforeResponse){
+        is Loading -> {
+        }
+        is Success -> {
+            action(response.data!!)
+            viewmodel.changeLoading(false)
+            viewmodel.getProduksiBeforeReset()
+        }
+        is Failure -> {
+            viewmodel.changeLoading(false)
+            viewmodel.getProduksi(id)
+            viewmodel.getProduksiBeforeReset()
+        }
+    }
 
 }
+
+@Composable
+fun GetProduksiResponse(context: Context, viewmodel: PegawaiListViewModel, onProcessChange: () -> Unit ,action: (ProduksiRequest) -> Unit){
+    when(val response = viewmodel.getProduksiResponse){
+        is Loading -> {
+
+        }
+        is Success -> {
+            action(response.data!!)
+            viewmodel.changeLoading(false)
+            viewmodel.getProduksiReset()
+        }
+        is Failure -> {
+            onProcessChange()
+            viewmodel.changeLoading(false)
+            viewmodel.getProduksiReset()
+
+        }
+    }
+
+}
+
+
 
 

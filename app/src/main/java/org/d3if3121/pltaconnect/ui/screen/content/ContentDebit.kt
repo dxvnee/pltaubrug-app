@@ -305,7 +305,6 @@ fun GetDebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, ac
         is Loading -> {
         }
         is Success -> {
-            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
             response.data?.let {
                 action(it)
                 viewmodel.changeLoading(false)
@@ -313,7 +312,8 @@ fun GetDebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, ac
         }
 
         is Failure -> {
-            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
+            viewmodel.changeLoading(false)
+
         }
     }
 

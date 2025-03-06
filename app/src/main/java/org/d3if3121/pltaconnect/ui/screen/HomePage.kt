@@ -78,6 +78,7 @@ import org.d3if3121.pltaconnect.data.model.Response
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
 import org.d3if3121.pltaconnect.ui.component.Calendar
+import org.d3if3121.pltaconnect.ui.component.DialogLoading
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -201,6 +202,7 @@ fun ProjectListHome(
     pegawaiListViewModel: PegawaiListViewModel,
     navController: NavHostController
 ){
+
     var selecteddate by remember { mutableStateOf("") }
 
     Card(
@@ -259,51 +261,9 @@ fun ProjectListHome(
                     }
                 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
-
-
-
-
-
     }
 
 
     Spacer(modifier = Modifier.height(20.dp))
 }
-
-@Composable
-fun EmptyView(){
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().height(550.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "You're up to date!",
-                color = Warna.MerahNormal,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Normal,
-            )
-        }
-
-    }
-}
-
-

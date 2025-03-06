@@ -13,7 +13,7 @@ data class Produksi(
 )
 
 data class ProduksiRequest(
-    var id: String,
+    var id: String = "",
     var sesudah1: String = "",
     var sebelum1: String = "",
     var selisih1: String = "",

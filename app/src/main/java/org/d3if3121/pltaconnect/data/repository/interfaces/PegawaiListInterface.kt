@@ -1,5 +1,6 @@
 package org.d3if3121.pltaconnect.data.repository.interfaces
 
+import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import org.d3if3121.pltaconnect.data.model.Pegawai
 import org.d3if3121.pltaconnect.data.model.PegawaiEdit
@@ -34,6 +35,8 @@ typealias GetPemakaianResponse = Response<PemakaianRequest>
 typealias GetMasukResponse = Response<MasukRequest>
 
 typealias SheetResponse = Response<Sheet>
+typealias AddFotoProfil = Response<String>
+
 
 interface PegawaiListInterface {
     fun getPegawaiList(): Flow<PegawaiListResponse>
@@ -62,6 +65,7 @@ interface PegawaiListInterface {
     suspend fun getMasuk(T: String): GetMasukResponse
     //
     suspend fun getSheet(id: String): SheetResponse
+    suspend fun addFotoProfil(nip: String, uri: Uri): AddFotoProfil
 
 
 }

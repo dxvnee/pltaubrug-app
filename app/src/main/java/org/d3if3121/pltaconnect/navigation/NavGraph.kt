@@ -7,11 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import org.d3if3121.absenubrug.ui.screen.ProfilePage
 import org.d3if3121.pltaconnect.ui.screen.ContentPage
 import org.d3if3121.pltaconnect.ui.screen.HomePage
 import org.d3if3121.pltaconnect.ui.screen.LoginPage
-import org.d3if3121.pltaconnect.ui.screen.ProfilePage
-import org.d3if3121.pltaconnect.ui.screen.RegisterPage
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
 
@@ -28,11 +27,6 @@ fun SetupNavGraph(){
         composable(route = Screen.Login.route){
             LoginPage(navController, pegawailistviewmodel)
         }
-
-        composable(route = Screen.Register.route){
-            RegisterPage(navController, pegawailistviewmodel)
-        }
-
         composable(route = Screen.Home.route){
             HomePage(navController, pegawailistviewmodel)
         }

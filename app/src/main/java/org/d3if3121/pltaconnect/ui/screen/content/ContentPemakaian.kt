@@ -63,7 +63,10 @@ fun ContentPemakaian(
     navController: NavHostController
 
 ){
+    var context = LocalContext.current
+
     DialogLoading(viewmodel)
+
     var judul2 by remember { mutableStateOf("(Jam 24)") }
     val id = tanggal + "_pemakaian_" + judul2
     val idBefore = viewmodel.tanggalBefore + "_pemakaian_" + judul2
@@ -73,8 +76,8 @@ fun ContentPemakaian(
     }
 
     var kva by remember { mutableStateOf("50 kVA") }
+    var process by remember { mutableStateOf(false) }
 
-    var context = LocalContext.current
 
     var kva1 by remember { mutableStateOf(Pemakaian()) }
     var kva2 by remember { mutableStateOf(Pemakaian()) }
@@ -109,18 +112,21 @@ fun ContentPemakaian(
             sebelum = data.kwh3_sebelum,
             kwh = data.kwh3
         )
+        viewmodel.getPemakaian(id)
     }
 
     GetPemakaianResponse(
         context = context,
-        viewmodel = viewmodel
+        viewmodel = viewmodel,
+        onProcessChange = {
+            process = true
+        }
     ) { data ->
         kva1 = kva1.copy(
             sesudah = data.kwh1_sesudah,
             sebelum = data.kwh1_sebelum,
             kwh = data.kwh1
         )
-        Log.d("hehe", kvasebelum1.sesudah)
         kva2 = kva2.copy(
             sesudah = data.kwh2_sesudah,
             sebelum = data.kwh2_sebelum,
@@ -131,15 +137,19 @@ fun ContentPemakaian(
             sebelum = data.kwh2_sebelum,
             kwh = data.kwh3
         )
+        process = true
     }
 
-    LaunchedEffect(kva1, kva2, kva3, checkbox1, checkbox2, checkbox3){
-        kva1 = hitungPemakaianSendiri(kva = kva1, kvasebelum = kvasebelum1, checkbox = checkbox1)
-        kva2 = hitungPemakaianSendiri(kva = kva2, kvasebelum = kvasebelum2, checkbox = checkbox2)
-        kva3 = hitungPemakaianSendiri(kva = kva3, kvasebelum = kvasebelum3, checkbox = checkbox3)
+    if(process){
+        LaunchedEffect(kva1, kva2, kva3, checkbox1, checkbox2, checkbox3){
+            kva1 = hitungPemakaianSendiri(kva = kva1, kvasebelum = kvasebelum1, checkbox = checkbox1)
+            kva2 = hitungPemakaianSendiri(kva = kva2, kvasebelum = kvasebelum2, checkbox = checkbox2)
+            kva3 = hitungPemakaianSendiri(kva = kva3, kvasebelum = kvasebelum3, checkbox = checkbox3)
 
-        kvatotal = totalPemakaian(kva1, kva2, kva3)
+            kvatotal = totalPemakaian(kva1, kva2, kva3)
+        }
     }
+
 
     PemakaianResponse(
         context = context,
@@ -486,11 +496,13 @@ fun hitungPemakaianSendiri(kva : Pemakaian, kvasebelum: Pemakaian, checkbox: Boo
 
     return if (!checkbox){
         kva.copy(
-            sebelum = kvasebelum.sesudah,
+            sebelum = if(kva.sebelum == "") kvasebelum.sesudah else kva.sebelum,
             kwh = String.format(Locale.US, "%.2f", kwh),
         )
+
     } else {
         kva.copy(
+            sebelum = if(kva.sebelum == "") kvasebelum.sesudah else kva.sebelum,
             kwh = String.format(Locale.US, "%.2f", kwh),
         )
     }
@@ -518,18 +530,15 @@ fun PemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, navCont
         is Success -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
             val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
-            Log.e("firestore", addRequestResponse.toString())
 
             if (hasilimport == "Import sukses!"){
                 viewmodel.addPemakaianResponseReset()
                 viewmodel.changeLoading(false)
                 navController.navigate(Screen.Home.route)
             } else {
-                Log.e("firestore", hasilimport)
             }
         }
         is Failure -> {
-            Log.e("firestore", addRequestResponse.e.toString())
             viewmodel.addPemakaianResponseReset()
         }
     }
@@ -538,17 +547,21 @@ fun PemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, navCont
 
 
 @Composable
-fun GetPemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, action: (PemakaianRequest) -> Unit){
+fun GetPemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, onProcessChange: () -> Unit ,action: (PemakaianRequest) -> Unit){
     when(val response = viewmodel.getPemakaianResponse){
         is Loading -> {
+
         }
         is Success -> {
-            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
             action(response.data!!)
             viewmodel.changeLoading(false)
             viewmodel.getPemakaianReset()
         }
         is Failure -> {
+            onProcessChange()
+            viewmodel.changeLoading(false)
+            viewmodel.getPemakaianReset()
+
         }
     }
 
@@ -556,18 +569,24 @@ fun GetPemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, acti
 
 
 @Composable
-fun GetPemakaianBeforeResponse(context: Context, id: String, viewmodel: PegawaiListViewModel, action: (PemakaianRequest) -> Unit){
+fun GetPemakaianBeforeResponse(
+    context: Context,
+    id: String,
+    viewmodel: PegawaiListViewModel,
+    action: (PemakaianRequest) -> Unit,
+){
     when(val response = viewmodel.getPemakaianBeforeResponse){
         is Loading -> {
         }
         is Success -> {
-            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
             action(response.data!!)
-            viewmodel.getPemakaian(id)
             viewmodel.changeLoading(false)
-            viewmodel.getPemakaianReset()
+            viewmodel.getPemakaianBeforeReset()
         }
         is Failure -> {
+            viewmodel.changeLoading(false)
+            viewmodel.getPemakaian(id)
+            viewmodel.getPemakaianBeforeReset()
         }
     }
 

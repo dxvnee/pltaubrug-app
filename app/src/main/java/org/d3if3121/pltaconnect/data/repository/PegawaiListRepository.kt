@@ -1,10 +1,12 @@
 package org.d3if3121.pltaconnect.data.repository
 
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
@@ -123,7 +125,7 @@ class PegawaiListRepository (
             pegawaiDocument.reference.update(
                 mapOf(
                     Pegawai.NAMA to pegawai.nama,
-                    Pegawai.JURUSAN to pegawai.major,
+                    Pegawai.ROLE to pegawai.major,
                 )
             ).await()
             Response.Success("Edit Success.")
@@ -167,12 +169,16 @@ class PegawaiListRepository (
 
         if (!docpegawai.isEmpty){
             val pegawai = docpegawai.first().toPegawai()
-
             if (pegawai.password == password){
-                Response.Success(pegawai)
+                if("SHEET" in pegawai.role){
+                    Response.Success(pegawai)
+                } else{
+                    Response.Failure(Exception("Anda tidak memiliki akses."))
+                }
             } else {
                 Response.Failure(Exception("Incorrect Password."))
             }
+
         } else {
             Response.Failure(Exception("NIM doesn't exist."))
         }
@@ -223,8 +229,6 @@ class PegawaiListRepository (
     override suspend fun getProduksi(id: String) = getData(produksiRef, id, ProduksiRequest::class.java)
 
 
-
-
     override suspend fun getSheet(id: String): Response<Sheet> = try {
         val snapshot = sheetRef.whereEqualTo("id", id).get().await()
 
@@ -244,15 +248,45 @@ class PegawaiListRepository (
 
 
 
+
+    override suspend fun addFotoProfil(nip: String, uri: Uri) = try {
+        val query = pegawaiRef.whereEqualTo("nip", nip).get().await()
+
+        if (uri != null) {
+            val imageUrl = uploadImagetoFirebase(uri, "${nip}_Foto", "fotoprofil/")
+            query.documents.first().reference.update("foto", imageUrl)
+            Response.Success(imageUrl)
+        } else {
+            Response.Failure(Exception("Tidak dapat mengupload foto."))
+        }
+
+    } catch (e: Exception) {
+        Response.Failure(e)
+    }
+
+    suspend fun uploadImagetoFirebase(uri: Uri, id: String, path: String = "images/"): String {
+
+        val storage = FirebaseStorage.getInstance()
+        val storageReference = storage.reference.child(path + id)
+        val uploadTask = storageReference.putFile(uri)
+
+        Log.d("STORAGE", storage.toString())
+        return try {
+            uploadTask.await()
+            storageReference.downloadUrl.await().toString()
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+
+
 }
 
-
 fun DocumentSnapshot.toPegawai() = Pegawai(
-    nama = getString(Pegawai.NAMA) ?: "Default",
-    password = getString(Pegawai.PASSWORD) ?: "Default",
-    nip = getString(Pegawai.NIP)?: "DefaultName",
-    jurusan = getString(Pegawai.JURUSAN)?: "DefaultName",
-    requests = get(Pegawai.REQUESTS) as? List<String> ?: emptyList(),
-    accept = get(Pegawai.ACCEPT) as? List<String> ?: emptyList(),
+    nama = getString(Pegawai.NAMA) ?: "null",
+    password = getString(Pegawai.PASSWORD) ?: "null",
+    nip = getString(Pegawai.NIP)?: "null",
+    role = get(Pegawai.ROLE) as? List<String> ?: emptyList(),
+    foto = getString(Pegawai.FOTO)?: "null",
 )
-

@@ -5,26 +5,17 @@ data class Pegawai(
     val nip: String = "",
     val password: String = "",
     val nama: String = "",
-    val jurusan: String = "",
-    val angkatan: String? = null,
-    val requests: List<String>? = emptyList(),
-    val accept: List<String>? = emptyList(),
-
-    val posts: List<String>? = null,
-    val totalpost: Int? = null
+    val role: List<String> = emptyList(),
+    val foto: String = ""
 ){
 
-    constructor() : this("", "", "", "", "", emptyList(), emptyList(), emptyList(),0)
+    constructor() : this("", "", "", emptyList<String>(), "")
 
     companion object {
         const val NIP = "nip"
         const val PASSWORD = "password"
         const val NAMA = "nama"
-        const val JURUSAN = "jurusan"
-        const val ANGKATAN = "angkatan"
-        const val POSTS = "posts"
-        const val TOTALPOST = "totalpost"
-        const val REQUESTS = "requests"
-        const val ACCEPT = "accept"
+        const val ROLE = "role"
+        const val FOTO = "foto"
     }
 }

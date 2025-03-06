@@ -681,14 +681,13 @@ fun GetMasukResponse(context: Context, viewmodel: PegawaiListViewModel, action: 
         is Loading -> {
         }
         is Success -> {
-            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
             action(response.data!!)
             viewmodel.changeLoading(false)
             viewmodel.getMasukReset()
 
         }
         is Failure -> {
-            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show()
+            viewmodel.changeLoading(false)
         }
     }
 
