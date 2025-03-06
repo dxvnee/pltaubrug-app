@@ -116,8 +116,8 @@ fun LoginPage(
                     painter = painterResource(id = R.drawable.pln),
                     contentDescription = "App logo",
                     modifier = Modifier
-                        .width(263.dp)
-                        .height(70.dp)
+                        .width(463.dp)
+                        .height(95.dp)
                 )
             }
 
