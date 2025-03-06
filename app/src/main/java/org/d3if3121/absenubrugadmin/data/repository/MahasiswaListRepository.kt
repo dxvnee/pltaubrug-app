@@ -86,7 +86,7 @@ class MahasiswaListRepository (
     override suspend fun addMahasiswa(mahasiswa: Mahasiswa) = try {
         val mahasiswaSama = mahasiswaRef.whereEqualTo("nim", mahasiswa.nip).get(Source.SERVER).await()
 
-        val hashedPassword = BCrypt.withDefaults()
+
         if (mahasiswaSama.isEmpty){
             val id = mahasiswaRef.add(mahasiswa).await().id
             Response.Success(id)
