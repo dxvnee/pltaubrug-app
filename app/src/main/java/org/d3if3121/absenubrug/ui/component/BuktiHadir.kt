@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -175,6 +177,7 @@ fun BuktiHadir(
                 if(statushadir){
                     Button(
                         onClick = {
+                            Log.d("masuk", "masuk")
 
                             if (ContextCompat.checkSelfPermission(
                                     context, Manifest.permission.ACCESS_FINE_LOCATION
@@ -183,8 +186,11 @@ fun BuktiHadir(
                                 getCurrentLocation(context, fusedLocationClient) { lat, lon ->
                                     location.value = Pair(lat, lon)
                                 }
+                                Log.d("masuk", "masuk1")
+
                             } else {
                                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                                Log.d("masuk", "masuk2")
                             }
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
@@ -196,12 +202,19 @@ fun BuktiHadir(
                     ) {
                         Text(text = "Lokasi", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     }
-                    location.value?.let { (lat, lon) ->
-                        lokasilat = lat
-                        lokasilon = lon
-                        showDialogLokasi = true
-                        onLokasiChange(lat, lon)
+                    Log.d("masuk", location.value.toString())
+
+                    LaunchedEffect(location.value) {
+                        location.value?.let { (lat, lon) ->
+                            lokasilat = lat
+                            lokasilon = lon
+                            showDialogLokasi = true
+                            onLokasiChange(lat, lon)
+                            Log.d("masuk", "masuk5")
+
+                        }
                     }
+
                 }
 
                 if(selectedstatus != "Pilih Keterangan"){

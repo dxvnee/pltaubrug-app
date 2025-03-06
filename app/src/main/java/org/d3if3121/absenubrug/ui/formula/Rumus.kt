@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.ImageUpload
 import org.d3if3121.absenubrug.data.model.Mahasiswa
@@ -24,20 +26,31 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-
-
-fun getCurrentLocation(context: Context, fusedLocationClient: FusedLocationProviderClient, onLocationReceived: (Double, Double) -> Unit) {
-    if (ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED
-    ) return
-
-    fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-        location?.let {
-            onLocationReceived(it.latitude, it.longitude)
-        }
+fun getCurrentLocation(
+    context: Context,
+    fusedLocationClient: FusedLocationProviderClient,
+    onLocationReceived: (Double, Double) -> Unit
+) {
+    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        Log.e("getCurrentLocation", "Izin lokasi tidak diberikan!")
+        return
     }
+
+    Log.d("getCurrentLocation", "Mencoba mendapatkan lokasi terbaru...")
+
+    val cancellationTokenSource = CancellationTokenSource()
+    fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
+        .addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                Log.d("getCurrentLocation", "Lokasi ditemukan: ${location.latitude}, ${location.longitude}")
+                onLocationReceived(location.latitude, location.longitude)
+            } else {
+                Log.e("getCurrentLocation", "Lokasi tidak tersedia, coba metode lain")
+            }
+        }
+        .addOnFailureListener { e ->
+            Log.e("getCurrentLocation", "Gagal mendapatkan lokasi: ${e.message}")
+        }
 }
 
 
