@@ -39,6 +39,7 @@ import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
 import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.model.data.Debit
+import org.d3if3121.pltaconnect.data.model.data.replaceDotsWithCommas
 import org.d3if3121.pltaconnect.data.repository.ImportData
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
@@ -237,20 +238,22 @@ fun MainContentDebit(
         onClick = {
             if (!isClicked) {
                 isClicked = true
+                val data = Debit(
+                    id = id,
+                    tanggal = tanggal,
+                    maksimal = maksimal,
+                    minimal = minimal,
+                    dam = dam,
+                    kth = kth,
+                    ph = ph,
+                    maxdam = maxdam,
+                    mindam = mindam,
+                    tma = tma,
+                    rata2 = ratarata
+                )
+                val debit = data.replaceDotsWithCommas()
                 viewmodel.addDebit(
-                    Debit(
-                        id = id,
-                        tanggal = tanggal,
-                        maksimal = maksimal,
-                        minimal = minimal,
-                        dam = dam,
-                        kth = kth,
-                        ph = ph,
-                        maxdam = maxdam,
-                        mindam = mindam,
-                        tma = tma,
-                        rata2 = ratarata
-                    )
+                    debit
                 )
             }
 
@@ -278,21 +281,29 @@ fun DebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, navCo
         is Loading -> {
         }
         is Success -> {
-            Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
-            Log.e("firestore", addRequestResponse.toString())
 
-            if (hasilimport == "Import sukses!"){
-                viewmodel.changeLoading(false)
-                viewmodel.addDebitResponseReset()
-                navController.navigate(Screen.Home.route)
-            } else {
-                Log.e("firestore", hasilimport)
+            LaunchedEffect (Unit){
+                val hasilimport = ImportData(addRequestResponse.idsheet!!)
+                Log.d("firestore1", addRequestResponse.toString())
+
+                if (hasilimport == "Import Sukses"){
+                    viewmodel.changeLoading(false)
+                    navController.navigate(Screen.Home.route)
+                    viewmodel.addDebitResponseReset()
+                    Log.d("firestore2", hasilimport)
+                } else {
+                    viewmodel.changeLoading(false)
+                    viewmodel.addDebitResponseReset()
+                    Log.d("firestore2", hasilimport)
+                }
             }
+
+
         }
         is Failure -> {
-            Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            Log.e("firestore", addRequestResponse.e.toString())
+            viewmodel.changeLoading(false)
+            viewmodel.addDebitResponseReset()
+            Log.d("firestore3", addRequestResponse.e.toString())
         }
     }
 
@@ -308,11 +319,16 @@ fun GetDebitSungaiResponse(context: Context, viewmodel: PegawaiListViewModel, ac
             response.data?.let {
                 action(it)
                 viewmodel.changeLoading(false)
+                Log.d("firestore35", response.toString())
+                viewmodel.getDebitResponseReset()
+
             }
         }
 
         is Failure -> {
             viewmodel.changeLoading(false)
+            Log.d("firestore35", response.e.toString())
+            viewmodel.getDebitResponseReset()
 
         }
     }

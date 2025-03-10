@@ -43,6 +43,7 @@ import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.model.data.Debit
 import org.d3if3121.pltaconnect.data.model.data.Masuk
 import org.d3if3121.pltaconnect.data.model.data.MasukRequest
+import org.d3if3121.pltaconnect.data.model.data.replaceDotsWithCommas
 import org.d3if3121.pltaconnect.data.repository.ImportData
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.BarisTigaText
@@ -283,39 +284,41 @@ fun ContentMasuk(
             ButtonMerah(
                 onClick = {
                     val id = tanggal + "_masuk"
+                    val data = MasukRequest(
+                        id = id,
+                        jam1 = unit1.jam,
+                        masuk1_1 = unit1.masuk1,
+                        masuk1_2 = unit1.masuk2,
+                        masuk1_3 = unit1.masuk3,
+                        keluar1_1 = unit1.keluar1,
+                        keluar1_2 = unit1.keluar2,
+                        keluar1_3 = unit1.keluar3,
+
+                        keterangan1 = unit1.keterangan,
+
+                        jam2 = unit2.jam,
+                        masuk2_1 = unit2.masuk1,
+                        masuk2_2 = unit2.masuk2,
+                        masuk2_3 = unit2.masuk3,
+                        keluar2_1 = unit2.keluar1,
+                        keluar2_2 = unit2.keluar2,
+                        keluar2_3 = unit2.keluar3,
+
+                        keterangan2 = unit2.keterangan,
+
+                        jam3 = unit3.jam,
+                        masuk3_1 = unit3.masuk1,
+                        masuk3_2 = unit3.masuk2,
+                        masuk3_3 = unit3.masuk3,
+                        keluar3_1 = unit3.keluar1,
+                        keluar3_2 = unit3.keluar2,
+                        keluar3_3 = unit3.keluar3,
+
+                        keterangan3 = unit3.keterangan,
+                    )
+                    val masuk = data.replaceDotsWithCommas()
                     viewmodel.addMasuk(
-                        MasukRequest(
-                            id = id,
-                            jam1 = unit1.jam,
-                            masuk1_1 = unit1.masuk1,
-                            masuk1_2 = unit1.masuk2,
-                            masuk1_3 = unit1.masuk3,
-                            keluar1_1 = unit1.keluar1,
-                            keluar1_2 = unit1.keluar2,
-                            keluar1_3 = unit1.keluar3,
-
-                            keterangan1 = unit1.keterangan,
-
-                            jam2 = unit2.jam,
-                            masuk2_1 = unit2.masuk1,
-                            masuk2_2 = unit2.masuk2,
-                            masuk2_3 = unit2.masuk3,
-                            keluar2_1 = unit2.keluar1,
-                            keluar2_2 = unit2.keluar2,
-                            keluar2_3 = unit2.keluar3,
-
-                            keterangan2 = unit2.keterangan,
-
-                            jam3 = unit3.jam,
-                            masuk3_1 = unit3.masuk1,
-                            masuk3_2 = unit3.masuk2,
-                            masuk3_3 = unit3.masuk3,
-                            keluar3_1 = unit3.keluar1,
-                            keluar3_2 = unit3.keluar2,
-                            keluar3_3 = unit3.keluar3,
-
-                            keterangan3 = unit3.keterangan,
-                        )
+                        masuk
                     )
                 },
                 modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
@@ -653,19 +656,26 @@ fun MasukResponse(context: Context, viewmodel: PegawaiListViewModel, navControll
         }
         is Success -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
-            Log.e("firestore", addRequestResponse.toString())
 
-            if (hasilimport == "Import sukses!"){
-                viewmodel.addMasukResponseReset()
-                viewmodel.changeLoading(false)
+            LaunchedEffect(Unit) {
+                val hasilimport = ImportData(addRequestResponse.idsheet!!)
+                Log.d("firestore1", addRequestResponse.toString())
 
-                navController.navigate(Screen.Home.route)
-            } else {
-                Log.e("firestore", hasilimport)
+                if (hasilimport == "Import Sukses") {
+                    viewmodel.changeLoading(false)
+                    navController.navigate(Screen.Home.route)
+                    viewmodel.addMasukResponseReset()
+                    Log.d("firestore2", hasilimport)
+                } else {
+                    viewmodel.changeLoading(false)
+                    viewmodel.addMasukResponseReset()
+                    Log.d("firestore2", hasilimport)
+
+                }
             }
         }
         is Failure -> {
+            viewmodel.changeLoading(false)
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
             Log.e("firestore", addRequestResponse.e.toString())
             viewmodel.addMasukResponseReset()

@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.d3if3121.pltaconnect.data.datastore.UserPreferences
 import org.d3if3121.pltaconnect.data.repository.PegawaiListRepository
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 import javax.inject.Singleton
@@ -34,6 +35,16 @@ object AppModule {
         sheetRef = Firebase.firestore.collection(SHEET),
     )
 
-
-
 }
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DataStoreModule {
+
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
+        return UserPreferences(context)
+    }
+}
+

@@ -5,37 +5,23 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.d3if3121.pltaconnect.data.repository.interfaces.RetrofitClient
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
-@Composable
-fun ImportData(viewmodel: PegawaiListViewModel, url: String): String {
-    val coroutineScope = rememberCoroutineScope()
-    var responseText by remember { mutableStateOf("Menunggu respons...") }
 
-
-    Log.e("IMPORT", url)
-
-    fun importData(): String {
-        coroutineScope.launch {
-            try {
-                Log.e("IMPORT", "JALAN")
-                val response = RetrofitClient.instance.runScript(url)
-                responseText = "Import sukses!"
-                Log.d("IMPORT", responseText)
-
-            } catch (e: Exception) {
-                responseText = "Error: ${e.localizedMessage}"
-                Log.d("IMPORT", responseText)
-            }
+suspend fun ImportData(url: String): String{
+    return withContext(Dispatchers.IO){
+        try {
+            val response = RetrofitClient.instance.runScript(url)
+            "Import Sukses"
+        } catch (e: Exception){
+            "Import Gagal : $e"
         }
-        return responseText
     }
-    LaunchedEffect(Unit){
-        importData()
-    }
-    return responseText
 }
 

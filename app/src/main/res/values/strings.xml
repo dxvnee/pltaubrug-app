@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Tellink</string>
+    <string name="app_name">Spreadsheet PLTA Ubrug</string>
     <string name="tellink">Tellink.</string>
     <string name="login">Login</string>
     <string name="nim">Keterangan:</string>
     <string name="name">Name :</string>
     <string name="enter_nim">Masukkan NIP disini: </string>
-    <string name="enter_name">Masukkan nama disini:</string>
+    <string name="enter_name">Input data...</string>
     <string name="enter_password">Masukkan password disini:</string>
     <string name="password">Password :</string>
     <string name="confirm_password">Konfirmasi :</string>

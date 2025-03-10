@@ -10,10 +10,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.d3if3121.pltaconnect.data.datastore.UserPreferences
@@ -43,6 +51,7 @@ import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.UpdatePegawaiResponse
 import org.d3if3121.pltaconnect.data.repository.interfaces.AddFotoProfil
+import org.d3if3121.pltaconnect.navigation.Screen
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -50,8 +59,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PegawaiListViewModel @Inject constructor(
-    private val repo: PegawaiListInterface
+    private val repo: PegawaiListInterface,
+    private val userPreferences: UserPreferences
 ): ViewModel() {
+    private val _usermasuk = MutableStateFlow(false)
+    val usermasuk: StateFlow<Boolean> get() = _usermasuk
+
+    private val _userdatastore = MutableStateFlow("")
+    val userdatastore: StateFlow<String> get() = _userdatastore
+
+    private val _passworddatastore = MutableStateFlow("")
+    val passworddatastore: StateFlow<String> get() = _passworddatastore
+
+    val isLoggedIn: StateFlow<Boolean> = userPreferences.isloggedin
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val userId: StateFlow<String?> = userPreferences.userid
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val password: StateFlow<String?> = userPreferences.password
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    private val _isInitialized = MutableStateFlow(false)
+    val isInitialized: StateFlow<Boolean> get() = _isInitialized
 
     var loading by mutableStateOf(false)
         private set
@@ -100,15 +130,35 @@ class PegawaiListViewModel @Inject constructor(
     var addFotoProfil by mutableStateOf<AddFotoProfil>(Response.Loading)
         private set
 
-    var usermasuk by mutableStateOf(false)
-        private set
-
     fun addViewedProject(projectId: String) {
         viewedProjects = viewedProjects + projectId // Membuat salinan baru dari List dengan menambah proyek
     }
 
     init {
-        getPegawaiList()
+        viewModelScope.launch {
+            userId.collectLatest { id ->
+               Log.d("warw", id.toString())
+            }
+        }
+        viewModelScope.launch {
+            password.collectLatest { id ->
+                Log.d("warw", id.toString())
+            }
+        }
+        viewModelScope.launch {
+            isLoggedIn.collectLatest { id ->
+                Log.d("warw", id.toString())
+            }
+        }
+        viewModelScope.launch {
+            getPegawaiList()
+        }
+    }
+    suspend fun getUserId(): String? {
+        return userPreferences.userid.firstOrNull()
+    }
+    suspend fun getPassword(): String? {
+        return userPreferences.password.firstOrNull()
     }
 
     private fun getPegawaiList() = viewModelScope.launch {
@@ -131,19 +181,19 @@ class PegawaiListViewModel @Inject constructor(
         tanggalBefore = selectedDate
     }
 
-//    fun login(userId: String) {
-//        viewModelScope.launch {
-//            userPreferences.saveuser(userId)
-//            usermasuk = true
-//        }
-//    }
-//
-//    fun logout() {
-//        viewModelScope.launch {
-//            userPreferences.clearuser()
-//            usermasuk = false
-//        }
-//    }
+    fun login(userId: String, password: String) {
+        viewModelScope.launch {
+            userPreferences.saveuser(userId, password)
+            _usermasuk.value = true
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            userPreferences.clearuser()
+            _usermasuk.value = false
+        }
+    }
 
 
     fun addPegawai(pegawai: Pegawai) = viewModelScope.launch {
@@ -180,7 +230,6 @@ class PegawaiListViewModel @Inject constructor(
                 val result = repo.getPegawaiByNim(nim)
                 pegawaiMap = pegawaiMap + (nim to result)
             }
-            // Mengembalikan pegawai dari map atau pegawai kosong jika tidak ditemukan
             pegawaiMap[nim] ?: Pegawai()
         }
     }
@@ -202,6 +251,7 @@ class PegawaiListViewModel @Inject constructor(
         changeLoading(true)
         loginResponse = repo.loginPegawai(response.nim, response.password)
     }
+
 
     fun updatePegawai(pegawai: PegawaiEdit) = viewModelScope.launch {
         updatePegawaiResponse = repo.updatePegawai(pegawai)
@@ -263,6 +313,10 @@ class PegawaiListViewModel @Inject constructor(
     fun getDebit(id: String) = viewModelScope.launch {
         changeLoading(true)
         getDebitResponse = repo.getDebit(id)
+    }
+
+    fun getDebitResponseReset() {
+        getDebitResponse = Response.Loading
     }
 
     fun getProduksi(id: String) = viewModelScope.launch {

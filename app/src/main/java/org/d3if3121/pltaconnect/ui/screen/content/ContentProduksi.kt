@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.trace
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import org.d3if3121.pltaconnect.data.model.Response.Failure
 import org.d3if3121.pltaconnect.data.model.Response.Loading
@@ -43,6 +44,8 @@ import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.Produksi
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
+import org.d3if3121.pltaconnect.data.model.data.replaceCommasWithDots
+import org.d3if3121.pltaconnect.data.model.data.replaceDotsWithCommas
 import org.d3if3121.pltaconnect.data.repository.ImportData
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.BarisTigaText
@@ -261,7 +264,8 @@ fun ContentProduksi(
                         checkbox = checkbox1,
                         onCheckedChange = {
                             checkbox1 = it
-                        }
+                        },
+                        viewmodel = viewmodel
                     )
 
                 }
@@ -283,7 +287,8 @@ fun ContentProduksi(
                         checkbox = checkbox2,
                         onCheckedChange = {
                             checkbox2 = it
-                        }
+                        },
+                        viewmodel = viewmodel
                     )
                 }
                 "Unit 3" ->{
@@ -304,7 +309,9 @@ fun ContentProduksi(
                         checkbox = checkbox3,
                         onCheckedChange = {
                             checkbox3 = it
-                        }
+                        },
+                        viewmodel = viewmodel
+
                     )
                 }
             }
@@ -362,39 +369,41 @@ fun ContentProduksi(
                     onClick = {
                         isClicked = true
                         if(isClicked){
+                            val data = ProduksiRequest(
+                                id = id,
+                                sesudah1 = unit1.sesudah,
+                                sebelum1 = unit1.sebelum,
+                                selisih1 = unit1.selisih,
+                                kwh1 = unit1.kwh,
+                                rataair1 = unit1.rataair,
+                                air1 = unit1.air,
+                                ekonomisair1 = unit1.ekonomisair,
+                                pemakaian1 = unit1.pemakaian,
+                                penjualan1 = unit1.penjualan,
+
+                                sesudah2 = unit2.sesudah,
+                                sebelum2 = unit2.sebelum,
+                                selisih2 = unit2.selisih,
+                                kwh2 = unit2.kwh,
+                                rataair2 = unit2.rataair,
+                                air2 = unit2.air,
+                                ekonomisair2 = unit2.ekonomisair,
+                                pemakaian2 = unit2.pemakaian,
+                                penjualan2 = unit2.penjualan,
+
+                                sesudah3 = unit3.sesudah,
+                                sebelum3 = unit3.sebelum,
+                                selisih3 = unit3.selisih,
+                                kwh3 = unit3.kwh,
+                                rataair3 = unit3.rataair,
+                                air3 = unit3.air,
+                                ekonomisair3 = unit3.ekonomisair,
+                                pemakaian3 = unit3.pemakaian,
+                                penjualan3 = unit3.penjualan,
+                            )
+                            val produksi = data.replaceDotsWithCommas()
                             viewmodel.addProduksi(
-                                ProduksiRequest(
-                                    id = id,
-                                    sesudah1 = unit1.sesudah,
-                                    sebelum1 = unit1.sebelum,
-                                    selisih1 = unit1.selisih,
-                                    kwh1 = unit1.kwh,
-                                    rataair1 = unit1.rataair,
-                                    air1 = unit1.air,
-                                    ekonomisair1 = unit1.ekonomisair,
-                                    pemakaian1 = unit1.pemakaian,
-                                    penjualan1 = unit1.penjualan,
-
-                                    sesudah2 = unit2.sesudah,
-                                    sebelum2 = unit2.sebelum,
-                                    selisih2 = unit2.selisih,
-                                    kwh2 = unit2.kwh,
-                                    rataair2 = unit2.rataair,
-                                    air2 = unit2.air,
-                                    ekonomisair2 = unit2.ekonomisair,
-                                    pemakaian2 = unit2.pemakaian,
-                                    penjualan2 = unit2.penjualan,
-
-                                    sesudah3 = unit3.sesudah,
-                                    sebelum3 = unit3.sebelum,
-                                    selisih3 = unit3.selisih,
-                                    kwh3 = unit3.kwh,
-                                    rataair3 = unit3.rataair,
-                                    air3 = unit3.air,
-                                    ekonomisair3 = unit3.ekonomisair,
-                                    pemakaian3 = unit3.pemakaian,
-                                    penjualan3 = unit3.penjualan,
-                                )
+                                produksi
                             )
                             isClicked = false
                         }
@@ -457,7 +466,9 @@ fun MainContentProduksiUnit1(
     onPenjualanChange: (String) -> Unit,
 
     checkbox: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+
+    viewmodel: PegawaiListViewModel
 ){
     MainContent(
         data = data,
@@ -471,7 +482,9 @@ fun MainContentProduksiUnit1(
         onPenjualanChange = onPenjualanChange,
 
         checkbox = checkbox,
-        onCheckedChange = onCheckedChange
+        onCheckedChange = onCheckedChange,
+
+        viewmodel = viewmodel
     )
 }
 
@@ -488,7 +501,9 @@ fun MainContentProduksiUnit2(
     onPenjualanChange: (String) -> Unit,
 
     checkbox: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+
+    viewmodel: PegawaiListViewModel
 ){
     MainContent(
         data = data,
@@ -502,7 +517,9 @@ fun MainContentProduksiUnit2(
         onPenjualanChange = onPenjualanChange,
 
         checkbox = checkbox,
-        onCheckedChange = onCheckedChange
+        onCheckedChange = onCheckedChange,
+
+        viewmodel = viewmodel
     )
 }
 
@@ -519,7 +536,9 @@ fun MainContentProduksiUnit3(
     onPenjualanChange: (String) -> Unit,
 
     checkbox: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+
+    viewmodel: PegawaiListViewModel
 ){
     MainContent(
         data = data,
@@ -533,7 +552,8 @@ fun MainContentProduksiUnit3(
         onPenjualanChange = onPenjualanChange,
 
         checkbox = checkbox,
-        onCheckedChange = onCheckedChange
+        onCheckedChange = onCheckedChange,
+        viewmodel = viewmodel
     )
 }
 
@@ -551,7 +571,9 @@ fun MainContent(
     onPenjualanChange: (String) -> Unit,
 
     checkbox: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+
+    viewmodel: PegawaiListViewModel
 ){
     Card(
         modifier = Modifier
@@ -572,9 +594,9 @@ fun MainContent(
                 warnarata2 = Warna.BiruNormal,
                 ratarata = data.selisih,
                 text1k1 = "Sesudah:",
-                text2k1 = "11 Januari 2025",
+                text2k1 = viewmodel.tanggal,
                 text1k2 = "Sebelum:",
-                text2k2 = "10 Januari 2025",
+                text2k2 = viewmodel.tanggalBefore,
 
                 judul2k2 = "kWh:",
                 ratarata2 = data.kwh,
@@ -734,17 +756,25 @@ fun ProduksiResponse(context: Context, viewmodel: PegawaiListViewModel, navContr
         }
         is Success -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
-            Log.e("firestore", addRequestResponse.toString())
+            LaunchedEffect(Unit) {
+                val hasilimport = ImportData(addRequestResponse.idsheet!!)
+                Log.d("firestore1", addRequestResponse.toString())
 
-            if (hasilimport == "Import sukses!"){
-                viewmodel.addProduksiResponseReset()
-                navController.navigate(Screen.Home.route)
-            } else {
-                Log.e("firestore", hasilimport)
+                if (hasilimport == "Import Sukses") {
+                    viewmodel.changeLoading(false)
+                    navController.navigate(Screen.Home.route)
+                    viewmodel.addProduksiResponseReset()
+                    Log.d("firestore2", hasilimport)
+                } else {
+                    viewmodel.changeLoading(false)
+                    viewmodel.addProduksiResponseReset()
+                    Log.d("firestore2", hasilimport)
+
+                }
             }
         }
         is Failure -> {
+            viewmodel.changeLoading(false)
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
             Log.e("firestore", addRequestResponse.e.toString())
             viewmodel.addProduksiResponseReset()
@@ -764,7 +794,7 @@ fun GetProduksiBeforeResponse(
         is Loading -> {
         }
         is Success -> {
-            action(response.data!!)
+            action(response.data!!.replaceCommasWithDots())
             viewmodel.changeLoading(false)
             viewmodel.getProduksiBeforeReset()
         }

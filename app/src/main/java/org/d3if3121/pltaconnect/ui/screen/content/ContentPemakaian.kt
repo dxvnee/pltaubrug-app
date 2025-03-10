@@ -39,6 +39,7 @@ import org.d3if3121.pltaconnect.data.model.Response.Success
 import org.d3if3121.pltaconnect.data.model.data.MasukRequest
 import org.d3if3121.pltaconnect.data.model.data.Pemakaian
 import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
+import org.d3if3121.pltaconnect.data.model.data.replaceDotsWithCommas
 import org.d3if3121.pltaconnect.data.repository.ImportData
 import org.d3if3121.pltaconnect.navigation.Screen
 import org.d3if3121.pltaconnect.ui.component.ButtonMerah
@@ -313,22 +314,23 @@ fun ContentPemakaian(
 
                 ButtonMerah(
                     onClick = {
+                        val data = PemakaianRequest(
+                            id = id,
+                            kwh1 = kva1.kwh,
+                            kwh1_sebelum = kva1.sebelum,
+                            kwh1_sesudah = kva1.sesudah,
 
+                            kwh2 = kva2.kwh,
+                            kwh2_sebelum = kva2.sebelum,
+                            kwh2_sesudah = kva2.sesudah,
+
+                            kwh3 = kva3.kwh,
+                            kwh3_sebelum = kva3.sebelum,
+                            kwh3_sesudah = kva3.sesudah,
+                        )
+                        val pemakaian = data.replaceDotsWithCommas()
                         viewmodel.addPemakaian(
-                            PemakaianRequest(
-                                id = id,
-                                kwh1 = kva1.kwh,
-                                kwh1_sebelum = kva1.sebelum,
-                                kwh1_sesudah = kva1.sesudah,
-
-                                kwh2 = kva2.kwh,
-                                kwh2_sebelum = kva2.sebelum,
-                                kwh2_sesudah = kva2.sesudah,
-
-                                kwh3 = kva3.kwh,
-                                kwh3_sebelum = kva3.sebelum,
-                                kwh3_sesudah = kva3.sesudah,
-                            )
+                            pemakaian
                         )
                     },
                     modifier = Modifier.fillMaxWidth().padding(top = 18.dp).height(46.dp),
@@ -529,16 +531,28 @@ fun PemakaianResponse(context: Context, viewmodel: PegawaiListViewModel, navCont
         }
         is Success -> {
             Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
-            val hasilimport = ImportData(viewmodel, addRequestResponse.idsheet!!)
 
-            if (hasilimport == "Import sukses!"){
-                viewmodel.addPemakaianResponseReset()
-                viewmodel.changeLoading(false)
-                navController.navigate(Screen.Home.route)
-            } else {
+            LaunchedEffect(Unit) {
+                val hasilimport = ImportData(addRequestResponse.idsheet!!)
+                Log.d("firestore1", addRequestResponse.toString())
+
+                if (hasilimport == "Import Sukses") {
+                    viewmodel.changeLoading(false)
+                    navController.navigate(Screen.Home.route)
+                    viewmodel.addPemakaianResponseReset()
+                    Log.d("firestore2", hasilimport)
+                } else {
+                    viewmodel.changeLoading(false)
+                    viewmodel.addPemakaianResponseReset()
+                    Log.d("firestore2", hasilimport)
+
+                }
             }
         }
         is Failure -> {
+            viewmodel.changeLoading(false)
+            Toast.makeText(context, addRequestResponse.toString(), Toast.LENGTH_SHORT).show()
+            Log.e("firestore", addRequestResponse.e.toString())
             viewmodel.addPemakaianResponseReset()
         }
     }

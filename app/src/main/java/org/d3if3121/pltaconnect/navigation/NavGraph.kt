@@ -15,14 +15,14 @@ import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
 
 @Composable
-fun SetupNavGraph(){
+fun SetupNavGraph(startdestination: String = Screen.Login.route){
 
     val navController = rememberNavController()
     val pegawailistviewmodel: PegawaiListViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = startdestination
     ) {
         composable(route = Screen.Login.route){
             LoginPage(navController, pegawailistviewmodel)

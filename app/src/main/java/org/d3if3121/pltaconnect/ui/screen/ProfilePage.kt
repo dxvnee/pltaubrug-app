@@ -147,6 +147,7 @@ fun ProfilePageContent(
         Button(
             onClick = {
                 viewmodel.loginResponseReset()
+                viewmodel.logout()
                 navController.navigate(Screen.Login.route)
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007BFF)),
@@ -178,6 +179,9 @@ fun FotoProfilResponse(viewmodel: PegawaiListViewModel, context: Context, navCon
             Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
         }
 
-        is Response.Loading -> {}
+        is Response.Loading -> {
+            viewmodel.changeLoading(false)
+
+        }
     }
 }

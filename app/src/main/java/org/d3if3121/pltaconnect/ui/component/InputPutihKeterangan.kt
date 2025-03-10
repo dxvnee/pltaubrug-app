@@ -67,7 +67,7 @@ fun InputPutihKeterangan(
             input = inputan,
             placeholder = stringResource(id = R.string.enter_name),
             onInputChange = onInputanChange,
-            keyboardType = KeyboardType.Text,
+            keyboardType = KeyboardType.Number,
             modifier = Modifier.fillMaxWidth().weight(1f)
         )
 

@@ -43,6 +43,7 @@ import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +55,7 @@ fun Calendar(
         initialSelectedDateMillis = System.currentTimeMillis()
     )
 
-    val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+    val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
     var selectedDate by remember { mutableStateOf("") }
 
     LaunchedEffect(datePickerState.selectedDateMillis) {

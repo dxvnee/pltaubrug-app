@@ -1,5 +1,6 @@
 package org.d3if3121.pltaconnect.ui.screen
 
+import android.util.Log
 import android.widget.Toast
 import org.d3if3121.pltaconnect.R
 
@@ -25,6 +26,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,12 +70,10 @@ fun LoginPage(
     navController: NavHostController,
     viewmodel: PegawaiListViewModel = hiltViewModel()
 ) {
-    val sudahlogin = viewmodel.usermasuk
-    LaunchedEffect(Unit) {
-        if (sudahlogin){
-            navController.navigate(Screen.Home.route)
-        }
-    }
+    val sudahlogin by viewmodel.usermasuk.collectAsState()
+    val isInitialized by viewmodel.isInitialized.collectAsState()
+
+
     var nim by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible = remember { mutableStateOf(false) }
@@ -81,7 +81,6 @@ fun LoginPage(
     var errorMessage by remember { mutableStateOf("") }
 
     var context = LocalContext.current
-
 
     fun handleLogin() {
         if(nim.isNotEmpty() && password.isNotEmpty()){
@@ -97,10 +96,28 @@ fun LoginPage(
         }
     }
 
+
+//    if (isInitialized) {
+//        if (sudahlogin) {
+//            val userdatastore by viewmodel.userdatastore.collectAsState()
+//            val passworddatastore by viewmodel.password.collectAsState()
+//
+//            LaunchedEffect(Unit) {
+//                nim = userdatastore
+//                password = passworddatastore
+//
+//                handleLogin()
+//                viewmodel.login(userdatastore, passworddatastore)
+//            }
+//        }
+//    } else {
+//        Log.d("jalanle", "Menunggu init {} di ViewModel selesai...")
+//    }
+
     when(val response = viewmodel.loginResponse){
         is Response.Success -> {
             viewmodel.addUser(response.data!!)
-            Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
+            viewmodel.login(response.data.nip, response.data.password)
             navController.navigate(Screen.Home.route)
         }
         is Response.Failure -> {
@@ -220,7 +237,7 @@ fun LoginPage(
                             onInputChange = { input ->
                                 nim = input
                             },
-                            keyboardType = KeyboardType.Number,
+                            keyboardType = KeyboardType.Text,
                             modifier = Modifier.fillMaxWidth()
 
                         )

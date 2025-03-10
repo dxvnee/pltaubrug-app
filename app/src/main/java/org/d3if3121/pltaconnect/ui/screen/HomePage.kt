@@ -92,6 +92,10 @@ fun HomePage(
     navController: NavHostController,
     viewModel: PegawaiListViewModel = hiltViewModel(),
 ) {
+    val sudahlogin = viewModel.usermasuk
+
+    Log.d("jalanle2",  sudahlogin.toString())
+
     val lazyListState = rememberLazyListState()
     var user = viewModel.user
     var context = LocalContext.current
