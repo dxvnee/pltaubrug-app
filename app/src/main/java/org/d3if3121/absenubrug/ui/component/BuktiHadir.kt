@@ -61,6 +61,7 @@ fun BuktiHadir(
 ) {
     var context = LocalContext.current
 
+    DialogLoading(viewmodel)
 
     //GAMBAR
     var tombolGambar by remember { mutableStateOf(false) }
@@ -82,7 +83,7 @@ fun BuktiHadir(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
-            getCurrentLocation(context, fusedLocationClient) { lat, lon ->
+            getCurrentLocation(context, fusedLocationClient, viewmodel) { lat, lon ->
                 location.value = Pair(lat, lon)
             }
         }
@@ -107,6 +108,7 @@ fun BuktiHadir(
     }
 
     if(showDialogLokasi){
+        Log.d("herh", "herh")
         konfirmasilokasi = isInsideRadiusAndroid(lokasilat,  lokasilon)
         DialogLokasi(
             konfirmasilokasi = konfirmasilokasi,
@@ -183,10 +185,10 @@ fun BuktiHadir(
                                     context, Manifest.permission.ACCESS_FINE_LOCATION
                                 ) == PackageManager.PERMISSION_GRANTED
                             ) {
-                                getCurrentLocation(context, fusedLocationClient) { lat, lon ->
+                                getCurrentLocation(context, fusedLocationClient, viewmodel) { lat, lon ->
                                     location.value = Pair(lat, lon)
                                 }
-                                Log.d("masuk", "masuk1")
+                                Log.d("masuk", location.value.toString())
 
                             } else {
                                 permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)

@@ -180,8 +180,10 @@ fun ProjectListHome(
             pegawaiListViewModel = pegawaiListViewModel,
             selectedDate = {
                 selecteddate = it
+                Log.d("SelectedDate", "Tanggal yang dipilih: $it")
             }
         )
+
 
         Column (
             modifier = Modifier.padding(17.dp).fillMaxWidth().fillMaxHeight()

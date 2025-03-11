@@ -174,9 +174,14 @@ fun FotoProfilResponse(viewmodel: MahasiswaListViewModel, context: Context, navC
 
         }
         is Response.Failure -> {
+            viewmodel.changeLoading(false)
+
             Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
         }
-        is Response.Loading -> {}
+        is Response.Loading -> {
+            viewmodel.changeLoading(false)
+
+        }
     }
 }
 

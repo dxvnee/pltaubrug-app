@@ -46,6 +46,7 @@ import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -55,20 +56,24 @@ fun Calendar(
     selectedDate: (String) -> Unit,
     pegawaiListViewModel: MahasiswaListViewModel
 ) {
-    val currentTimeMillis = System.currentTimeMillis()
+    val currentTimeMillis = ZonedDateTime.now(ZoneId.of("Asia/Jakarta"))
+        .toInstant()
+        .toEpochMilli()
+
 
     val datePickerState = remember {
         DatePickerState(
             initialSelectedDateMillis = currentTimeMillis,
-            yearRange = 2000..2100,
             initialDisplayedMonthMillis = currentTimeMillis,
-            locale = Locale.KOREA
+            locale = Locale.ENGLISH
         )
     }
 
-
     val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
-    var selectedDate by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(Instant.ofEpochMilli(currentTimeMillis)
+        .atZone(ZoneId.of("Asia/Jakarta"))
+        .toLocalDate()
+        .format(dateFormatter)) }
 
 
     LaunchedEffect (Unit){
@@ -80,15 +85,18 @@ fun Calendar(
         )
     }
 
-    LaunchedEffect(key1 = Unit, key2 = datePickerState.selectedDateMillis) {
+    LaunchedEffect(datePickerState.selectedDateMillis) {
         datePickerState.selectedDateMillis?.let { millis ->
             val newDate = Instant.ofEpochMilli(millis)
                 .atZone(ZoneId.of("Asia/Jakarta"))
                 .toLocalDate()
                 .format(dateFormatter)
-            selectedDate = newDate  // Update selectedDate
-            selectedDate(newDate)   // Kirim ke parameter selectedDate
-            pegawaiListViewModel.changeTanggal(newDate)  // Perbarui ViewModel
+
+            if (newDate != selectedDate) {
+                selectedDate = newDate
+                selectedDate(selectedDate)
+                pegawaiListViewModel.changeTanggal(newDate)
+            }
         }
     }
 

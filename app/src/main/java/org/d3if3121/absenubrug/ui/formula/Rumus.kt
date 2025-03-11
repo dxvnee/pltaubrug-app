@@ -29,19 +29,22 @@ import java.util.Locale
 fun getCurrentLocation(
     context: Context,
     fusedLocationClient: FusedLocationProviderClient,
-    onLocationReceived: (Double, Double) -> Unit
+    viewmodel: MahasiswaListViewModel,
+    onLocationReceived: (Double, Double) -> Unit,
 ) {
     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
         Log.e("getCurrentLocation", "Izin lokasi tidak diberikan!")
         return
     }
 
+    viewmodel.changeLoading(true)
     Log.d("getCurrentLocation", "Mencoba mendapatkan lokasi terbaru...")
 
     val cancellationTokenSource = CancellationTokenSource()
     fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
         .addOnSuccessListener { location: Location? ->
             if (location != null) {
+                viewmodel.changeLoading(false)
                 Log.d("getCurrentLocation", "Lokasi ditemukan: ${location.latitude}, ${location.longitude}")
                 onLocationReceived(location.latitude, location.longitude)
             } else {
