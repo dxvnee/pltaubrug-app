@@ -188,6 +188,8 @@ fun ProjectContent(
         "(Masuk)" -> {
             var jamsebelum by remember { mutableStateOf("07:00") }
             if (viewmodel.tanggalSeharusnya != viewmodel.tanggal){
+                Log.d("tes22", viewmodel.tanggalSeharusnya + " he " + viewmodel.tanggal)
+
                 Text(
                     text = "Anda Harus Mengisi Absen Sesuai Tanggal! (${viewmodel.tanggalSeharusnya})",
                     color = Color.Red,

@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.runBlocking
 import org.d3if3121.absenubrug.components.LoadingIndicator
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.Response
@@ -102,9 +103,11 @@ fun MainContentHome(
     paddingValues: PaddingValues,
     viewmodel: MahasiswaListViewModel = hiltViewModel(),
 ) {
+
     LaunchedEffect (Unit){
         viewmodel.getAbsenList(viewmodel.user)
     }
+    HomeResponse(viewmodel)
 
     DialogLoading(viewmodel)
 
@@ -129,7 +132,9 @@ fun MainContentHome(
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
+
                 ProjectListHome(pegawaiListViewModel = viewmodel, navController = navController, viewmodel = viewmodel)
+
             }
         }
     }
@@ -142,17 +147,20 @@ fun ProjectListHome(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel
 ){
-    HomeResponse(viewmodel)
 
     if(viewmodel.absenList.isNotEmpty()){
-        LaunchedEffect(viewmodel.tanggal) {
+
+        LaunchedEffect(key1 = Unit, key2 = viewmodel.tanggal) {
             val absenList = viewmodel.absenList
-            val absen = absenList.firstOrNull { it.tanggal == viewmodel.tanggal }
+            val absen = absenList.firstOrNull {
+                it.tanggal == viewmodel.tanggal
+            }
 
             if (absen != null) {
                 viewmodel.changeAbsen(absen)
                 viewmodel.changeJamHome(absen.jam, absen.jam2)
                 viewmodel.changeKeteranganHome(absen.keterangan, absen.keterangan2)
+
             } else {
                 viewmodel.changeJamHome("-", "-")
                 viewmodel.changeKeteranganHome("Belum Absen", "Belum Absen")
@@ -167,7 +175,8 @@ fun ProjectListHome(
         }
     }
 
-    var selecteddate by remember { mutableStateOf("") }
+    var selecteddate by remember { mutableStateOf(viewmodel.tanggal) }
+
 
     Card(
         modifier = Modifier
@@ -180,7 +189,6 @@ fun ProjectListHome(
             pegawaiListViewModel = pegawaiListViewModel,
             selectedDate = {
                 selecteddate = it
-                Log.d("SelectedDate", "Tanggal yang dipilih: $it")
             }
         )
 
@@ -188,7 +196,6 @@ fun ProjectListHome(
         Column (
             modifier = Modifier.padding(17.dp).fillMaxWidth().fillMaxHeight()
         ){
-            Log.d("absenlist", viewmodel.absenList.toString())
 
             KeteranganAbsen(
                 hadir1 = viewmodel.keteranganhome,
@@ -223,7 +230,6 @@ fun HomeResponse(
     when(val response = viewmodel.absenListResponse){
         is Response.Loading -> {}
         is Response.Success -> response.data?.let {
-            Log.d("kenapa", it.toString())
             viewmodel.changeLoading(false)
             viewmodel.changeList(it)
             viewmodel.changeAbsenListResponse()

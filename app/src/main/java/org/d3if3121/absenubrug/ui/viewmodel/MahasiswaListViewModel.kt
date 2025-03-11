@@ -73,6 +73,7 @@ class MahasiswaListViewModel @Inject constructor(
         private set
 
 
+
     fun getAbsenList(user: Mahasiswa) = viewModelScope.launch {
         repo.getAbsenList(user).collect() {
             absenListResponse = it

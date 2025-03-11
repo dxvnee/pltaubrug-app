@@ -50,30 +50,27 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Calendar(
     selectedDate: (String) -> Unit,
     pegawaiListViewModel: MahasiswaListViewModel
 ) {
-    val currentTimeMillis = ZonedDateTime.now(ZoneId.of("Asia/Jakarta"))
-        .toInstant()
-        .toEpochMilli()
-
+    val currentTimeMillis = System.currentTimeMillis()
 
     val datePickerState = remember {
         DatePickerState(
             initialSelectedDateMillis = currentTimeMillis,
+            yearRange = 2000..2100,
             initialDisplayedMonthMillis = currentTimeMillis,
-            locale = Locale.ENGLISH
+            locale = Locale.KOREA
         )
     }
 
+
     val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH)
-    var selectedDate by remember { mutableStateOf(Instant.ofEpochMilli(currentTimeMillis)
-        .atZone(ZoneId.of("Asia/Jakarta"))
-        .toLocalDate()
-        .format(dateFormatter)) }
+    var selectedDate by remember { mutableStateOf("") }
 
 
     LaunchedEffect (Unit){
@@ -85,18 +82,15 @@ fun Calendar(
         )
     }
 
-    LaunchedEffect(datePickerState.selectedDateMillis) {
+    LaunchedEffect(key1 = Unit, key2 = datePickerState.selectedDateMillis) {
         datePickerState.selectedDateMillis?.let { millis ->
             val newDate = Instant.ofEpochMilli(millis)
                 .atZone(ZoneId.of("Asia/Jakarta"))
                 .toLocalDate()
                 .format(dateFormatter)
-
-            if (newDate != selectedDate) {
-                selectedDate = newDate
-                selectedDate(selectedDate)
-                pegawaiListViewModel.changeTanggal(newDate)
-            }
+            selectedDate = newDate  // Update selectedDate
+            selectedDate(newDate)   // Kirim ke parameter selectedDate
+            pegawaiListViewModel.changeTanggal(newDate)  // Perbarui ViewModel
         }
     }
 
