@@ -22,7 +22,6 @@ import org.d3if3121.pltaconnect.data.model.data.Pemakaian
 import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.model.data.Produksi
-import org.d3if3121.pltaconnect.data.model.data.replaceCommasWithDots
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
 
 class PegawaiListRepository (
