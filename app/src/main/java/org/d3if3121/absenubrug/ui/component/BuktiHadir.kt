@@ -40,6 +40,7 @@ import com.google.android.gms.location.LocationServices
 import org.d3if3121.absenubrug.R
 import org.d3if3121.absenubrug.ui.formula.getCurrentLocation
 import org.d3if3121.absenubrug.ui.formula.isInsideRadiusAndroid
+import org.d3if3121.absenubrug.ui.formula.isInsideTriangle
 import org.d3if3121.absenubrug.ui.theme.Warna
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 
@@ -108,8 +109,8 @@ fun BuktiHadir(
     }
 
     if(showDialogLokasi){
-        Log.d("herh", "herh")
-        konfirmasilokasi = isInsideRadiusAndroid(lokasilat,  lokasilon)
+        konfirmasilokasi = isInsideTriangle(lokasilat,  lokasilon)
+        Log.d("mawjj", konfirmasilokasi.toString())
         DialogLokasi(
             konfirmasilokasi = konfirmasilokasi,
             onDismissRequest = { showDialogLokasi = false },

@@ -94,6 +94,32 @@ fun isInsideRadiusAndroid(currentLat: Double, currentLng: Double): Boolean {
 
     return distance <= 71.0
 }
+fun isInsideTriangle(currentLat: Double, currentLng: Double): Boolean {
+    // Titik-titik segitiga
+    val ax = -6.947752
+    val ay = 106.757868
+    val bx = -6.948594
+    val by = 106.754947
+    val cx = -6.950487
+    val cy = 106.754995
+
+    // Fungsi untuk menghitung luas segitiga menggunakan determinan
+    fun area(x1: Double, y1: Double, x2: Double, y2: Double, x3: Double, y3: Double): Double {
+        return 0.5 * kotlin.math.abs((x1 * (y2 - y3)) + (x2 * (y3 - y1)) + (x3 * (y1 - y2)))
+    }
+
+    // Luas segitiga ABC
+    val areaABC = area(ax, ay, bx, by, cx, cy)
+
+    // Luas segitiga yang dibentuk dengan titik (currentLat, currentLng)
+    val areaPBC = area(currentLat, currentLng, bx, by, cx, cy)
+    val areaPCA = area(ax, ay, currentLat, currentLng, cx, cy)
+    val areaPAB = area(ax, ay, bx, by, currentLat, currentLng)
+
+    // Jika jumlah luas segitiga-sub sama dengan luas segitiga ABC, maka titik berada di dalam segitiga
+    return kotlin.math.abs(areaABC - (areaPBC + areaPCA + areaPAB)) < 1e-9
+}
+
 
 
 fun parseJam(jam: String): LocalTime? {
