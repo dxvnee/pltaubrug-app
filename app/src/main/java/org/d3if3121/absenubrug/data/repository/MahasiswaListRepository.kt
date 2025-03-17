@@ -23,7 +23,6 @@ class MahasiswaListRepository (
     private val absenRef: CollectionReference
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
-        Log.d("user", user.nip)
         val absenRef = absenRef.document(user.nip).collection("tanggal")
 
         val listener = absenRef
@@ -43,25 +42,23 @@ class MahasiswaListRepository (
         }
     }
 
-
-
-    override fun addUser(mahasiswa: Mahasiswa) = callbackFlow  {
-        val listener = mahasiswaRef.whereEqualTo("nip", mahasiswa.nip)
+    override fun getMahasiswa(nip: String) = callbackFlow {
+        val listener = mahasiswaRef.document(nip)
             .addSnapshotListener { snapshot, e ->
-                if (snapshot != null && !snapshot.isEmpty) {
-                    val updatedMahasiswa = snapshot.documents.first().toMahasiswa()
-                    trySend(Response.Success(updatedMahasiswa))
-                } else if (e != null) {
-                    trySend(Response.Failure(e))
+                val mahasiswaResponse = if(snapshot != null){
+                    val data = snapshot.toMahasiswa()
+                    Response.Success(data)
                 } else {
-                    trySend(Response.Failure(Exception("User not found!")))
+                    Response.Failure(e)
                 }
+                trySend(mahasiswaResponse)
             }
 
-        awaitClose {
+        awaitClose{
             listener.remove()
         }
     }
+
 
 
     override suspend fun addMahasiswa(mahasiswa: Mahasiswa) = try {
@@ -70,6 +67,26 @@ class MahasiswaListRepository (
         if (mahasiswaSama.isEmpty){
             val id = mahasiswaRef.add(mahasiswa).await().id
             Response.Success(id)
+        } else {
+            Response.Failure(Exception("nip already registered."))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
+
+    override suspend fun editMahasiswa(mahasiswabaru: Mahasiswa) = try {
+        Log.d("waow2", mahasiswabaru.toString())
+        val mahasiswa = mahasiswaRef.document(mahasiswabaru.nip)
+
+
+        if (mahasiswa.get().await().exists()){
+            mahasiswa.update(
+                mapOf(
+                    "nama" to mahasiswabaru.nama,
+                    "posisi" to mahasiswabaru.posisi
+                )
+            )
+            Response.Success("Data berhasil diubah!")
         } else {
             Response.Failure(Exception("nip already registered."))
         }
@@ -181,6 +198,7 @@ fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     nip = getString(Mahasiswa.NIP)?: "null",
     role = get(Mahasiswa.ROLE) as? List<String> ?: emptyList(),
     foto = getString(Mahasiswa.FOTO)?: "null",
+    posisi = getString(Mahasiswa.POSISI)?: "-",
 )
 
 fun DocumentSnapshot.toAbsen(): Absen = Absen(

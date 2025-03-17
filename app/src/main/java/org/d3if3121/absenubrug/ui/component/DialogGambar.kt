@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,14 +33,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
+import org.d3if3121.absenubrug.R
 import org.d3if3121.absenubrug.components.LoadingIndicator
+import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.ui.theme.Warna
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 
@@ -226,6 +232,97 @@ fun DialogLoading(
             },
             confirmButton = {
 
+            },
+            containerColor = Warna.PutihNormal,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+}
+
+@Composable
+fun DialogEditProfile(
+    viewmodel: MahasiswaListViewModel,
+    showDialog: Boolean,
+    onDismissRequest: () -> Unit,
+){
+    var nama by remember { mutableStateOf(viewmodel.user.nama) }
+    var posisi by remember { mutableStateOf(viewmodel.user.posisi) }
+
+    if (showDialog){
+        AlertDialog(
+            modifier = Modifier,
+            onDismissRequest = onDismissRequest,
+            title = {
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(text = "Edit Data Profil", color = Warna.MerahNormal, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+
+                    Text(
+                        text = "Nama:",
+                        color = Warna.MerahNormal,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    InputPutih(
+                        input = nama,
+                        placeholder = "Masukkan nama anda...",
+                        onInputChange = { input ->
+                            nama = input
+                        },
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(bottom = 10.dp)
+                    )
+
+
+                    Text(
+                        text = "Posisi:",
+                        color = Warna.MerahNormal,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    InputPutih(
+                        input = posisi,
+                        placeholder = "Masukkan posisi anda...",
+                        onInputChange = { input ->
+                            posisi = input
+                        },
+                        keyboardType = KeyboardType.Number,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                }
+
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewmodel.editMahasiswa(
+                            Mahasiswa(
+                                nip = viewmodel.user.nip,
+                                nama = nama,
+                                posisi = posisi
+                            )
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
+                    shape = RoundedCornerShape(7.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "KIRIM", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
             },
             containerColor = Warna.PutihNormal,
             shape = RoundedCornerShape(20.dp)

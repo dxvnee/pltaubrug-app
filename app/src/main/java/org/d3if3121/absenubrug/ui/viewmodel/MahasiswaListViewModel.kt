@@ -24,6 +24,8 @@ import org.d3if3121.absenubrug.data.repository.interfaces.LoginResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 import org.d3if3121.absenubrug.data.repository.interfaces.AbsenListResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.AddFotoProfil
+import org.d3if3121.absenubrug.data.repository.interfaces.EditMahasiswaResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.GetMahasiswaResponse
 import javax.inject.Inject
 import kotlin.math.log
 
@@ -41,6 +43,12 @@ class MahasiswaListViewModel @Inject constructor(
 
     var addMahasiswaResponse by mutableStateOf<AddMahasiswaResponse>(Response.Loading)
         private set
+    var editMahasiswaResponse by mutableStateOf<EditMahasiswaResponse>(Response.Loading)
+        private set
+    var getMahasiswaResponse by mutableStateOf<GetMahasiswaResponse>(Response.Loading)
+        private set
+
+
     var addAbsenResponse by mutableStateOf<AddAbsenResponse>(Response.Loading)
         private set
 
@@ -77,8 +85,6 @@ class MahasiswaListViewModel @Inject constructor(
     fun getAbsenList(user: Mahasiswa) = viewModelScope.launch {
         repo.getAbsenList(user).collect() {
             absenListResponse = it
-            Log.d("hew", it.toString())
-
         }
     }
 
@@ -131,6 +137,20 @@ class MahasiswaListViewModel @Inject constructor(
         addMahasiswaResponse = repo.addMahasiswa(mahasiswa)
         repo.addAbsen(Absen(tanggal = "5 July 2004", nip = mahasiswa.nip))
     }
+    fun editMahasiswa(mahasiswa: Mahasiswa) = viewModelScope.launch {
+        changeLoading(true)
+        editMahasiswaResponse = repo.editMahasiswa(mahasiswa)
+    }
+    fun getMahasiswa(nip: String) = viewModelScope.launch {
+        repo.getMahasiswa(nip).collect{
+            getMahasiswaResponse = it
+            if(it is Response.Success){
+                user = it.data ?: Mahasiswa()
+            }
+        }
+    }
+
+
 
     fun addAbsen(absen: Absen) = viewModelScope.launch {
         changeLoading(true)
@@ -149,6 +169,9 @@ class MahasiswaListViewModel @Inject constructor(
         addMahasiswaResponse = Response.Loading
     }
 
+    fun editMahasiswaResponseReset() {
+        editMahasiswaResponse = Response.Loading
+    }
 
     fun loginResponseReset() {
         loginResponse = Response.Loading
