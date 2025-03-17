@@ -95,8 +95,6 @@ fun LoginPage(
         }
     }
 
-
-
     Column(
         modifier = Modifier
             .fillMaxWidth()

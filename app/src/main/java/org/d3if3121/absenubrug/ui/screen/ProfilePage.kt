@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,87 +115,102 @@ fun ProfilePageContent(
     FotoProfilResponse(viewmodel, context, navController)
     EditProfilResponse(viewmodel, context){ showDialog = false }
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(paddingValues).padding(top = 30.dp, start = 17.dp, end = 17.dp),
-        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
-        shape = RoundedCornerShape(10.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
-    ){
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(17.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            FotoProfil(
-                imageUrl = viewmodel.user.foto,
+    LazyColumn {
+        item {
+            Card(
                 modifier = Modifier
-                    .padding(top = 50.dp)
-                    .size(145.dp).clickable {
-                        launcher.launch("image/*")
+                    .fillMaxWidth()
+                    .padding(paddingValues).padding(top = 30.dp, start = 17.dp, end = 17.dp),
+                colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+                shape = RoundedCornerShape(10.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ){
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(17.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    FotoProfil(
+                        imageUrl = viewmodel.user.foto,
+                        modifier = Modifier
+                            .padding(top = 50.dp)
+                            .size(145.dp).clickable {
+                                launcher.launch("image/*")
+                            }
+                    )
+
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = viewmodel.user.nama,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+
+                    Row{
+                        Text(
+                            text = viewmodel.user.nip + " - ",
+                            fontSize = 16.sp,
+                            color = Warna.HitamNormal
+                        )
+                        Text(
+                            text = viewmodel.user.posisi,
+                            fontSize = 16.sp,
+                            color = Warna.HitamNormal
+                        )
                     }
-            )
 
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = viewmodel.user.nama,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Row{
-                Text(
-                    text = viewmodel.user.nip + " - ",
-                    fontSize = 16.sp,
-                    color = Warna.HitamNormal
-                )
-                Text(
-                    text = viewmodel.user.posisi,
-                    fontSize = 16.sp,
-                    color = Warna.HitamNormal
-                )
-            }
+                    viewmodel.user.role.forEach {
+                        Text(
+                            text = it,
+                            fontSize = 16.sp,
+                            color = Color.Gray
+                        )
+                    }
 
 
-            viewmodel.user.role.forEach {
-                Text(
-                    text = it,
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-            }
+                    Spacer(modifier = Modifier.height(56.dp))
+
+                    Row {
+                        ButtonIcon(
+                            modifier = Modifier.weight(1f).padding(end = 5.dp),
+                            color = Warna.MerahNormal,
+                            icon = Icons.Default.Edit,
+                            text = "Edit"
+                        ) {
+                            showDialog = true
+                        }
+                        ButtonIcon(
+                            modifier = Modifier.weight(1f).padding(start = 5.dp),
+                            color = Color.Red,
+                            icon = Icons.AutoMirrored.Filled.Logout,
+                            text = "Log out"
+                        ) {
+                            viewmodel.loginResponseReset()
+                            navController.navigate(Screen.Login.route)
+                        }
+                    }
 
 
-            Spacer(modifier = Modifier.height(56.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Text(
+                        text = stringResource(R.string.app_version),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Gray
+                    )
 
-            Row {
-                ButtonIcon(
-                    modifier = Modifier.weight(1f).padding(end = 5.dp),
-                    color = Warna.MerahNormal,
-                    icon = Icons.Default.Edit,
-                    text = "Edit"
-                ) {
-                    showDialog = true
                 }
-                ButtonIcon(
-                    modifier = Modifier.weight(1f).padding(start = 5.dp),
-                    color = Color.Red,
-                    icon = Icons.AutoMirrored.Filled.Logout,
-                    text = "Log out"
-                ) {
-                    viewmodel.loginResponseReset()
-                    navController.navigate(Screen.Login.route)
-                }
-            }
-            Spacer(modifier = Modifier.height(14.dp))
 
+
+            }
         }
-
-
     }
+
+
+
 
 
 }
