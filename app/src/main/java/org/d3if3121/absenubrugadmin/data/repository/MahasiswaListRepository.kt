@@ -225,8 +225,42 @@ class MahasiswaListRepository (
         Response.Failure(e)
     }
 
+    override fun getMahasiswa(nip: String) = callbackFlow {
+        val listener = mahasiswaRef.document(nip)
+            .addSnapshotListener { snapshot, e ->
+                val mahasiswaResponse = if(snapshot != null){
+                    val data = snapshot.toMahasiswa()
+                    Response.Success(data)
+                } else {
+                    Response.Failure(e)
+                }
+                trySend(mahasiswaResponse)
+            }
+
+        awaitClose{
+            listener.remove()
+        }
+    }
+
+    override suspend fun editMahasiswa(mahasiswabaru: Mahasiswa) = try {
+        Log.d("waow2", mahasiswabaru.toString())
+        val mahasiswa = mahasiswaRef.document(mahasiswabaru.nip)
 
 
+        if (mahasiswa.get().await().exists()){
+            mahasiswa.update(
+                mapOf(
+                    "nama" to mahasiswabaru.nama,
+                    "posisi" to mahasiswabaru.posisi
+                )
+            )
+            Response.Success("Data berhasil diubah!")
+        } else {
+            Response.Failure(Exception("nip already registered."))
+        }
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
 
 
 
@@ -248,6 +282,7 @@ class MahasiswaListRepository (
             Response.Failure(Exception("NIM doesn't exist."))
         }
     } catch (e: Exception){
+        Log.e("Firestore", e.toString())
         Response.Failure(Exception("Error"))
     }
 

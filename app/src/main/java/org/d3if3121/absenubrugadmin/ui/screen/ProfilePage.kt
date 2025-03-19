@@ -14,12 +14,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +44,8 @@ import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
+import org.d3if3121.absenubrugadmin.ui.component.ButtonIcon
+import org.d3if3121.absenubrugadmin.ui.component.DialogEditProfile
 import org.d3if3121.absenubrugadmin.ui.component.DialogLoading
 import org.d3if3121.absenubrugadmin.ui.component.FotoProfil
 
@@ -89,7 +95,10 @@ fun ProfilePageContent(
 ) {
     DialogLoading(viewmodel)
 
-
+    LaunchedEffect(Unit){
+        Log.d("iiii", viewmodel.user.nip)
+        viewmodel.getMahasiswa(viewmodel.user.nip)
+    }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -101,70 +110,91 @@ fun ProfilePageContent(
         }
     }
     val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+
+    DialogEditProfile(viewmodel = viewmodel, showDialog = showDialog, onDismissRequest = { showDialog = false })
     FotoProfilResponse(viewmodel, context)
+    EditProfilResponse(viewmodel, context){
+        showDialog = false
+    }
 
-    Column(
+    Card(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues).padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Foto Profil
+            .fillMaxWidth()
+            .padding(paddingValues).padding(top = 30.dp, start = 17.dp, end = 17.dp),
+        colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
+        shape = RoundedCornerShape(10.dp),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ){
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(17.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            FotoProfil(
+                imageUrl = viewmodel.user.foto,
+                modifier = Modifier
+                    .padding(top = 50.dp)
+                    .size(145.dp).clickable {
+                        launcher.launch("image/*")
+                    }
+            )
 
-        FotoProfil(
-            imageUrl = viewmodel.user.foto,
-            modifier = Modifier
-                .size(145.dp).clickable {
-                    launcher.launch("image/*")
-                }
-        )
+            Spacer(modifier = Modifier.height(12.dp))
 
+            Text(
+                text = viewmodel.user.nama,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Nama & Email
-        Text(
-            text = viewmodel.user.nama,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Text(
-            text = viewmodel.user.nip,
-            fontSize = 16.sp,
-            color = Color.Gray
-        )
-        viewmodel.user.role.forEach {
-            Row {
+            Row{
                 Text(
-                    text = "$it ",
+                    text = viewmodel.user.nip + " - ",
                     fontSize = 16.sp,
-                    color = Color.Gray,
-                    fontStyle = FontStyle.Italic
+                    color = Warna.HitamNormal
+                )
+                Text(
+                    text = viewmodel.user.posisi,
+                    fontSize = 16.sp,
+                    color = Warna.HitamNormal
                 )
             }
-        }
 
 
-        Spacer(modifier = Modifier.height(16.dp))
+            viewmodel.user.role.forEach {
+                Text(
+                    text = it,
+                    fontSize = 16.sp,
+                    color = Color.Gray
+                )
+            }
 
-        Button(
-            onClick = {
-                viewmodel.loginResponseReset()
-                navController.navigate(Screen.Login.route) {
-                    popUpTo(Screen.Home.route) { inclusive = true }
+
+            Spacer(modifier = Modifier.height(56.dp))
+
+            Row {
+                ButtonIcon(
+                    modifier = Modifier.weight(1f).padding(end = 5.dp),
+                    color = Warna.MerahNormal,
+                    icon = Icons.Default.Edit,
+                    text = "Edit"
+                ) {
+                    showDialog = true
                 }
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF007BFF)),
-            modifier = Modifier.clip(RoundedCornerShape(8.dp))
-        ) {
-            Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Edit", tint = Color.White)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Log out", color = Color.White)
+                ButtonIcon(
+                    modifier = Modifier.weight(1f).padding(start = 5.dp),
+                    color = Color.Red,
+                    icon = Icons.AutoMirrored.Filled.Logout,
+                    text = "Log out"
+                ) {
+                    viewmodel.loginResponseReset()
+                    navController.navigate(Screen.Login.route)
+                }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
     }
 }
 
@@ -180,6 +210,31 @@ fun FotoProfilResponse(viewmodel: MahasiswaListViewModel, context: Context){
             Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
         }
         is Response.Loading -> {}
+    }
+}
+
+@Composable
+fun EditProfilResponse(viewmodel:MahasiswaListViewModel, context: Context, onShowDialogChange: () -> Unit){
+
+    when(val response = viewmodel.editMahasiswaResponse){
+        is Response.Success -> {
+            viewmodel.changeLoading(false)
+            Toast.makeText(context, response.data, Toast.LENGTH_SHORT).show()
+            onShowDialogChange()
+            viewmodel.editMahasiswaResponseReset()
+        }
+
+        is Response.Failure -> {
+            viewmodel.changeLoading(false)
+            Log.d("waow", response.e.toString())
+            Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
+            viewmodel.editMahasiswaResponseReset()
+
+        }
+        is Response.Loading -> {
+            viewmodel.changeLoading(false)
+
+        }
     }
 }
 

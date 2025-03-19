@@ -23,8 +23,10 @@ import org.d3if3121.absenubrugadmin.data.repository.interfaces.AbsenListResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.AddFotoProfil
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.DeleteAbsenResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditAbsenResponse
+import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditMahasiswaResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditRoleResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.FetchImageResponse
+import org.d3if3121.absenubrugadmin.data.repository.interfaces.GetMahasiswaResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListResponse
 import javax.inject.Inject
 
@@ -54,6 +56,10 @@ class MahasiswaListViewModel @Inject constructor(
         private set
 
     var addFotoProfil by mutableStateOf<AddFotoProfil>(Response.Loading)
+        private set
+    var editMahasiswaResponse by mutableStateOf<EditMahasiswaResponse>(Response.Loading)
+        private set
+    var getMahasiswaResponse by mutableStateOf<GetMahasiswaResponse>(Response.Loading)
         private set
 
 
@@ -282,7 +288,24 @@ class MahasiswaListViewModel @Inject constructor(
         loginResponse = repo.loginMahasiswa(response.nim, response.password)
     }
 
+    fun editMahasiswa(mahasiswa: Mahasiswa) = viewModelScope.launch {
+        changeLoading(true)
+        editMahasiswaResponse = repo.editMahasiswa(mahasiswa)
+    }
+    fun getMahasiswa(nip: String) = viewModelScope.launch {
+        repo.getMahasiswa(nip).collect{
+            getMahasiswaResponse = it
+            if(it is Response.Success){
+                user = it.data ?: Mahasiswa()
+            } else if (it is Response.Failure){
+                Log.d("iiii2", it.e.toString())
+            }
+        }
+    }
 
+    fun editMahasiswaResponseReset() {
+        editMahasiswaResponse = Response.Loading
+    }
 
 
 }
