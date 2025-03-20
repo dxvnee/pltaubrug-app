@@ -294,6 +294,8 @@ fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     nip = getString(Mahasiswa.NIP)?: "DefaultName",
     foto = getString(Mahasiswa.FOTO)?: "DefaultName",
     role = get(Mahasiswa.ROLE) as? List<String> ?: emptyList(),
+    posisi = getString(Mahasiswa.POSISI)?: "-",
+
 
 )
 

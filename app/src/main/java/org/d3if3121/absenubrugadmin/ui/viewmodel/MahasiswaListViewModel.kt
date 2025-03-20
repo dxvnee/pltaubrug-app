@@ -83,6 +83,9 @@ class MahasiswaListViewModel @Inject constructor(
     var user by mutableStateOf(Mahasiswa())
         private set
 
+    var currentpegawaiedit by mutableStateOf(Mahasiswa())
+        private set
+
     var currentPegawai by mutableStateOf(Mahasiswa())
         private set
 
@@ -134,15 +137,11 @@ class MahasiswaListViewModel @Inject constructor(
         absenListResponse = Response.Loading
     }
 
-
-
     fun getMahasiswaNip(){
         mahasiswaList.forEach {
             listNip = listNip + it.nip
         }
     }
-
-
 
     fun getMahasiswaList() = viewModelScope.launch {
         changeLoading(true)
@@ -295,11 +294,14 @@ class MahasiswaListViewModel @Inject constructor(
     fun getMahasiswa(nip: String) = viewModelScope.launch {
         repo.getMahasiswa(nip).collect{
             getMahasiswaResponse = it
-            if(it is Response.Success){
-                user = it.data ?: Mahasiswa()
-            } else if (it is Response.Failure){
-                Log.d("iiii2", it.e.toString())
-            }
+            if(it is Response.Success){ user = it.data ?: Mahasiswa() }
+        }
+    }
+
+    fun getMahasiswaByNip(nip: String) = viewModelScope.launch {
+        repo.getMahasiswa(nip).collect{
+            getMahasiswaResponse = it
+            if(it is Response.Success){ currentpegawaiedit = it.data ?: Mahasiswa() }
         }
     }
 

@@ -33,12 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
+import org.d3if3121.absenubrugadmin.R
 import org.d3if3121.absenubrugadmin.ui.component.BottomBar
 import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
@@ -48,6 +50,7 @@ import org.d3if3121.absenubrugadmin.ui.component.ButtonIcon
 import org.d3if3121.absenubrugadmin.ui.component.DialogEditProfile
 import org.d3if3121.absenubrugadmin.ui.component.DialogLoading
 import org.d3if3121.absenubrugadmin.ui.component.FotoProfil
+import org.d3if3121.absenubrugadmin.ui.component.KartuProfil
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -71,9 +74,7 @@ fun ProfilePage(
                 Column(
                     modifier = Modifier
                         .padding(
-                            top = paddingValues.calculateTopPadding() - 10.dp,
-                            start = 17.dp,
-                            end = 17.dp
+                            top = paddingValues.calculateTopPadding() - 50.dp,
                         )
                 ) {
                     ProfilePageContent(paddingValues, viewmodel, navController)
@@ -96,27 +97,21 @@ fun ProfilePageContent(
     DialogLoading(viewmodel)
 
     LaunchedEffect(Unit){
-        Log.d("iiii", viewmodel.user.nip)
         viewmodel.getMahasiswa(viewmodel.user.nip)
     }
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-        Log.d("WHY", imageUri.toString())
-        imageUri?.let {
-            viewmodel.addFotoProfil(viewmodel.user.nip, imageUri!!)
-        }
-    }
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
 
-    DialogEditProfile(viewmodel = viewmodel, showDialog = showDialog, onDismissRequest = { showDialog = false })
+    if(showDialog){
+        DialogEditProfile(pegawai = viewmodel.user, viewmodel = viewmodel, onDismissRequest = { showDialog = false })
+    }
     FotoProfilResponse(viewmodel, context)
     EditProfilResponse(viewmodel, context){
         showDialog = false
     }
+
 
     Card(
         modifier = Modifier
@@ -126,76 +121,36 @@ fun ProfilePageContent(
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(6.dp)
     ){
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(17.dp),
+        Column (
+            modifier = Modifier.padding(17.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            FotoProfil(
-                imageUrl = viewmodel.user.foto,
-                modifier = Modifier
-                    .padding(top = 50.dp)
-                    .size(145.dp).clickable {
-                        launcher.launch("image/*")
-                    }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = viewmodel.user.nama,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-
-            Row{
-                Text(
-                    text = viewmodel.user.nip + " - ",
-                    fontSize = 16.sp,
-                    color = Warna.HitamNormal
-                )
-                Text(
-                    text = viewmodel.user.posisi,
-                    fontSize = 16.sp,
-                    color = Warna.HitamNormal
-                )
-            }
-
-
-            viewmodel.user.role.forEach {
-                Text(
-                    text = it,
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-            }
-
-
-            Spacer(modifier = Modifier.height(56.dp))
-
-            Row {
-                ButtonIcon(
-                    modifier = Modifier.weight(1f).padding(end = 5.dp),
-                    color = Warna.MerahNormal,
-                    icon = Icons.Default.Edit,
-                    text = "Edit"
-                ) {
-                    showDialog = true
-                }
-                ButtonIcon(
-                    modifier = Modifier.weight(1f).padding(start = 5.dp),
-                    color = Color.Red,
-                    icon = Icons.AutoMirrored.Filled.Logout,
-                    text = "Log out"
-                ) {
+            KartuProfil(
+                pegawai = viewmodel.user,
+                viewmodel = viewmodel,
+                button1text = "Edit",
+                button2text = "Log out",
+                button1color = Warna.MerahNormal,
+                button2color = Color.Red,
+                button1icon = Icons.Default.Edit,
+                button2icon = Icons.AutoMirrored.Filled.Logout,
+                onClick1 = { showDialog = true },
+                onClick2 = {
                     viewmodel.loginResponseReset()
                     navController.navigate(Screen.Login.route)
                 }
-            }
-            Spacer(modifier = Modifier.height(14.dp))
-
+            )
+            Text(
+                text = stringResource(R.string.app_version),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Normal,
+                color = Color.Gray
+            )
         }
     }
+
+
+
 }
 
 @Composable

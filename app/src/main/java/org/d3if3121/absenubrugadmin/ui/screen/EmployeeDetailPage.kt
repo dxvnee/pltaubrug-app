@@ -33,8 +33,11 @@ import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
+import org.d3if3121.absenubrugadmin.ui.component.ButtonCommon
 import org.d3if3121.absenubrugadmin.ui.component.CardListPegawai
 import org.d3if3121.absenubrugadmin.ui.component.DataKosong
+import org.d3if3121.absenubrugadmin.ui.component.DialogEditProfile
+import org.d3if3121.absenubrugadmin.ui.component.DialogProfil
 import org.d3if3121.absenubrugadmin.ui.component.DialogRole
 import org.d3if3121.absenubrugadmin.ui.component.HeaderContent
 
@@ -83,10 +86,12 @@ fun MainContentEmployeeDetail(
     navController: NavHostController
 ) {
 
+    var dialogprofil by remember { mutableStateOf(false) }
     var dialogrole by remember { mutableStateOf(false) }
-    var statuspage by remember { mutableStateOf("(Daftar Pegawai)") }
-    viewmodel.getMahasiswaNip()
+    var dialogedit by remember { mutableStateOf(false) }
 
+    var statuspage by remember { mutableStateOf("(Daftar Pegawai)") }
+    val context = LocalContext.current
 
     val listpegawai by remember { derivedStateOf { (viewmodel.mahasiswaList) }}
     var currentpegawai by remember { mutableStateOf(Mahasiswa()) }
@@ -95,8 +100,38 @@ fun MainContentEmployeeDetail(
         viewmodel.getMahasiswaList()
     }
 
-    EmployeeDetailResponse(viewmodel){
-        dialogrole = it
+    FotoProfilResponse(viewmodel, context)
+    EditProfilResponse(viewmodel, context){ dialogedit = false }
+    EmployeeDetailResponse(viewmodel){ dialogprofil = it }
+
+    if (dialogprofil) {
+        DialogProfil(
+            pegawai = currentpegawai,
+            viewmodel = viewmodel,
+            onDismissRequest = {
+                dialogprofil = false
+            },
+            onClick1 = {
+                dialogedit = true
+            },
+            onClick2 = {
+                viewmodel.changePegawai(currentpegawai)
+                dialogprofil = false
+                navController.navigate(Screen.EmployeeHome.route)
+            }
+        )
+    }
+
+    if (dialogedit) {
+        DialogEditProfile(
+            pegawai = currentpegawai.copy(),
+            viewmodel = viewmodel,
+            secondbutton = true,
+            buttonAction = {
+                dialogrole = true
+            },
+            onDismissRequest = { dialogedit = false }
+        )
     }
 
     DialogRole(
@@ -106,11 +141,7 @@ fun MainContentEmployeeDetail(
         },
         dialogrole = dialogrole,
         pegawai = currentpegawai,
-    ){  pegawai ->
-        viewmodel.changePegawai(pegawai)
-        dialogrole = false
-        navController.navigate(Screen.EmployeeHome.route)
-    }
+    )
 
     HeaderContent(
         viewmodel = viewmodel,
@@ -139,7 +170,7 @@ fun MainContentEmployeeDetail(
                         if(("UNKNOWN" !in pegawai.role) && ("ADMIN" !in pegawai.role)) {
                             CardListPegawai(pegawai){
                                 currentpegawai = pegawai
-                                dialogrole = true
+                                dialogprofil = true
                             }
                         }
                     }
@@ -157,7 +188,7 @@ fun MainContentEmployeeDetail(
                         if("UNKNOWN" in pegawai.role) {
                             CardListPegawai(pegawai){
                                 currentpegawai = pegawai
-                                dialogrole = true
+                                dialogprofil = true
                             }
                         }
                     }

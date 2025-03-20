@@ -94,8 +94,6 @@ fun MainContentEmployeeHome(
 ) {
     LaunchedEffect (Unit){
         viewmodel.getAbsenListSingle(viewmodel.currentPegawai)
-        Log.d("mantapbos1", viewmodel.absenListSingle.toString())
-
     }
 
     DialogLoading(viewmodel)
@@ -115,7 +113,7 @@ fun MainContentEmployeeHome(
                     modifier = Modifier.padding(top = 20.dp, bottom = 17.dp).fillMaxWidth()
                 ){
                     Text(
-                        text = "Lihat Data",
+                        text = "Lihat Absen (${viewmodel.currentPegawai.nama})" ,
                         color = Warna.MerahNormal,
                         fontSize = 21.sp,
                         fontWeight = FontWeight.ExtraBold

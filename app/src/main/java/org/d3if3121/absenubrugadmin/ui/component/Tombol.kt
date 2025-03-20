@@ -1,7 +1,12 @@
 package org.d3if3121.absenubrugadmin.ui.component
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -9,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -49,9 +55,7 @@ fun ButtonCommon(
     warna: Color = Warna.MerahNormal,
     onClick: () -> Unit,
 ){
-    val hehe = Mahasiswa.run {
 
-    }
     Button(
         onClick = {
             onClick()
@@ -79,7 +83,18 @@ fun ButtonIcon(
         shape = RoundedCornerShape(10.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        Icon(icon, contentDescription = "Edit", tint = Color.White, modifier = Modifier.padding(end =5.dp))
-        Text(text, color = Color.White)
+        Box (
+            modifier = Modifier.horizontalScroll(rememberScrollState())
+        ){
+            Row (
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ){
+                Icon(icon, contentDescription = "Edit", tint = Color.White, modifier = Modifier.padding(end =5.dp))
+                Text(text, color = Color.White, fontSize = 14.sp)
+            }
+
+        }
+
     }
 }

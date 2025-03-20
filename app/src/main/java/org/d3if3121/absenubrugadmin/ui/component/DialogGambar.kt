@@ -37,6 +37,8 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import org.d3if3121.absenubrugadmin.components.LoadingIndicator
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
+import org.d3if3121.absenubrugadmin.ui.screen.EditProfilResponse
+import org.d3if3121.absenubrugadmin.ui.screen.FotoProfilResponse
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
 
@@ -200,7 +202,6 @@ fun DialogRole(
     onDismissRequest: () -> Unit,
     dialogrole: Boolean,
     pegawai: Mahasiswa,
-    cekAction: (Mahasiswa) -> Unit
 ){
     var selectedrole by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -296,14 +297,6 @@ fun DialogRole(
 
                     }
 
-                    if("UNKNOWN" !in pegawai.role) {
-                        ButtonCommon(
-                            text = "Cek Absen",
-                            modifier = Modifier.weight(1f).padding(start = 3.dp),
-                        ){
-                            cekAction(pegawai)
-                        }
-                    }
                 }
 
 
@@ -318,99 +311,103 @@ fun DialogRole(
 @Composable
 fun DialogEditProfile(
     viewmodel: MahasiswaListViewModel,
-    showDialog: Boolean,
+    pegawai: Mahasiswa,
+    secondbutton: Boolean = false,
+    buttonAction: () -> Unit = {},
     onDismissRequest: () -> Unit,
 ) {
-    var nama by remember { mutableStateOf(viewmodel.user.nama) }
-    var posisi by remember { mutableStateOf(viewmodel.user.posisi) }
-
-    if (showDialog) {
-        AlertDialog(
-            modifier = Modifier,
-            onDismissRequest = onDismissRequest,
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Edit Data Profil",
-                        color = Warna.MerahNormal,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            },
-            text = {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Text(
-                        text = "Nama:",
-                        color = Warna.MerahNormal,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                    )
-                    InputPutih(
-                        input = nama,
-                        placeholder = "Masukkan nama anda...",
-                        onInputChange = { input ->
-                            nama = input
-                        },
-                        keyboardType = KeyboardType.Number,
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(bottom = 10.dp)
-                    )
 
 
-                    Text(
-                        text = "Posisi:",
-                        color = Warna.MerahNormal,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                    )
-                    InputPutih(
-                        input = posisi,
-                        placeholder = "Masukkan posisi anda...",
-                        onInputChange = { input ->
-                            posisi = input
-                        },
-                        keyboardType = KeyboardType.Number,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+    var nama by remember { mutableStateOf (pegawai.nama) }
+    var nip by remember { mutableStateOf (pegawai.nip) }
+    var posisi by remember { mutableStateOf(pegawai.posisi) }
 
-                }
 
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewmodel.editMahasiswa(
-                            Mahasiswa(
-                                nip = viewmodel.user.nip,
-                                nama = nama,
-                                posisi = posisi
-                            )
-                        )
+    AlertDialog(
+        modifier = Modifier,
+        onDismissRequest = onDismissRequest,
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Edit Data Profil",
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = "Nama:",
+                    color = Warna.MerahNormal,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+                InputPutih(
+                    input = nama,
+                    placeholder = "Masukkan nama anda...",
+                    onInputChange = { input ->
+                        nama = input
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = Warna.MerahNormal),
-                    shape = RoundedCornerShape(7.dp),
+                    keyboardType = KeyboardType.Number,
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "KIRIM",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        .padding(bottom = 10.dp)
+                )
+
+
+                Text(
+                    text = "Posisi:",
+                    color = Warna.MerahNormal,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+                InputPutih(
+                    input = posisi,
+                    placeholder = "Masukkan posisi anda...",
+                    onInputChange = { input ->
+                        posisi = input
+                    },
+                    keyboardType = KeyboardType.Number,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+            }
+
+        },
+        confirmButton = {
+            Row{
+                ButtonCommon(text = "Kirim", modifier = Modifier.weight(1f).padding(end = if(secondbutton)5.dp else 0.dp) ){
+                    viewmodel.editMahasiswa(
+                        Mahasiswa(
+                            nip = nip,
+                            nama = nama,
+                            posisi = posisi
+                        )
                     )
                 }
-            },
-            containerColor = Warna.PutihNormal,
-            shape = RoundedCornerShape(20.dp)
-        )
-    }
+                if(secondbutton){
+                    ButtonCommon(text = "Edit Role", modifier = Modifier.weight(1f).padding(start = 5.dp)){
+                        buttonAction()
+                    }
+                }
+
+            }
+
+        },
+        containerColor = Warna.PutihNormal,
+        shape = RoundedCornerShape(20.dp)
+    )
+
+
+
 }
