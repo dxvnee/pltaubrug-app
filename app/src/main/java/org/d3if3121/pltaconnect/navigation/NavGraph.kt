@@ -2,6 +2,7 @@ package org.d3if3121.pltaconnect.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,14 +16,14 @@ import org.d3if3121.pltaconnect.ui.viewmodel.PegawaiListViewModel
 
 
 @Composable
-fun SetupNavGraph(startdestination: String = Screen.Login.route){
+fun SetupNavGraph(isLoggedIn: Boolean){
 
     val navController = rememberNavController()
     val pegawailistviewmodel: PegawaiListViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = startdestination
+        startDestination = if (isLoggedIn) Screen.Home.route else Screen.Login.route
     ) {
         composable(route = Screen.Login.route){
             LoginPage(navController, pegawailistviewmodel)

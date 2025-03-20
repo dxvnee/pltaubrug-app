@@ -70,8 +70,6 @@ fun LoginPage(
     navController: NavHostController,
     viewmodel: PegawaiListViewModel = hiltViewModel()
 ) {
-    val sudahlogin by viewmodel.usermasuk.collectAsState()
-    val isInitialized by viewmodel.isInitialized.collectAsState()
 
 
     var nim by remember { mutableStateOf("") }

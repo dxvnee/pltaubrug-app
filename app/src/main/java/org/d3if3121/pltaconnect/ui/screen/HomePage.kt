@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -92,9 +93,16 @@ fun HomePage(
     navController: NavHostController,
     viewModel: PegawaiListViewModel = hiltViewModel(),
 ) {
-    val sudahlogin = viewModel.usermasuk
 
-    Log.d("jalanle2",  sudahlogin.toString())
+    DialogLoading(viewModel)
+
+
+    val userid = viewModel.userId.collectAsState().value
+    LaunchedEffect(Unit, userid){
+        userid?.let {
+            viewModel.getMahasiswa(it)
+        }
+    }
 
     val lazyListState = rememberLazyListState()
     var user = viewModel.user
@@ -122,33 +130,27 @@ fun HomePage(
         },
         contentColor = Warna.PutihNormal
     )
-    ResponseHome(context)
+    ResponseHome(viewModel, context, navController)
+
+
 }
+
 
 @Composable
-fun ResponseHome(context: Context){
+fun ResponseHome(viewmodel: PegawaiListViewModel, context: Context, navController: NavHostController){
+    when(val response = viewmodel.pegawaiListResponse){
+        is Success -> {
+            viewmodel.changeLoading(false)
+        }
+        is Failure -> {
+            Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
+        }
 
-//    when(val addRequestResponse = projectviewmodel.addRequestResponse){
-//        is Loading -> {
-//
-//        }
-//        is Success -> {
-//            Toast.makeText(context, "Request Success!", Toast.LENGTH_SHORT).show()
-//            projectviewmodel.resetAddRequestResponse()
-//        }
-//        is Failure -> printError(addRequestResponse.e)
-//    }
-//    when(val deleteRequestResponse = projectviewmodel.deleteRequestResponse){
-//        is Loading -> {
-//
-//        }
-//        is Success -> {
-//            Toast.makeText(context, "Request Cancelled.", Toast.LENGTH_SHORT).show()
-//            projectviewmodel.resetDeleteRequestResponse()
-//        }
-//        is Failure -> printError(deleteRequestResponse.e)
-//    }
+        is Loading -> {
+        }
+    }
 }
+
 
 @Composable
 fun MainContentHome(
@@ -191,11 +193,7 @@ fun MainContentHome(
                 }
                 ProjectListHome(pegawaiListViewModel = viewmodel, navController = navController)
 
-
             }
-
-
-
         }
     }
 
@@ -222,8 +220,6 @@ fun ProjectListHome(
                 selecteddate = it
             }
         )
-
-
 
         Column (
             modifier = Modifier.padding(17.dp).fillMaxWidth().fillMaxHeight()

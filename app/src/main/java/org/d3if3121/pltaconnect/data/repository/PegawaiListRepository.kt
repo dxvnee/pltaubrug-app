@@ -5,9 +5,12 @@ import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import org.d3if3121.pltaconnect.data.model.Pegawai
@@ -23,6 +26,7 @@ import org.d3if3121.pltaconnect.data.model.data.PemakaianRequest
 import org.d3if3121.pltaconnect.data.model.data.ProduksiRequest
 import org.d3if3121.pltaconnect.data.model.data.Produksi
 import org.d3if3121.pltaconnect.data.repository.interfaces.PegawaiListInterface
+import java.io.IOException
 
 class PegawaiListRepository (
     private val pegawaiRef: CollectionReference,
@@ -38,40 +42,29 @@ class PegawaiListRepository (
         val listener = pegawaiRef
             .orderBy("nama")
             .addSnapshotListener { snapshot, e ->
-                val pegawaiListResponse =
-                    if (snapshot != null) {
-                        val pegawaiList = snapshot.map {
-                            it.toPegawai()
-                        }
-                        Response.Success(pegawaiList)
-                    } else {
-                        Response.Failure(e)
-                    }
-                trySend(pegawaiListResponse)
-            }
-        awaitClose {
-            listener.remove()
-        }
-    }
-
-
-    override fun addUser(pegawai: Pegawai) = callbackFlow {
-        val listener = pegawaiRef.whereEqualTo("nip", pegawai.nip)
-            .addSnapshotListener { snapshot, e ->
-                if (snapshot != null && !snapshot.isEmpty) {
-                    val updatedPegawai = snapshot.documents.first().toPegawai()
-                    trySend(Response.Success(updatedPegawai))
-                } else if (e != null) {
+                if (e != null) {
                     trySend(Response.Failure(e))
-                } else {
-                    trySend(Response.Failure(Exception("User not found!")))
+                    return@addSnapshotListener
                 }
+
+                pegawaiRef.orderBy("nama")
+                    .get(Source.SERVER)
+                    .addOnSuccessListener { freshSnapshot ->
+                        val pegawaiList = freshSnapshot.map { it.toPegawai() }
+                        trySend(Response.Success(pegawaiList))
+                    }
+                    .addOnFailureListener { serverError ->
+                        trySend(Response.Failure(serverError))
+                    }
             }
 
         awaitClose {
             listener.remove()
         }
     }
+
+
+
 
     override suspend fun addPegawai(pegawai: Pegawai) = try {
         val pegawaiSama = pegawaiRef.whereEqualTo("nip", pegawai.nip).get().await()
@@ -84,36 +77,6 @@ class PegawaiListRepository (
         }
     } catch (e: Exception) {
         Response.Failure(e)
-    }
-
-    override suspend fun markProject(nip: String, projectId: List<String>) {
-        val pegawaiQuery = pegawaiRef
-            .whereEqualTo("nip", nip)
-
-        pegawaiQuery.get()
-            .addOnSuccessListener { snapshot ->
-                if (!snapshot.isEmpty) {
-
-                    val pegawaiDoc = snapshot.documents.first()
-
-                    // Update viewedProjects dengan menambahkan semua projectId yang diberikan
-                    pegawaiDoc.reference.update(
-                        "viewedProjects",
-                        FieldValue.arrayUnion(*projectId.toTypedArray())
-                    )
-                        .addOnSuccessListener {
-                            Log.d("Firestore", "Project(s) $projectId marked as viewed for $nip")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("Firestore", "Failed to mark project as viewed", e)
-                        }
-                } else {
-                    Log.e("Firestore", "No pegawai found with nip $nip")
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firestore", "Failed to fetch pegawai", e)
-            }
     }
 
 
@@ -136,31 +99,20 @@ class PegawaiListRepository (
         Response.Failure(e)
     }
 
+    override fun getMahasiswa(nip: String) = callbackFlow {
+        val listener = pegawaiRef.document(nip)
+            .addSnapshotListener { snapshot, e ->
+                val mahasiswaResponse = if(snapshot != null){
+                    val data = snapshot.toPegawai()
+                    Response.Success(data)
+                } else {
+                    Response.Failure(e)
+                }
+                trySend(mahasiswaResponse)
+            }
 
-    override suspend fun checkRequestProject(id: String, nip: String): Boolean {
-        return try {
-            val process = pegawaiRef.whereEqualTo("nip", nip).get().await().documents.first()
-            val requests = process.get("requests") as? List<String>
-            requests?.contains(id) ?: false
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-
-    override suspend fun deletePegawai(id: String) = try {
-        val process = pegawaiRef.document(id).delete().await()
-        Response.Success(process)
-    } catch (e: Exception){
-        Response.Failure(e)
-    }
-
-    override suspend fun getPegawaiByNim(nip: String): Pegawai {
-        val pegawai = pegawaiRef.whereEqualTo("nip", nip).get().await()
-        if (!pegawai.isEmpty){
-            return pegawai.first().toPegawai()
-        } else {
-            return Pegawai()
+        awaitClose{
+            listener.remove()
         }
     }
 
@@ -208,20 +160,54 @@ class PegawaiListRepository (
     override suspend fun addMasuk(masuk: MasukRequest) = addData(masukRef, masuk, masuk.id)
 
 
-    suspend fun <T : Any> getData(ref: CollectionReference,id: String, dataclass: Class<T>): Response<T> {
-        return try {
-            val snapshot = ref.document(id).get().await()
 
+    // Fungsi retry yang bisa digunakan ulang
+    suspend fun <T> retryWithDelay(
+        maxRetryTime: Long = 30_000L, // Maksimal waktu retry 30 detik
+        retryDelay: Long = 5_000L, // Delay antar percobaan
+        action: suspend () -> Response<T> // Aksi yang akan dicoba ulang
+    ): Response<T> {
+        val startTime = System.currentTimeMillis()
+
+        while (System.currentTimeMillis() - startTime < maxRetryTime) {
+            try {
+                return action()
+            } catch (e: Exception) {
+                when (e) {
+                    is FirebaseFirestoreException -> {
+                        if (e.code == FirebaseFirestoreException.Code.UNAVAILABLE) {
+                            delay(retryDelay)
+                        } else {
+                            return Response.Failure(e)
+                        }
+                    }
+                    is IOException -> delay(retryDelay)
+                    else -> return Response.Failure(e)
+                }
+            }
+        }
+
+        return Response.Failure(Exception("Gagal mengambil data setelah 30 detik!"))
+    }
+
+    suspend fun <T : Any> getData(
+        ref: CollectionReference,
+        id: String,
+        dataclass: Class<T>
+    ): Response<T> {
+        return retryWithDelay {
+            val snapshot = ref.document(id).get().await()
             if (snapshot.exists()) {
                 val data = snapshot.toObject(dataclass)
                 Response.Success(data)
             } else {
                 Response.Failure(Exception("Data tidak ada!"))
             }
-        } catch (e: Exception) {
-            Response.Failure(e)
         }
     }
+
+
+
 
     override suspend fun getDebit(id: String) = getData(debitRef, id, Debit::class.java)
     override suspend fun getMasuk(id: String) = getData(masukRef, id, MasukRequest::class.java)
