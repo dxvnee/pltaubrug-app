@@ -137,6 +137,11 @@ fun MainContentProject(
     navController: NavHostController
 ) {
 
+    LaunchedEffect(Unit, viewmodel.jam){
+        viewmodel.getJam()
+        Log.d("jamupdate", viewmodel.jam.toString())
+    }
+
     var context = LocalContext.current
 
     AbsenResponse(context, viewmodel, navController)
@@ -186,9 +191,7 @@ fun ProjectContent(
 
     when(masukpergi){
         "(Masuk)" -> {
-            var jamsebelum by remember { mutableStateOf("07:00") }
             if (viewmodel.tanggalSeharusnya != viewmodel.tanggal){
-                Log.d("tes22", viewmodel.tanggalSeharusnya + " he " + viewmodel.tanggal)
 
                 Text(
                     text = "Anda Harus Mengisi Absen Sesuai Tanggal! (${viewmodel.tanggalSeharusnya})",
@@ -202,7 +205,6 @@ fun ProjectContent(
             } else {
                 ProjectTambah(
                     viewmodel = viewmodel,
-                    jamsebelum = jamsebelum,
                     currentJam = viewmodel.currentAbsen.jam,
                     currentKeterangan = viewmodel.currentAbsen.keterangan,
                     currentDeskripsi = viewmodel.currentAbsen.deskripsi,
@@ -219,9 +221,6 @@ fun ProjectContent(
 
         }
         "(Pulang)" -> {
-            var jamsebelum by remember { mutableStateOf("17:00") }
-
-            Log.d("geg", viewmodel.currentAbsen.keterangan)
             if(viewmodel.currentAbsen.keterangan == "Belum Absen"){
                 Text(
                     text = "Anda Belum Mengisi Absen Masuk!",
@@ -235,7 +234,6 @@ fun ProjectContent(
             } else {
                 ProjectTambah(
                     viewmodel = viewmodel,
-                    jamsebelum = jamsebelum,
                     currentJam = viewmodel.currentAbsen.jam2,
                     currentKeterangan = viewmodel.currentAbsen.keterangan2,
                     currentDeskripsi = viewmodel.currentAbsen.deskripsi2,
@@ -258,7 +256,6 @@ fun ProjectContent(
 @Composable
 fun ProjectTambah(
     viewmodel: MahasiswaListViewModel,
-    jamsebelum: String,
     currentJam: String,
     currentKeterangan: String,
     currentDeskripsi: String,
@@ -272,7 +269,7 @@ fun ProjectTambah(
     var currentAbsen by remember { mutableStateOf(viewmodel.currentAbsen) }
 
     var absen by remember { mutableStateOf("") }
-    var jamsebelum by remember { mutableStateOf(jamsebelum) }
+    var jamsebelum = if (isPulang) viewmodel.jam.keluar else viewmodel.jam.masuk
     var jamsesudah by remember { mutableStateOf(dapatJam()) }
     var selectedStatus by remember { mutableStateOf("Pilih Keterangan") }
     var deskripsi by remember { mutableStateOf("") }

@@ -17,14 +17,14 @@ import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 
 
 @Composable
-fun SetupNavGraph(){
+fun SetupNavGraph(isLoggedIn: Boolean){
 
     val navController = rememberNavController()
     val mahasiswalistviewmodel: MahasiswaListViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination =  if (isLoggedIn) Screen.Home.route else Screen.Login.route
     ) {
         composable(route = Screen.Login.route){
             LoginPage(navController, mahasiswalistviewmodel)

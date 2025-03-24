@@ -8,12 +8,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.d3if3121.absenubrug.data.datastore.UserPreferences
 import org.d3if3121.absenubrug.data.repository.MahasiswaListRepository
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 import javax.inject.Singleton
 
 const val MAHASISWA = "pegawai"
-const val PROJECT = "reqpost"
+const val DATA = "sheet"
 const val ABSEN = "absen"
 
 
@@ -25,6 +26,19 @@ object AppModule {
     fun provideMahasiswaListRepository(): MahasiswaListInterface = MahasiswaListRepository(
         mahasiswaRef = Firebase.firestore.collection(MAHASISWA),
         absenRef = Firebase.firestore.collection(ABSEN),
+        dataRef = Firebase.firestore.collection(DATA),
     )
 
+}
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DataStoreModule {
+
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
+        return UserPreferences(context)
+    }
 }

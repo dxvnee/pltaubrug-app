@@ -189,6 +189,7 @@ fun ProfilePageContent(
                             text = "Log out"
                         ) {
                             viewmodel.loginResponseReset()
+                            viewmodel.logout()
                             navController.navigate(Screen.Login.route)
                         }
                     }

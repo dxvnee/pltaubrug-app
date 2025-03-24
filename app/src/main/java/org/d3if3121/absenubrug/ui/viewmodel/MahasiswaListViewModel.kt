@@ -2,6 +2,7 @@ package org.d3if3121.absenubrug.ui.viewmodel
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,9 +12,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.d3if3121.absenubrug.data.datastore.UserPreferences
 import org.d3if3121.absenubrug.data.model.Absen
+import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.data.model.MahasiswaEdit
 import org.d3if3121.absenubrug.data.model.MahasiswaLogin
@@ -25,14 +32,21 @@ import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 import org.d3if3121.absenubrug.data.repository.interfaces.AbsenListResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.AddFotoProfil
 import org.d3if3121.absenubrug.data.repository.interfaces.EditMahasiswaResponse
+import org.d3if3121.absenubrug.data.repository.interfaces.GetJamResponse
 import org.d3if3121.absenubrug.data.repository.interfaces.GetMahasiswaResponse
 import javax.inject.Inject
 import kotlin.math.log
 
 @HiltViewModel
 class MahasiswaListViewModel @Inject constructor(
-    private val repo: MahasiswaListInterface
+    private val repo: MahasiswaListInterface,
+    private val userPreferences: UserPreferences
 ): ViewModel() {
+
+    val userId: StateFlow<String?> = userPreferences.userid
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+
     var absenListResponse by mutableStateOf<AbsenListResponse>(Response.Loading)
         private set
 
@@ -48,6 +62,9 @@ class MahasiswaListViewModel @Inject constructor(
     var getMahasiswaResponse by mutableStateOf<GetMahasiswaResponse>(Response.Loading)
         private set
 
+    var getJamResponse by mutableStateOf<GetJamResponse>(Response.Loading)
+        private set
+
 
     var addAbsenResponse by mutableStateOf<AddAbsenResponse>(Response.Loading)
         private set
@@ -56,6 +73,9 @@ class MahasiswaListViewModel @Inject constructor(
         private set
 
     var user by mutableStateOf(Mahasiswa())
+        private set
+
+    var jam by mutableStateOf(Jam())
         private set
 
     var tanggal by mutableStateOf("")
@@ -81,6 +101,15 @@ class MahasiswaListViewModel @Inject constructor(
         private set
 
 
+    init {
+        getMahasiswaFromDatastore()
+    }
+
+    fun getMahasiswaFromDatastore() = viewModelScope.launch {
+        userId.collectLatest { id ->
+            if (id != null) { getMahasiswa(id) }
+        }
+    }
 
     fun getAbsenList(user: Mahasiswa) = viewModelScope.launch {
         repo.getAbsenList(user).collect() {
@@ -146,7 +175,33 @@ class MahasiswaListViewModel @Inject constructor(
             getMahasiswaResponse = it
             if(it is Response.Success){
                 user = it.data ?: Mahasiswa()
+            } else if(it is Response.Loading){
+                changeLoading(true)
             }
+        }
+    }
+
+    fun getJam() = viewModelScope.launch {
+        repo.getJam().collect{
+            getJamResponse = it
+            if(it is Response.Success){
+                jam = it.data ?: Jam()
+                Log.d("jamupdate2", jam.toString())
+
+            }
+        }
+    }
+
+
+    fun login(userId: String) {
+        viewModelScope.launch {
+            userPreferences.saveuser(userId)
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            userPreferences.clearuser()
         }
     }
 

@@ -35,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,11 +105,7 @@ fun MainContentHome(
     viewmodel: MahasiswaListViewModel = hiltViewModel(),
 ) {
 
-    LaunchedEffect (Unit){
-        viewmodel.getAbsenList(viewmodel.user)
-    }
     HomeResponse(viewmodel)
-
     DialogLoading(viewmodel)
 
     Column(
@@ -227,6 +224,20 @@ fun ProjectListHome(
 fun HomeResponse(
     viewmodel: MahasiswaListViewModel
 ){
+    when(val response = viewmodel.getMahasiswaResponse){
+        is Response.Loading -> {
+        }
+        is Response.Success -> {
+            Log.d("geg2", viewmodel.user.toString())
+            viewmodel.getAbsenList(viewmodel.user)
+            viewmodel.changeLoading(false)
+
+        }
+        is Response.Failure -> {
+            Log.d("error", response.e.toString())
+        }
+    }
+
     when(val response = viewmodel.absenListResponse){
         is Response.Loading -> {}
         is Response.Success -> response.data?.let {

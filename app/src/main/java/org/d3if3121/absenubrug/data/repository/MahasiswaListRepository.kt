@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.ImageUpload
+import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.data.model.MahasiswaEdit
 import org.d3if3121.absenubrug.data.model.Response
@@ -20,7 +21,8 @@ import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 
 class MahasiswaListRepository (
     private val mahasiswaRef: CollectionReference,
-    private val absenRef: CollectionReference
+    private val absenRef: CollectionReference,
+    private val dataRef: CollectionReference,
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
         val absenRef = absenRef.document(user.nip).collection("tanggal")
@@ -45,6 +47,11 @@ class MahasiswaListRepository (
     override fun getMahasiswa(nip: String) = callbackFlow {
         val listener = mahasiswaRef.document(nip)
             .addSnapshotListener { snapshot, e ->
+                if (e != null){
+                    trySend(Response.Failure(e))
+                    return@addSnapshotListener
+                }
+
                 val mahasiswaResponse = if(snapshot != null){
                     val data = snapshot.toMahasiswa()
                     Response.Success(data)
@@ -54,6 +61,25 @@ class MahasiswaListRepository (
                 trySend(mahasiswaResponse)
             }
 
+        awaitClose{
+            listener.remove()
+        }
+    }
+
+    override fun getJam() = callbackFlow {
+        val listener = dataRef.document("jam")
+            .addSnapshotListener{ snapshot, e ->
+                val dataResponse = if(snapshot != null){
+                    val data  = snapshot.toJam()
+                    Response.Success(data)
+
+                } else {
+                    Response.Failure(e)
+                }
+
+                trySend(dataResponse)
+
+            }
         awaitClose{
             listener.remove()
         }
@@ -192,6 +218,10 @@ class MahasiswaListRepository (
 
 }
 
+fun DocumentSnapshot.toJam() = Jam(
+    masuk = getString(Jam.MASUK) ?: "07:00",
+    keluar = getString(Jam.KELUAR) ?: "16:00"
+)
 fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     nama = getString(Mahasiswa.NAMA) ?: "null",
     password = getString(Mahasiswa.PASSWORD) ?: "null",

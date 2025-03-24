@@ -313,6 +313,8 @@ fun LoginResponse(viewmodel: MahasiswaListViewModel, navController: NavHostContr
         is Response.Success -> {
 
             viewmodel.addUser(response.data!!)
+            viewmodel.login(response.data.nip)
+
             viewmodel.changeLoading(false)
             navController.navigate(Screen.Home.route)
             Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
