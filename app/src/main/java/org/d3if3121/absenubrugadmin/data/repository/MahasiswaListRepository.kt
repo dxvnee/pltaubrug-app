@@ -10,18 +10,22 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import org.d3if3121.absenubrugadmin.data.model.Absen
+import org.d3if3121.absenubrugadmin.data.model.Jam
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.Response
+import org.d3if3121.absenubrugadmin.data.repository.interfaces.GetJamResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListInterface
 import java.io.IOException
 
 
 class MahasiswaListRepository (
     private val mahasiswaRef: CollectionReference,
-    private val absenRef: CollectionReference
+    private val absenRef: CollectionReference,
+    private val dataRef: CollectionReference,
 ): MahasiswaListInterface {
     override fun getAbsenList(user: Mahasiswa) = callbackFlow {
         val absenRef = absenRef.document(user.nip).collection("tanggal")
@@ -37,8 +41,6 @@ class MahasiswaListRepository (
                     val absenListResponse =
                         if (snapshot != null) {
                             val absenList = snapshot.map { it.toAbsen() }
-                            Log.d("leole", absenList.toString())
-
                             Response.Success(absenList)
                         } else {
                             Response.Failure(e)
@@ -61,8 +63,6 @@ class MahasiswaListRepository (
                 val mahasiswaListResponse =
                     if (snapshot != null) {
                         val mahasiswaList = snapshot.map { it.toMahasiswa() }
-                        Log.d("leole", mahasiswaList.toString())
-
                         Response.Success(mahasiswaList)
                     } else {
                         Response.Failure(e)
@@ -236,6 +236,7 @@ class MahasiswaListRepository (
         Response.Failure(e)
     }
 
+
     override fun getMahasiswa(nip: String) = callbackFlow {
         val listener = mahasiswaRef.document(nip)
             .addSnapshotListener { snapshot, e ->
@@ -273,6 +274,36 @@ class MahasiswaListRepository (
         Response.Failure(e)
     }
 
+    override suspend fun editJam(jam: Jam) = try {
+        val mahasiswa = dataRef.document("jam")
+
+        mahasiswa.update(
+            mapOf(
+                "masuk" to jam.masuk,
+                "keluar" to jam.keluar
+            )
+        )
+        Response.Success("Jam berhasil diubah!")
+    } catch (e: Exception){
+        Response.Failure(e)
+    }
+
+    override fun getJam() = callbackFlow {
+        val listener = dataRef.document("jam")
+            .addSnapshotListener { snapshot, e ->
+                val mahasiswaResponse = if(snapshot != null){
+                    val data = snapshot.toJam()
+                    Response.Success(data)
+                } else {
+                    Response.Failure(e)
+                }
+                trySend(mahasiswaResponse)
+            }
+
+        awaitClose{
+            listener.remove()
+        }
+    }
 
 
     override suspend fun loginMahasiswa(nim: String, password: String) = try {
@@ -337,6 +368,11 @@ fun DocumentSnapshot.toMahasiswa() = Mahasiswa(
     posisi = getString(Mahasiswa.POSISI)?: "-",
 
 
+)
+
+fun DocumentSnapshot.toJam() = Jam(
+    masuk = getString(Jam.MASUK) ?: "07:00",
+    keluar = getString(Jam.KELUAR) ?: "16:00"
 )
 
 fun DocumentSnapshot.toAbsen(): Absen = Absen(

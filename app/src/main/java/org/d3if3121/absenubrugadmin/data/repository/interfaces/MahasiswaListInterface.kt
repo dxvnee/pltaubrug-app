@@ -3,6 +3,7 @@ package org.d3if3121.absenubrugadmin.data.repository.interfaces
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import org.d3if3121.absenubrugadmin.data.model.Absen
+import org.d3if3121.absenubrugadmin.data.model.Jam
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.Response
 
@@ -25,6 +26,9 @@ typealias EditRoleResponse = Response<String>
 typealias FetchImageResponse = Response<Uri>
 typealias AddFotoProfil = Response<String>
 
+typealias EditJamResponse = Response<String>
+typealias GetJamResponse = Response<Jam>
+
 interface MahasiswaListInterface {
     fun getAbsenList(user: Mahasiswa): Flow<AbsenListResponse>
     fun getMahasiswaList(): Flow<MahasiswaListResponse>
@@ -45,4 +49,7 @@ interface MahasiswaListInterface {
     suspend fun editRole(pegawai: Mahasiswa): EditAbsenResponse
     suspend fun fetchImageFromFirebase(filePath: String): FetchImageResponse
     suspend fun addFotoProfil(nip: String, uri: Uri): AddFotoProfil
+
+    suspend fun editJam(jam: Jam): EditJamResponse
+    fun getJam(): Flow<GetJamResponse>
 }

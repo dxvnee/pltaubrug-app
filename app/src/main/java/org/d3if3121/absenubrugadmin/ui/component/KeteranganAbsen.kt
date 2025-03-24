@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Input
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DoNotDisturb
+import androidx.compose.material.icons.filled.Input
 import androidx.compose.material.icons.filled.LinearScale
+import androidx.compose.material.icons.filled.Output
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -88,7 +91,7 @@ fun KeteranganAbsenComponent(
                 Icon(
                     imageVector = KondisiIkon(hadir1),
                     contentDescription = "Check",
-                    modifier = Modifier.size(35.dp),
+                    modifier = Modifier.size(25.dp),
                     tint = Warna.PutihNormal
                 )
             }
@@ -146,6 +149,12 @@ fun KondisiWarna(keterangan: String): Color {
         "Belum Absen" -> {
             warna = Color.Gray
         }
+        "Jam Masuk" -> {
+            warna = Color.Gray
+        }
+        "Jam Keluar" -> {
+            warna = Color.Gray
+        }
     }
     return warna
 }
@@ -166,6 +175,13 @@ fun KondisiIkon(keterangan: String): ImageVector {
         "Belum Absen" -> {
             icon = Icons.Filled.Clear
         }
+        "Jam Masuk" -> {
+            icon = Icons.AutoMirrored.Filled.Input
+        }
+        "Jam Keluar" -> {
+            icon = Icons.Filled.Output
+        }
+
     }
     return icon
 }

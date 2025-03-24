@@ -45,11 +45,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.hilt.navigation.compose.hiltViewModel
+import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.navigation.Screen
 import org.d3if3121.absenubrugadmin.ui.component.BottomBar
 import org.d3if3121.absenubrugadmin.ui.component.Calendar
+import org.d3if3121.absenubrugadmin.ui.component.DialogEditJam
+import org.d3if3121.absenubrugadmin.ui.component.DialogEditProfile
 import org.d3if3121.absenubrugadmin.ui.component.DialogLoading
+import org.d3if3121.absenubrugadmin.ui.component.KeteranganAbsen
 import org.d3if3121.absenubrugadmin.ui.component.TopBar
 import org.d3if3121.absenubrugadmin.ui.theme.Warna
 import org.d3if3121.absenubrugadmin.ui.viewmodel.MahasiswaListViewModel
@@ -134,6 +138,7 @@ fun MainContentHome(
 ) {
     LaunchedEffect (Unit){
         viewmodel.getMahasiswaList()
+        viewmodel.getJam()
     }
 
     DialogLoading(viewmodel)
@@ -173,7 +178,17 @@ fun ProjectListHome(
     viewmodel: MahasiswaListViewModel
 ){
 
-    HomeResponse(viewmodel)
+    var gantijam by remember { mutableStateOf(false) }
+    var context = LocalContext.current
+
+    if(gantijam){
+        DialogEditJam(viewmodel) {
+            gantijam = false
+        }
+    }
+    HomeResponse(viewmodel, context){
+        gantijam = false
+    }
 
     var selecteddate by remember { mutableStateOf("") }
 
@@ -194,14 +209,16 @@ fun ProjectListHome(
         Column (
             modifier = Modifier.padding(17.dp).fillMaxWidth().fillMaxHeight()
         ){
-            Text(
-                text = "Input ke Spreadsheet!",
-                color = Warna.MerahNormal,
-                fontSize = 12.sp,
+            KeteranganAbsen(
+                hadir1 = "Jam Masuk",
+                hadir2 = "Jam Keluar",
+                jam1 = viewmodel.jam.masuk,
+                jam2 = viewmodel.jam.keluar,
                 modifier = Modifier.clickable {
-
-                }
+                    gantijam = true
+                }.padding(bottom = 9.dp)
             )
+
 
             Button(
                 onClick = {
@@ -214,6 +231,14 @@ fun ProjectListHome(
             ) {
                 Text(text = "LIHAT", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
+            Text(
+                text = "Input ke Spreadsheet!",
+                color = Warna.MerahNormal,
+                fontSize = 12.sp,
+                modifier = Modifier.clickable {
+
+                }
+            )
         }
     }
 
@@ -224,7 +249,7 @@ fun ProjectListHome(
 
 @Composable
 fun HomeResponse(
-    viewmodel: MahasiswaListViewModel
+    viewmodel: MahasiswaListViewModel, context: Context, onShowDialogChange: () -> Unit
 ){
     when(val response = viewmodel.absenListResponse){
         is Response.Loading -> {}
@@ -246,7 +271,30 @@ fun HomeResponse(
             Log.d("error", response.e.toString())
         }
     }
+
+    when(val response = viewmodel.editJamResponse){
+        is Response.Success -> {
+            viewmodel.changeLoading(false)
+            Toast.makeText(context, response.data, Toast.LENGTH_SHORT).show()
+            onShowDialogChange()
+            viewmodel.editJamResponseReset()
+        }
+
+        is Response.Failure -> {
+            viewmodel.changeLoading(false)
+            Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
+            viewmodel.editJamResponseReset()
+
+        }
+        is Response.Loading -> {
+            viewmodel.changeLoading(false)
+
+        }
+    }
 }
+
+
+
 
 
 

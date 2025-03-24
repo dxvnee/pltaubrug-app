@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.d3if3121.absenubrugadmin.data.datastore.UserPreferences
 import org.d3if3121.absenubrugadmin.data.model.Absen
+import org.d3if3121.absenubrugadmin.data.model.Jam
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.MahasiswaLogin
 import org.d3if3121.absenubrugadmin.data.model.Response
@@ -27,10 +28,12 @@ import org.d3if3121.absenubrugadmin.data.repository.interfaces.AbsenListResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.AddFotoProfil
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.DeleteAbsenResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditAbsenResponse
+import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditJamResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditMahasiswaResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.EditRoleResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.FetchImageResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.GetMahasiswaResponse
+import org.d3if3121.absenubrugadmin.data.repository.interfaces.GetJamResponse
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListResponse
 import javax.inject.Inject
 
@@ -85,10 +88,20 @@ class MahasiswaListViewModel @Inject constructor(
     var editRoleResponse by mutableStateOf<EditRoleResponse>(Response.Loading)
         private set
 
+    var editJamResponse by mutableStateOf<EditJamResponse>(Response.Loading)
+        private set
+
+    var getJamResponse by mutableStateOf<GetJamResponse>(Response.Loading)
+        private set
+
+
+
     var loginResponse by mutableStateOf<LoginResponse>(Response.Loading)
         private set
 
     var user by mutableStateOf(Mahasiswa())
+        private set
+    var jam by mutableStateOf(Jam())
         private set
 
     var currentpegawaiedit by mutableStateOf(Mahasiswa())
@@ -227,6 +240,22 @@ class MahasiswaListViewModel @Inject constructor(
         addMahasiswaResponse = repo.addMahasiswa(mahasiswa)
     }
 
+    fun getJam() = viewModelScope.launch {
+        repo.getJam().collect{
+            getJamResponse = it
+            if(it is Response.Success){
+                Log.d("proses2", it.data.toString())
+
+                jam = it.data ?: Jam()
+            }
+        }
+    }
+    fun editJam(jam: Jam) = viewModelScope.launch {
+        changeLoading(true)
+        editJamResponse = repo.editJam(jam)
+    }
+
+
     fun addAbsen(absen: Absen) = viewModelScope.launch {
         changeLoading(true)
         addAbsenResponse = repo.addAbsen(absen)
@@ -315,9 +344,7 @@ class MahasiswaListViewModel @Inject constructor(
         repo.getMahasiswa(nip).collect{
             getMahasiswaResponse = it
             if(it is Response.Success){
-
                 user = it.data ?: Mahasiswa()
-                Log.d("Usersekarang4", user.toString())
             }
         }
     }
@@ -332,6 +359,11 @@ class MahasiswaListViewModel @Inject constructor(
     fun editMahasiswaResponseReset() {
         editMahasiswaResponse = Response.Loading
     }
+
+    fun editJamResponseReset() {
+        editJamResponse = Response.Loading
+    }
+
 
 
 }

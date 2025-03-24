@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import org.d3if3121.absenubrugadmin.components.LoadingIndicator
+import org.d3if3121.absenubrugadmin.data.model.Jam
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.ui.screen.EditProfilResponse
 import org.d3if3121.absenubrugadmin.ui.screen.FotoProfilResponse
@@ -399,6 +400,101 @@ fun DialogEditProfile(
                     ButtonCommon(text = "Edit Role", modifier = Modifier.weight(1f).padding(start = 5.dp)){
                         buttonAction()
                     }
+                }
+
+            }
+
+        },
+        containerColor = Warna.PutihNormal,
+        shape = RoundedCornerShape(20.dp)
+    )
+
+
+
+}
+
+
+@Composable
+fun DialogEditJam(
+    viewmodel: MahasiswaListViewModel,
+    onDismissRequest: () -> Unit,
+) {
+
+
+    var masuk by remember { mutableStateOf (viewmodel.jam.masuk) }
+    var keluar by remember { mutableStateOf(viewmodel.jam.keluar) }
+
+
+    AlertDialog(
+        modifier = Modifier,
+        onDismissRequest = onDismissRequest,
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Edit Jam Masuk",
+                    color = Warna.MerahNormal,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = "Jam Masuk:",
+                    color = Warna.MerahNormal,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+                InputPutih(
+                    input = masuk,
+                    placeholder = "Masukkan jam...",
+                    onInputChange = { input ->
+                        masuk = input
+                    },
+                    keyboardType = KeyboardType.Number,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(bottom = 10.dp)
+                )
+
+
+                Text(
+                    text = "Jam Keluar:",
+                    color = Warna.MerahNormal,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+                InputPutih(
+                    input = keluar,
+                    placeholder = "Masukkan jam...",
+                    onInputChange = { input ->
+                        keluar = input
+                    },
+                    keyboardType = KeyboardType.Number,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+            }
+
+        },
+        confirmButton = {
+            Row{
+                ButtonCommon(text = "Ubah", modifier = Modifier.weight(1f)){
+                    viewmodel.editJam(
+                       Jam(
+                           masuk = masuk,
+                           keluar = keluar
+                       )
+                    )
                 }
 
             }

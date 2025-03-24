@@ -14,8 +14,8 @@ import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListInte
 import javax.inject.Singleton
 
 const val MAHASISWA = "pegawai"
-const val PROJECT = "reqpost"
 const val ABSEN = "absen"
+const val DATA = "sheet"
 
 
 @Module
@@ -26,6 +26,7 @@ object AppModule {
     fun provideMahasiswaListRepository(): MahasiswaListInterface = MahasiswaListRepository(
         mahasiswaRef = Firebase.firestore.collection(MAHASISWA),
         absenRef = Firebase.firestore.collection(ABSEN),
+        dataRef = Firebase.firestore.collection(DATA),
     )
 
 }
