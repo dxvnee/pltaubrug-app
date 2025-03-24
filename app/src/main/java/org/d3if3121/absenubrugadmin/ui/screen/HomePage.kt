@@ -1,7 +1,9 @@
 package org.d3if3121.absenubrugadmin.ui.screen
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,8 +62,22 @@ fun HomePage(
     navController: NavHostController,
     viewModel: MahasiswaListViewModel = hiltViewModel(),
 ) {
+
+    DialogLoading(viewModel)
+
+    val userid = viewModel.userId.collectAsState().value
+
+    LaunchedEffect (Unit, userid){
+        Log.d("Usersekarang3", userid.toString())
+
+        userid?.let {
+            viewModel.getMahasiswa(it)
+        }
+    }
+
     val lazyListState = rememberLazyListState()
     val user  = viewModel.user
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -89,8 +107,24 @@ fun HomePage(
         },
         contentColor = Warna.PutihNormal
     )
+    ResponseHome(viewModel, context)
 }
 
+@Composable
+fun ResponseHome(viewmodel: MahasiswaListViewModel, context: Context) {
+    when (val response = viewmodel.mahasiswaListResponse) {
+        is Response.Success -> {
+            viewmodel.changeLoading(false)
+        }
+
+        is Response.Failure -> {
+            Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
+        }
+
+        is Response.Loading -> {
+        }
+    }
+}
 @Composable
 fun MainContentHome(
     navController: NavHostController,
@@ -140,8 +174,6 @@ fun ProjectListHome(
 ){
 
     HomeResponse(viewmodel)
-
-
 
     var selecteddate by remember { mutableStateOf("") }
 

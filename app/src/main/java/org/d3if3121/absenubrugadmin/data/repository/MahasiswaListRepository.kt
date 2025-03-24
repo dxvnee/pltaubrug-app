@@ -2,17 +2,21 @@ package org.d3if3121.absenubrugadmin.data.repository
 
 import android.net.Uri
 import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.Response
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListInterface
+import java.io.IOException
 
 
 class MahasiswaListRepository (
@@ -24,16 +28,23 @@ class MahasiswaListRepository (
 
         val listener = absenRef
             .addSnapshotListener { snapshot, e ->
-                val absenListResponse =
-                    if (snapshot != null) {
-                        val absenList = snapshot.map { it.toAbsen() }
-                        Log.d("leole", absenList.toString())
+                if (e != null){
+                    Response.Failure(e)
+                    return@addSnapshotListener
+                }
 
-                        Response.Success(absenList)
-                    } else {
-                        Response.Failure(e)
-                    }
-                trySend(absenListResponse)
+                absenRef.get(Source.SERVER).addOnSuccessListener { freshSnapshot ->
+                    val absenListResponse =
+                        if (snapshot != null) {
+                            val absenList = snapshot.map { it.toAbsen() }
+                            Log.d("leole", absenList.toString())
+
+                            Response.Success(absenList)
+                        } else {
+                            Response.Failure(e)
+                        }
+                    trySend(absenListResponse)
+                }
             }
 
         awaitClose {
@@ -285,6 +296,35 @@ class MahasiswaListRepository (
         Log.e("Firestore", e.toString())
         Response.Failure(Exception("Error"))
     }
+
+    suspend fun <T> retryWithDelay(
+        maxRetryTime: Long = 30_000L,
+        retryDelay: Long = 5_000,
+        action: suspend () -> Response<T>
+    ): Response<T> {
+        val startTime = System.currentTimeMillis()
+
+        while (System.currentTimeMillis() - startTime < maxRetryTime) {
+            try {
+                return action()
+            } catch (e: Exception) {
+                when (e) {
+                    is FirebaseFirestoreException -> {
+                        if (e.code == FirebaseFirestoreException.Code.UNAVAILABLE) {
+                            delay(retryDelay)
+                        } else {
+                            return Response.Failure(e)
+                        }
+                    }
+
+                    is IOException -> delay(retryDelay)
+                    else -> return Response.Failure(e)
+                }
+            }
+        }
+        return Response.Failure(Exception("Gagal mengambil data!"))
+    }
+
 
 }
 

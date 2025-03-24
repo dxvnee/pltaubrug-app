@@ -137,6 +137,7 @@ fun ProfilePageContent(
                 onClick1 = { showDialog = true },
                 onClick2 = {
                     viewmodel.loginResponseReset()
+                    viewmodel.logout()
                     navController.navigate(Screen.Login.route)
                 }
             )

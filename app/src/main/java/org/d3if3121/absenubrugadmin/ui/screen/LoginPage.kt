@@ -87,23 +87,17 @@ fun LoginPage(
 
     when(val response = viewmodel.loginResponse){
         is Response.Success -> {
-
             viewmodel.addUser(response.data!!)
+            viewmodel.login(response.data.nip)
             viewmodel.changeLoading(false)
-            showloading = false
             navController.navigate(Screen.Home.route)
-            Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
-
         }
         is Response.Failure -> {
-            showloading = false
             viewmodel.changeLoading(false)
             errorMessage = response.e!!.message.toString()
         }
         is Response.Loading -> {
-            if(showloading){
-                viewmodel.changeLoading(true)
-            }
+
         }
     }
 

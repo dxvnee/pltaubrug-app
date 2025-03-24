@@ -1,11 +1,14 @@
 package org.d3if3121.absenubrugadmin.di
 
+import android.content.Context
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.d3if3121.absenubrugadmin.data.datastore.UserPreferences
 import org.d3if3121.absenubrugadmin.data.repository.MahasiswaListRepository
 import org.d3if3121.absenubrugadmin.data.repository.interfaces.MahasiswaListInterface
 import javax.inject.Singleton
@@ -25,4 +28,14 @@ object AppModule {
         absenRef = Firebase.firestore.collection(ABSEN),
     )
 
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DataStoreModule {
+    @Provides
+    @Singleton
+    fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
+        return UserPreferences(context)
+    }
 }

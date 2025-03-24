@@ -96,6 +96,10 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+    //datastore
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+
 }
 
 hilt {

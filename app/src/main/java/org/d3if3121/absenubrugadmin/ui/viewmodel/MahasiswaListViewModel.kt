@@ -10,7 +10,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.d3if3121.absenubrugadmin.data.datastore.UserPreferences
 import org.d3if3121.absenubrugadmin.data.model.Absen
 import org.d3if3121.absenubrugadmin.data.model.Mahasiswa
 import org.d3if3121.absenubrugadmin.data.model.MahasiswaLogin
@@ -32,8 +36,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MahasiswaListViewModel @Inject constructor(
-    private val repo: MahasiswaListInterface
+    private val repo: MahasiswaListInterface,
+    private val userPreferences: UserPreferences
 ): ViewModel() {
+
+    val userId: StateFlow<String?> = userPreferences.userid
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     var absenListResponse by mutableStateOf<AbsenListResponse>(Response.Loading)
         private set
@@ -282,6 +290,18 @@ class MahasiswaListViewModel @Inject constructor(
         user = Mahasiswa()
     }
 
+    fun login(userId: String){
+        viewModelScope.launch {
+            userPreferences.saveuser(userId)
+        }
+    }
+
+    fun logout(){
+        viewModelScope.launch {
+            userPreferences.clearuser()
+        }
+    }
+
     fun loginMahasiswa(response: MahasiswaLogin) = viewModelScope.launch {
         changeLoading(true)
         loginResponse = repo.loginMahasiswa(response.nim, response.password)
@@ -294,7 +314,11 @@ class MahasiswaListViewModel @Inject constructor(
     fun getMahasiswa(nip: String) = viewModelScope.launch {
         repo.getMahasiswa(nip).collect{
             getMahasiswaResponse = it
-            if(it is Response.Success){ user = it.data ?: Mahasiswa() }
+            if(it is Response.Success){
+
+                user = it.data ?: Mahasiswa()
+                Log.d("Usersekarang4", user.toString())
+            }
         }
     }
 
