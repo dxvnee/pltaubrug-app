@@ -208,10 +208,14 @@ class MahasiswaListViewModel @Inject constructor(
 
     fun addAbsen(absen: Absen) = viewModelScope.launch {
         changeLoading(true)
+        Log.d("ekkk", "0")
+
         addAbsenResponse = repo.addAbsen(absen)
     }
     fun addAbsenPulang(absen: Absen) = viewModelScope.launch {
         changeLoading(true)
+        Log.d("ekkk", "0")
+
         addAbsenResponse = repo.addAbsenPulang(absen)
     }
 
@@ -222,6 +226,12 @@ class MahasiswaListViewModel @Inject constructor(
     fun addMahasiswaResponseReset() {
         addMahasiswaResponse = Response.Loading
     }
+
+
+    fun getMahasiswaResponseReset() {
+        getMahasiswaResponse = Response.Loading
+    }
+
 
     fun editMahasiswaResponseReset() {
         editMahasiswaResponse = Response.Loading

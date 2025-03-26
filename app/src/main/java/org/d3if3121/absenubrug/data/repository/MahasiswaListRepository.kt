@@ -6,9 +6,12 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
@@ -27,7 +30,10 @@ class MahasiswaListRepository (
             .addSnapshotListener { snapshot, e ->
                 val absenListResponse =
                     if (snapshot != null) {
-                        val absenList = snapshot.map { it.toAbsen() }
+                        val absenList = snapshot.map {
+                            Log.d("kelas", it.toString())
+                            it.toAbsen();
+                        }
                         Response.Success(absenList)
                     } else {
                         Response.Failure(e)
@@ -50,6 +56,8 @@ class MahasiswaListRepository (
 
                 val mahasiswaResponse = if(snapshot != null){
                     val data = snapshot.toMahasiswa()
+                    Log.d("kelas", "2")
+
                     Response.Success(data)
                 } else {
                     Response.Failure(e)
@@ -67,6 +75,8 @@ class MahasiswaListRepository (
             .addSnapshotListener{ snapshot, e ->
                 val dataResponse = if(snapshot != null){
                     val data  = snapshot.toJam()
+                    Log.d("kelas", "3")
+
                     Response.Success(data)
 
                 } else {
@@ -128,46 +138,50 @@ class MahasiswaListRepository (
         }
     }
 
-    override suspend fun addAbsen(absen: Absen) = try {
-        val idRef = absenRef.document(absen.nip)
-        val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
+    override suspend fun addAbsen(absen: Absen) = withContext(Dispatchers.IO){
+        try {
+            val idRef = absenRef.document(absen.nip)
+            val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
-        pegawaiRef.set(absen).await()
+            pegawaiRef.set(absen).await()
 
-        if (absen.foto != null) {
-            val imageUrl = uploadImagetoFirebase(absen.foto.uri, "${absen.tanggal}_${absen.nip}_Masuk")
-            pegawaiRef.update("image", imageUrl).await()
+            if (absen.foto != null) {
+                val imageUrl = uploadImagetoFirebase(absen.foto.uri, "${absen.tanggal}_${absen.nip}_Masuk")
+                pegawaiRef.update("image", imageUrl).await()
+            }
+
+            Response.Success(absen.nip)
+        } catch (e: Exception) {
+            Response.Failure(e)
         }
-
-        Response.Success(absen.nip)
-    } catch (e: Exception) {
-        Response.Failure(e)
     }
 
-    override suspend fun addAbsenPulang(absen: Absen) = try {
-        val idRef = absenRef.document(absen.nip)
-
-        val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
 
-        pegawaiRef.update("keterangan2", absen.keterangan2).await()
-        pegawaiRef.update("absen2", absen.absen2).await()
-        pegawaiRef.update("foto2", absen.foto2).await()
-        pegawaiRef.update("deskripsi2", absen.deskripsi2).await()
-        pegawaiRef.update("lokasi2", absen.lokasi2).await()
-        pegawaiRef.update("jam2", absen.jam2).await()
-        pegawaiRef.update("telat2", absen.telat2).await()
-        pegawaiRef.update("jamtelat2", absen.jamtelat2).await()
-        pegawaiRef.update("jamtarget2", absen.jamtarget2).await()
+    override suspend fun addAbsenPulang(absen: Absen) = withContext(Dispatchers.IO){
+        try {
+            val idRef = absenRef.document(absen.nip)
+            val pegawaiRef = idRef.collection("tanggal").document(absen.tanggal)
 
-        if (absen.foto2 != null) {
-            val imageUrl = uploadImagetoFirebase(absen.foto2.uri, "${absen.tanggal}_${absen.nip}_Pulang")
-            pegawaiRef.update("image2", imageUrl).await()
+            pegawaiRef.update("keterangan2", absen.keterangan2).await()
+            pegawaiRef.update("absen2", absen.absen2).await()
+            pegawaiRef.update("foto2", absen.foto2).await()
+            pegawaiRef.update("deskripsi2", absen.deskripsi2).await()
+            pegawaiRef.update("lokasi2", absen.lokasi2).await()
+            pegawaiRef.update("jam2", absen.jam2).await()
+            pegawaiRef.update("telat2", absen.telat2).await()
+            pegawaiRef.update("jamtelat2", absen.jamtelat2).await()
+            pegawaiRef.update("jamtarget2", absen.jamtarget2).await()
+
+            if (absen.foto2 != null) {
+                val imageUrl = uploadImagetoFirebase(absen.foto2.uri, "${absen.tanggal}_${absen.nip}_Pulang")
+                pegawaiRef.update("image2", imageUrl).await()
+            }
+
+            Response.Success(absen.nip)
+        } catch (e: Exception) {
+            Response.Failure(e)
         }
-
-        Response.Success(absen.nip)
-    } catch (e: Exception) {
-        Response.Failure(e)
     }
 
 

@@ -26,8 +26,7 @@ fun ButtonKecil(
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = warna),
-        modifier = modifier
-            .padding(end = 8.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(7.dp)
     ) {
         Text(text = text, color = Color.White, fontSize = fontsize.sp, fontWeight = FontWeight.Bold)
@@ -60,20 +59,20 @@ fun ButtonTiga(
     ) {
         ButtonKecil (
             onClick = onClick1,
-            modifier = modifier,
+            modifier = modifier.padding(end = 4.dp),
             text = text1,
             warna = warna1
         )
         ButtonKecil (
             onClick = onClick2,
-            modifier = modifier,
+            modifier = modifier.padding(start = 4.dp, end = if (!absenpulang) 4.dp else 0.dp),
             text =text2,
             warna = warna2
         )
         if(!absenpulang){
             ButtonKecil (
                 onClick = onClick3,
-                modifier = modifier,
+                modifier = modifier.padding(start = 4.dp),
                 text = text3,
                 warna = warna3,
                 fontsize = 15

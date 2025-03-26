@@ -231,6 +231,7 @@ fun HomeResponse(
             Log.d("geg2", viewmodel.user.toString())
             viewmodel.getAbsenList(viewmodel.user)
             viewmodel.changeLoading(false)
+            viewmodel.getMahasiswaResponseReset()
 
         }
         is Response.Failure -> {
