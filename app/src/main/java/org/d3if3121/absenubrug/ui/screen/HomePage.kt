@@ -228,11 +228,9 @@ fun HomeResponse(
         is Response.Loading -> {
         }
         is Response.Success -> {
-            Log.d("geg2", viewmodel.user.toString())
             viewmodel.getAbsenList(viewmodel.user)
             viewmodel.changeLoading(false)
             viewmodel.getMahasiswaResponseReset()
-
         }
         is Response.Failure -> {
             Log.d("error", response.e.toString())
