@@ -10,12 +10,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.ImageUpload
+import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.data.model.Response
 import org.d3if3121.absenubrug.navigation.Screen
@@ -172,6 +174,7 @@ fun createAbsen(
     jam: String,
     telat: String,
     jamtelat: String,
+    jamtarget: Jam,
     absen: String,
     isPulang: String
 ): Absen {
@@ -186,6 +189,7 @@ fun createAbsen(
             jam2 = jam,
             telat2 = telat,
             jamtelat2 = jamtelat,
+            jamtarget2 = jamtarget.keluar,
             absen2 = absen
         )
     } else if (isPulang == "false") {
@@ -200,6 +204,7 @@ fun createAbsen(
             jam = jam,
             telat = telat,
             jamtelat = jamtelat,
+            jamtarget = jamtarget.masuk,
             absen = absen
         )
     } else {
@@ -214,6 +219,7 @@ fun createAbsen(
             jam = jam,
             telat = telat,
             jamtelat = jamtelat,
+            jamtarget = jamtarget.masuk,
             absen = absen,
 
             keterangan2 = keterangan,
@@ -223,6 +229,7 @@ fun createAbsen(
             jam2 = jam,
             telat2 = telat,
             jamtelat2 = jamtelat,
+            jamtarget2 = jamtarget.keluar,
             absen2 = absen
         )
     }

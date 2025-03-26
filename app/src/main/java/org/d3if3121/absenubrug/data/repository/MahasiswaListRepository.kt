@@ -76,9 +76,7 @@ class MahasiswaListRepository (
                 } else {
                     Response.Failure(e)
                 }
-
                 trySend(dataResponse)
-
             }
         awaitClose{
             listener.remove()
@@ -101,7 +99,6 @@ class MahasiswaListRepository (
     }
 
     override suspend fun editMahasiswa(mahasiswabaru: Mahasiswa) = try {
-        Log.d("waow2", mahasiswabaru.toString())
         val mahasiswa = mahasiswaRef.document(mahasiswabaru.nip)
 
 
@@ -165,6 +162,7 @@ class MahasiswaListRepository (
         pegawaiRef.update("jam2", absen.jam2).await()
         pegawaiRef.update("telat2", absen.telat2).await()
         pegawaiRef.update("jamtelat2", absen.jamtelat2).await()
+        pegawaiRef.update("jamtarget2", absen.jamtarget2).await()
 
         if (absen.foto2 != null) {
             val imageUrl = uploadImagetoFirebase(absen.foto2.uri, "${absen.tanggal}_${absen.nip}_Pulang")
@@ -240,6 +238,7 @@ fun DocumentSnapshot.toAbsen(): Absen = Absen(
     jam = getString("jam") ?: "-",
     telat = getString("telat") ?: "",
     jamtelat = getString("jamtelat") ?: "",
+    jamtarget = getString("jamtarget") ?: "",
     absen = getString("absen") ?: "",
 
     lokasi = getString("lokasi") ?: "",
@@ -251,5 +250,6 @@ fun DocumentSnapshot.toAbsen(): Absen = Absen(
     lokasi2 = getString("lokasi2") ?: "",
     telat2 = getString("telat2") ?: "",
     jamtelat2 = getString("jamtelat2") ?: "",
+    jamtarget2 = getString("jamtarget2") ?: "",
     absen2 = getString("absen2") ?: ""
 )
