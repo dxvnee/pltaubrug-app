@@ -22,7 +22,6 @@ import org.d3if3121.absenubrug.data.datastore.UserPreferences
 import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
-import org.d3if3121.absenubrug.data.model.MahasiswaEdit
 import org.d3if3121.absenubrug.data.model.MahasiswaLogin
 import org.d3if3121.absenubrug.data.model.Response
 import org.d3if3121.absenubrug.data.repository.interfaces.AddMahasiswaResponse

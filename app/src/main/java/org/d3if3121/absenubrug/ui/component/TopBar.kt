@@ -3,7 +3,6 @@ package org.d3if3121.absenubrug.ui.component
 import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +37,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import org.d3if3121.absenubrug.R
 import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.ui.theme.Warna
 
@@ -51,18 +48,13 @@ fun TopBar(
     helloActive: Boolean,
     profileActive: Boolean = false,
     TOP_BAR_ZERO: Int = 0,
-    search: String = "",
-    onSearchChange: (String) -> Unit = {},
-    navController: NavHostController = rememberNavController(),
     user: Mahasiswa? = null
 ){
 
     val currentUser = user ?: Mahasiswa()
     val TOP_BAR_HEIGHT = 70.dp
 
-
-    if (profileActive == true){
-
+    if (profileActive){
         TopAppBar(
             title = {
                 Row(
@@ -86,21 +78,6 @@ fun TopBar(
                         }
 
                     }
-                    Column (
-
-                    ){
-//                        InputPutihSearchProfile(
-//                            input = search,
-//                            placeholder = stringResource(id = R.string.search),
-//                            onInputChange = onSearchChange,
-//                            keyboardType = KeyboardType.Text,
-//                            modifier = Modifier.fillMaxWidth()
-//                                .padding( end = 17.dp).height(40.dp),
-//                            fontSize = 15
-//
-//                        )
-                    }
-
 
                 }
             },
@@ -133,9 +110,7 @@ fun TopBar(
                             )
                         }
 
-                        Column (
-
-                        ){
+                        Column {
                             if (helloActive == true) {
                                 Text(
                                     text = "Hello,",
@@ -167,34 +142,9 @@ fun TopBar(
                                     modifier = Modifier.offset(y = -4.dp)
                                 )
                             }
-
-
-
-
                         }
-                        Row (
-                            horizontalArrangement = Arrangement.End,
-                            modifier = Modifier.fillMaxWidth()
-                        ){
-//                            TombolGambar(
-//                                painterResource(id = R.drawable.notifications),
-//                                26
-//                            ){
-//
-//                            }
-//                            TombolGambar(
-//                                painterResource(id = R.drawable.chat),
-//                                26
-//                            ){
-//                                navController.navigate(Screen.Login.route)
-//                            }
-                        }
-
                     }
-
-
                 }
-
             },
             colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = Warna.PutihNormal,
@@ -208,21 +158,19 @@ fun TopBar(
                 )
                 )
                 .height(height =
-                if (cekScroll(lazyListState)){
-                    TOP_BAR_ZERO.dp
-                    if (ScrollDirectionDetector(lazyListState) == "Up" && ObserveScrollState(lazyListState)){
-                        Log.d("cekFlow", ObserveScrollState(lazyListState).toString())
-                        TOP_BAR_HEIGHT
-                    } else {
+                    if (cekScroll(lazyListState)){
                         TOP_BAR_ZERO.dp
+                        if (ScrollDirectionDetector(lazyListState) == "Up" && ObserveScrollState(lazyListState)){
+                            TOP_BAR_HEIGHT
+                        } else {
+                            TOP_BAR_ZERO.dp
+                        }
+                    } else {
+                        TOP_BAR_HEIGHT
                     }
-                } else {
-                    TOP_BAR_HEIGHT
-                }
                 ),
         )
     }
-
 }
 
 

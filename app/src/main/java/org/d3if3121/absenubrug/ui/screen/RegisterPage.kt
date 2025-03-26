@@ -1,6 +1,5 @@
 package org.d3if3121.absenubrug.ui.screen
 
-import android.util.Log
 import android.widget.Toast
 import org.d3if3121.absenubrug.R
 import androidx.compose.foundation.Canvas
@@ -37,12 +36,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import org.d3if3121.absenubrug.core.printError
 import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.navigation.Screen
@@ -63,19 +59,12 @@ fun RegisterPage(
 ){
 
     var context = LocalContext.current
-
     var nim by remember { mutableStateOf("") }
     var nama by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible = remember { mutableStateOf(false) }
-
     var confirmPassword by remember { mutableStateOf("") }
     var confirmPasswordVisible = remember { mutableStateOf(false) }
-
-    var usernameError by remember { mutableStateOf(false) }
-
-    var addingMahasiswa by remember { mutableStateOf(false) }
-
     var errorMessage by remember { mutableStateOf("") }
 
     fun handleRegister(){
@@ -97,8 +86,7 @@ fun RegisterPage(
         }
     }
     when(val addMahasiswa = viewmodel.addMahasiswaResponse) {
-        is Loading -> {
-        }
+        is Loading -> {}
         is Success -> {
             Toast.makeText(context, "Register Success!", Toast.LENGTH_SHORT).show()
             viewmodel.addMahasiswaResponseReset()
@@ -116,7 +104,6 @@ fun RegisterPage(
             .fillMaxHeight()
             .background(Warna.PutihNormal, RectangleShape)
     ){
-
         Column {
             Row(
                 modifier = Modifier
@@ -124,7 +111,7 @@ fun RegisterPage(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ) {
+            ){
                 Image(
                     painter = painterResource(id = R.drawable.pln),
                     contentDescription = "App logo",
@@ -138,7 +125,7 @@ fun RegisterPage(
                 modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ) {
+            ){
                 Column(
 
                     verticalArrangement = Arrangement.Center,
@@ -168,22 +155,16 @@ fun RegisterPage(
             .fillMaxSize()
 
     ) {
-
         Canvas(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(top = 525.dp)
                 .size(400.dp)
-
-
-        ) {
-
+        ){
             drawCircle(
                 color = Warna.MerahTua,
                 radius = size.minDimension
             )
-
-
         }
 
         Card(
@@ -195,14 +176,13 @@ fun RegisterPage(
             colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
             elevation = CardDefaults.cardElevation(20.dp),
             shape = RoundedCornerShape(15.dp)
-        )
-        {
+        ){
             Column(
                 modifier = Modifier
                     .padding(start = 24.dp, top = 23.dp, end = 24.dp, bottom = 23.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
-            ) {
+            ){
                 Row(
                     modifier = Modifier.fillMaxWidth()
                         .height(100.dp)
@@ -230,7 +210,6 @@ fun RegisterPage(
                     modifier = Modifier.fillMaxWidth()
                         .height(100.dp)
                 ){
-
                     Column {
                         Row (
                             horizontalArrangement = Arrangement.Center,
@@ -281,9 +260,9 @@ fun RegisterPage(
                                 modifiers = Modifier.weight(1f).padding(start = 7.dp)
                             )
                         }
-
                     }
                 }
+
                 Row(
                     modifier = Modifier.padding(top = 6.dp)
                 ){
@@ -304,7 +283,6 @@ fun RegisterPage(
                             keyboardType = KeyboardType.Text,
                             modifier = Modifier.fillMaxWidth()
                         )
-
                         Text(
                             text = errorMessage,
                             color = Warna.MerahNormal,
@@ -312,18 +290,15 @@ fun RegisterPage(
                             fontWeight = FontWeight.Normal,
                             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                         )
-
-
                     }
                 }
-
 
                 Row {
                     Column(
                         horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.Bottom,
                         modifier = Modifier.fillMaxHeight()
-                    ) {
+                    ){
                         ButtonMerah(
                             onClick = {
                                 handleRegister()
@@ -342,10 +317,7 @@ fun RegisterPage(
                             }
                         )
 
-                        Row(
-
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically){
                             Text(
                                 text = stringResource(id = R.string.have_account),
                                 fontSize = 12.sp,
@@ -368,11 +340,7 @@ fun RegisterPage(
 
                     }
                 }
-
-
-
             }
         }
     }
-
 }

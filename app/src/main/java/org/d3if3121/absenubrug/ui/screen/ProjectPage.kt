@@ -77,9 +77,7 @@ fun ProjectPage(
     val user = viewmodel.user
 
     Scaffold(
-        topBar = {
-            TopBar(lazyListState = lazyListState, helloActive = false, TOP_BAR_ZERO = 70, user = user)
-        },
+        topBar = { TopBar(lazyListState = lazyListState, helloActive = false, TOP_BAR_ZERO = 70, user = user) },
         content = { paddingValues ->
             Column(modifier = Modifier.background(color = Warna.PutihNormal)){
                 MainContentProject(
@@ -141,18 +139,13 @@ fun ProjectContent(
     HeaderContent(
         viewmodel = viewmodel,
         masukpergi = masukpergi,
-        onclick1 = {
-            masukpergi = "(Masuk)"
-        },
-        onclick2 = {
-            masukpergi = "(Pulang)"
-        }
+        onclick1 = { masukpergi = "(Masuk)" },
+        onclick2 = { masukpergi = "(Pulang)" }
     )
 
     when(masukpergi){
         "(Masuk)" -> {
             if (viewmodel.tanggalSeharusnya != viewmodel.tanggal){
-
                 Text(
                     text = "Anda Harus Mengisi Absen Sesuai Tanggal! (${viewmodel.tanggalSeharusnya})",
                     color = Color.Red,
@@ -169,18 +162,14 @@ fun ProjectContent(
                     currentJamTarget = viewmodel.currentAbsen.jamtarget,
                     currentKeterangan = viewmodel.currentAbsen.keterangan,
                     currentDeskripsi = viewmodel.currentAbsen.deskripsi,
-                    telat = { jamsebelum, jamsesudah ->
-                        isLebihCepat(jamsebelum, jamsesudah)
-                    },
-                    jamtelat = { jamsebelum, jamsesudah ->
-                        selisihJam(jamsebelum, jamsesudah)
-                    },
+                    telat = { jamsebelum, jamsesudah -> isLebihCepat(jamsebelum, jamsesudah) },
+                    jamtelat = { jamsebelum, jamsesudah -> selisihJam(jamsebelum, jamsesudah) },
                     viewmodeladd = { viewmodel.addAbsen(it) },
                     isPulang = false
                 )
             }
-
         }
+
         "(Pulang)" -> {
             if(viewmodel.currentAbsen.keterangan == "Belum Absen"){
                 Text(
@@ -213,7 +202,6 @@ fun ProjectContent(
     }
     Spacer(modifier = Modifier.height(50.dp))
 }
-
 
 @Composable
 fun ProjectTambah(
@@ -253,7 +241,6 @@ fun ProjectTambah(
     var konfirmasikirim by remember { mutableStateOf(false) }
     var peringatan by remember { mutableStateOf(false) }
 
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -285,7 +272,6 @@ fun ProjectTambah(
                     selectedStatus = selectedStatus,
                     absenpulang = isPulang
                 )
-
                 if(belumabsenmasuk){
                     ButtonTiga(
                         onClick1 = { selectedStatus = "Hadir"},
@@ -326,6 +312,7 @@ fun ProjectTambah(
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
             )
+
             InputPutih(
                 expand = true,
                 input = deskripsi,

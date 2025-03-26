@@ -1,10 +1,8 @@
 package org.d3if3121.absenubrug.ui.component
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,7 +37,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.LocationServices
 import org.d3if3121.absenubrug.R
 import org.d3if3121.absenubrug.ui.formula.getCurrentLocation
-import org.d3if3121.absenubrug.ui.formula.isInsideRadiusAndroid
 import org.d3if3121.absenubrug.ui.formula.isInsideTriangle
 import org.d3if3121.absenubrug.ui.theme.Warna
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel

@@ -45,16 +45,14 @@ fun HeaderContent(
                 text = "Absensi",
                 color = Warna.MerahNormal,
                 fontSize = 21.sp,
-                fontWeight = FontWeight.ExtraBold,
-
-                )
+                fontWeight = FontWeight.ExtraBold
+            )
             Text(
                 text = viewmodel.tanggal,
                 color = Warna.MerahNormal,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal,
                 fontStyle = FontStyle.Italic
-
             )
 
             Box(

@@ -4,18 +4,14 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import org.d3if3121.absenubrug.data.model.Absen
-import org.d3if3121.absenubrug.data.model.ImageUpload
 import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
-import org.d3if3121.absenubrug.data.model.MahasiswaEdit
 import org.d3if3121.absenubrug.data.model.Response
 import org.d3if3121.absenubrug.data.repository.interfaces.MahasiswaListInterface
 

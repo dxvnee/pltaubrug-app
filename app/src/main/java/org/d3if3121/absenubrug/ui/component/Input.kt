@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -99,135 +98,6 @@ fun InputPutih(
 
 
 @Composable
-fun InputPutihSearchProfile(
-    input: String,
-    placeholder: String,
-    onInputChange: (String) -> Unit,
-    keyboardType: KeyboardType,
-    modifier: Modifier = Modifier,
-    fontSize: Int = 17,
-
-){
-    var isFocused by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = modifier
-            .border(1.dp, if (!isFocused) Warna.AbuMuda else Warna.MerahNormal, RoundedCornerShape(10.dp)).fillMaxHeight(),
-        colors = if (!isFocused) CardDefaults.cardColors(Warna.AbuMuda) else CardDefaults.cardColors(
-            Warna.PutihNormal)
-
-    ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxHeight().padding(start = 10.dp)
-        ){
-            Icon(
-                modifier = Modifier.size(25.dp),
-                imageVector = Icons.Default.Search,
-                contentDescription = "eheh",
-                tint = Warna.AbuTua
-            )
-            Column (
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.fillMaxHeight().padding(start = 7.dp)
-            ){
-                if (input.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        color = Warna.AbuTua,
-                        fontSize = fontSize.sp,
-                        style = TextStyle(
-                            fontSize = fontSize.sp,
-                            color = Warna.HitamNormal,
-                            textAlign = TextAlign.Center
-                        ),
-                        modifier = Modifier.offset(y = 8.dp)
-
-                    )
-                }
-                BasicTextField(
-                    value =  input,
-                    onValueChange = onInputChange,
-                    textStyle = TextStyle(
-                        fontSize = fontSize.sp,
-                        color = Warna.HitamNormal,
-                        textAlign = TextAlign.Start
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset(y = if (input.isEmpty()) -9.dp else 0.dp)
-                        .onFocusChanged {
-                            isFocused = it.isFocused
-                        },
-                )
-            }
-        }
-
-
-    }
-}
-@Composable
-fun InputPutihSearch(
-    input: String,
-    placeholder: String,
-    onInputChange: (String) -> Unit,
-    keyboardType: KeyboardType,
-    modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
-    fontSize: Int = 17,
-){
-    var isFocused by remember { mutableStateOf(false) }
-    OutlinedTextField(
-        leadingIcon = {
-            Icon(
-                modifier = iconModifier.size(25.dp),
-                imageVector = Icons.Default.Search,
-                contentDescription = "eheh",
-                tint = Warna.AbuTua,
-
-            )
-        },
-        textStyle = TextStyle(
-            color = Warna.HitamNormal,
-            fontSize = fontSize.sp,
-            fontWeight = FontWeight.Normal,
-        ),
-        value = input,
-        onValueChange = onInputChange,
-        singleLine = true,
-        placeholder = {
-            Text(
-                text = placeholder,
-                color = Warna.AbuTua,
-                fontSize = fontSize.sp,
-                fontWeight = FontWeight.Normal,
-                textAlign = TextAlign.Center
-            )
-        },
-        shape = RoundedCornerShape(10.dp),
-        modifier = modifier
-            .height(48.dp)
-            .onFocusChanged { focusState ->
-                isFocused = focusState.isFocused
-            },
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Warna.HitamNormal,
-            unfocusedTextColor = Warna.HitamNormal,
-            focusedPlaceholderColor = Warna.MerahNormal,
-            focusedIndicatorColor = Warna.MerahNormal,
-            unfocusedIndicatorColor = Warna.AbuMuda,
-            focusedContainerColor = if (isFocused) Warna.PutihNormal else Warna.AbuMuda,
-            unfocusedContainerColor = if (isFocused) Warna.PutihNormal else Warna.AbuMuda
-        ),
-
-
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
-
-        )
-}
-
-@Composable
 fun InputPassword(
     input: String,
     placeholder: String,
@@ -286,7 +156,6 @@ fun InputPassword(
                 )
             }
         }
-
     )
 }
 

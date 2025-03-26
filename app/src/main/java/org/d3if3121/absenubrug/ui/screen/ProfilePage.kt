@@ -12,18 +12,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,18 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.d3if3121.absenubrug.ui.theme.Warna
-import androidx.hilt.navigation.compose.hiltViewModel
 import org.d3if3121.absenubrug.ui.component.BottomBar
 import org.d3if3121.absenubrug.ui.component.TopBar
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
@@ -64,7 +54,6 @@ fun ProfilePage(
     navController: NavHostController,
     viewmodel: MahasiswaListViewModel,
 ) {
-    var search by remember { mutableStateOf("") }
     val lazyListState = rememberLazyListState()
     val user = viewmodel.user
 
@@ -78,7 +67,6 @@ fun ProfilePage(
             ){
                 ProfilePageContent(paddingValues, viewmodel, navController)
             }
-
         },
         bottomBar = {
             BottomBar(navController = navController)
@@ -92,10 +80,7 @@ fun ProfilePageContent(
     viewmodel: MahasiswaListViewModel,
     navController: NavHostController
 ) {
-    LaunchedEffect(Unit){
-        viewmodel.getMahasiswa(viewmodel.user.nip)
-    }
-
+    LaunchedEffect(Unit){ viewmodel.getMahasiswa(viewmodel.user.nip) }
     DialogLoading(viewmodel)
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -104,7 +89,6 @@ fun ProfilePageContent(
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
-        Log.d("WHY", imageUri.toString())
         imageUri?.let {
             viewmodel.addFotoProfil(viewmodel.user.nip, imageUri!!)
         }
@@ -138,7 +122,6 @@ fun ProfilePageContent(
                             }
                     )
 
-
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
@@ -161,7 +144,6 @@ fun ProfilePageContent(
                         )
                     }
 
-
                     viewmodel.user.role.forEach {
                         Text(
                             text = it,
@@ -169,7 +151,6 @@ fun ProfilePageContent(
                             color = Color.Gray
                         )
                     }
-
 
                     Spacer(modifier = Modifier.height(56.dp))
 
@@ -194,7 +175,6 @@ fun ProfilePageContent(
                         }
                     }
 
-
                     Spacer(modifier = Modifier.height(14.dp))
                     Text(
                         text = stringResource(R.string.app_version),
@@ -202,18 +182,10 @@ fun ProfilePageContent(
                         fontWeight = FontWeight.Normal,
                         color = Color.Gray
                     )
-
                 }
-
-
             }
         }
     }
-
-
-
-
-
 }
 
 
@@ -224,23 +196,19 @@ fun FotoProfilResponse(viewmodel: MahasiswaListViewModel, context: Context, navC
             viewmodel.changeLoading(false)
             Toast.makeText(context, "Upload foto berhasil!", Toast.LENGTH_SHORT).show()
             viewmodel.addFotoProfilReset()
-
         }
         is Response.Failure -> {
             viewmodel.changeLoading(false)
-
             Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
         }
         is Response.Loading -> {
             viewmodel.changeLoading(false)
-
         }
     }
 }
 
 @Composable
 fun EditProfilResponse(viewmodel:MahasiswaListViewModel, context: Context, onShowDialogChange: () -> Unit){
-
     when(val response = viewmodel.editMahasiswaResponse){
         is Response.Success -> {
             viewmodel.changeLoading(false)
@@ -248,17 +216,13 @@ fun EditProfilResponse(viewmodel:MahasiswaListViewModel, context: Context, onSho
             onShowDialogChange()
             viewmodel.editMahasiswaResponseReset()
         }
-
         is Response.Failure -> {
             viewmodel.changeLoading(false)
-            Log.d("waow", response.e.toString())
             Toast.makeText(context, response.e.toString(), Toast.LENGTH_SHORT).show()
             viewmodel.editMahasiswaResponseReset()
-
         }
         is Response.Loading -> {
             viewmodel.changeLoading(false)
-
         }
     }
 }

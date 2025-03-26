@@ -6,6 +6,4 @@ sealed class Screen(val route: String) {
     data object Home: Screen("HomePage")
     data object Project: Screen("ProjectPage")
     data object Profile: Screen("ProfilePage")
-    data object EditProject: Screen("EditProjectPage")
-    data object ConfirmPage: Screen("ConfirmPage")
 }

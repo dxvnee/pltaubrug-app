@@ -28,14 +28,11 @@ object AppModule {
         absenRef = Firebase.firestore.collection(ABSEN),
         dataRef = Firebase.firestore.collection(DATA),
     )
-
 }
-
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-
     @Provides
     @Singleton
     fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {

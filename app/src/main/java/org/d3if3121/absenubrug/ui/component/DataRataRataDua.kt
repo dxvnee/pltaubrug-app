@@ -1,12 +1,9 @@
 package org.d3if3121.absenubrug.ui.component
 
 
-import android.graphics.Color
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -16,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.d3if3121.absenubrug.ui.theme.Warna
 import org.d3if3121.absenubrug.ui.theme.Warna.MerahNormal
 
 @Composable
@@ -62,7 +58,6 @@ fun DataDua(
                 fontWeight = FontWeight.ExtraBold,
                 color = MerahNormal,
             )
-
         }
 
         if (ratacond){
@@ -149,11 +144,5 @@ fun DataDua(
                 }
             }
         }
-
-
-
     }
-
-
-
 }

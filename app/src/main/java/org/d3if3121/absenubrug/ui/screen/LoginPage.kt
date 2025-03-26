@@ -1,6 +1,5 @@
 package org.d3if3121.absenubrug.ui.screen
 
-import android.util.Log
 import android.widget.Toast
 import org.d3if3121.absenubrug.R
 
@@ -24,7 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,13 +37,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import org.d3if3121.absenubrug.data.model.Mahasiswa
 import org.d3if3121.absenubrug.data.model.MahasiswaLogin
 import org.d3if3121.absenubrug.data.model.Response
 import org.d3if3121.absenubrug.navigation.Screen
@@ -70,7 +64,6 @@ fun LoginPage(
     var showloading by remember { mutableStateOf(false) }
 
     var context = LocalContext.current
-
 
     DialogLoading(viewmodel)
 
@@ -101,7 +94,6 @@ fun LoginPage(
             .fillMaxHeight()
             .background(Warna.PutihNormal, RectangleShape)
     ){
-
         Column {
             Row(
                 modifier = Modifier
@@ -153,7 +145,6 @@ fun LoginPage(
             .fillMaxSize()
 
     ) {
-
         Canvas(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -161,13 +152,10 @@ fun LoginPage(
                 .size(400.dp)
 
         ) {
-
             drawCircle(
                 color = Warna.MerahTua,
                 radius = size.minDimension
             )
-
-
         }
 
         Card(
@@ -179,8 +167,7 @@ fun LoginPage(
             colors = CardDefaults.cardColors(containerColor = Warna.PutihNormal),
             elevation = CardDefaults.cardElevation(20.dp),
             shape = RoundedCornerShape(15.dp)
-        )
-        {
+        ){
             Column(
                 modifier = Modifier
                     .padding(start = 24.dp, top = 23.dp, end = 24.dp, bottom = 23.dp)
@@ -207,10 +194,7 @@ fun LoginPage(
                             },
                             keyboardType = KeyboardType.Number,
                             modifier = Modifier.fillMaxWidth(),
-
-
                         )
-
                     }
                 }
 
@@ -246,7 +230,6 @@ fun LoginPage(
                     }
                 }
 
-
                 Row {
                     Column(
                         horizontalAlignment = Alignment.End,
@@ -272,11 +255,7 @@ fun LoginPage(
                             }
                         )
 
-
-                        Row(
-
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = "Belum punya akun? ",
                                 fontSize = 12.sp,
@@ -294,16 +273,11 @@ fun LoginPage(
                                 )
                             )
                         }
-
                     }
                 }
-
-
-
             }
         }
     }
-
 }
 
 @Composable
@@ -311,21 +285,17 @@ fun LoginResponse(viewmodel: MahasiswaListViewModel, navController: NavHostContr
     val context = LocalContext.current
     when(val response = viewmodel.loginResponse){
         is Response.Success -> {
-
             viewmodel.addUser(response.data!!)
             viewmodel.login(response.data.nip)
 
             viewmodel.changeLoading(false)
             navController.navigate(Screen.Home.route)
             Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
-
         }
         is Response.Failure -> {
             viewmodel.changeLoading(false)
             showError(response.e!!.message.toString())
         }
-        is Response.Loading -> {
-
-        }
+        is Response.Loading -> {}
     }
 }

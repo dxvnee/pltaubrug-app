@@ -76,7 +76,7 @@ fun HomePage(
 
     Scaffold(
         topBar = {
-            TopBar(lazyListState = lazyListState, helloActive = true, navController = navController, user = user)
+            TopBar(lazyListState = lazyListState, helloActive = true, user = user)
         },
         content = { paddingValues ->
             Column(modifier = Modifier.background(color = Warna.PutihNormal)){

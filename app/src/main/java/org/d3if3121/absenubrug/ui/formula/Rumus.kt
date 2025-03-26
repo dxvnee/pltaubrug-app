@@ -7,11 +7,7 @@ import android.location.Location
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.runtime.Composable
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -19,8 +15,6 @@ import org.d3if3121.absenubrug.data.model.Absen
 import org.d3if3121.absenubrug.data.model.ImageUpload
 import org.d3if3121.absenubrug.data.model.Jam
 import org.d3if3121.absenubrug.data.model.Mahasiswa
-import org.d3if3121.absenubrug.data.model.Response
-import org.d3if3121.absenubrug.navigation.Screen
 import org.d3if3121.absenubrug.ui.viewmodel.MahasiswaListViewModel
 import java.text.SimpleDateFormat
 import java.time.Duration
@@ -28,6 +22,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+
+
 fun getCurrentLocation(
     context: Context,
     fusedLocationClient: FusedLocationProviderClient,
@@ -35,22 +31,17 @@ fun getCurrentLocation(
     onLocationReceived: (Double, Double) -> Unit,
 ) {
     if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        Log.e("getCurrentLocation", "Izin lokasi tidak diberikan!")
         return
     }
 
     viewmodel.changeLoading(true)
-    Log.d("getCurrentLocation", "Mencoba mendapatkan lokasi terbaru...")
 
     val cancellationTokenSource = CancellationTokenSource()
     fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
         .addOnSuccessListener { location: Location? ->
             if (location != null) {
                 viewmodel.changeLoading(false)
-                Log.d("getCurrentLocation", "Lokasi ditemukan: ${location.latitude}, ${location.longitude}")
                 onLocationReceived(location.latitude, location.longitude)
-            } else {
-                Log.e("getCurrentLocation", "Lokasi tidak tersedia, coba metode lain")
             }
         }
         .addOnFailureListener { e ->
@@ -117,8 +108,6 @@ fun isInsideTriangle(currentLat: Double, currentLng: Double): Boolean {
 
     return kotlin.math.abs(areaABC - (areaPBC + areaPCA + areaPAB)) < 1e-9
 }
-
-
 
 fun parseJam(jam: String): LocalTime? {
     return if (isValidTimeFormat(jam)) {
