@@ -40,7 +40,10 @@ class MahasiswaListRepository (
                 absenRef.get(Source.SERVER).addOnSuccessListener { freshSnapshot ->
                     val absenListResponse =
                         if (snapshot != null) {
-                            val absenList = snapshot.map { it.toAbsen() }
+                            val absenList = snapshot.map {
+                                Log.d("kerer", it.toString())
+                                it.toAbsen()
+                            }
                             Response.Success(absenList)
                         } else {
                             Response.Failure(e)
@@ -384,6 +387,7 @@ fun DocumentSnapshot.toAbsen(): Absen = Absen(
     jam = getString("jam") ?: "-",
     telat = getString("telat") ?: "",
     jamtelat = getString("jamtelat") ?: "",
+    jamtarget = getString("jamtarget") ?: "07:00",
     absen = getString("absen") ?: "",
 
     lokasi = getString("lokasi") ?: "",

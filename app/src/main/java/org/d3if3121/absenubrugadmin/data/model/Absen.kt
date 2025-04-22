@@ -12,6 +12,7 @@ data class Absen(
     val jam: String = "-",
     val telat: String = "",
     val jamtelat: String? = "",
+    val jamtarget: String = "",
     val image: String? = "",
     val image2: String? = "",
 
@@ -25,7 +26,9 @@ data class Absen(
     val foto2: ImageUpload? = null,
     val telat2: String = "",
     val jamtelat2: String? = "",
-){
-    constructor() : this("", "", "", "", "", "", "", "", "", "", "", "","", null, "", "", "", "", null, "", "")
+    val jamtarget2: String = "",
+
+    ){
+    constructor() : this("", "", "", "", "", "", "", "", "", "", "", "", "","", null, "", "", "", "", null, "", "", "")
 }
 

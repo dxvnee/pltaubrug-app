@@ -66,14 +66,11 @@ fun HomePage(
     navController: NavHostController,
     viewModel: MahasiswaListViewModel = hiltViewModel(),
 ) {
+    val userid = viewModel.userId.collectAsState().value
 
     DialogLoading(viewModel)
 
-    val userid = viewModel.userId.collectAsState().value
-
     LaunchedEffect (Unit, userid){
-        Log.d("Usersekarang3", userid.toString())
-
         userid?.let {
             viewModel.getMahasiswa(it)
         }

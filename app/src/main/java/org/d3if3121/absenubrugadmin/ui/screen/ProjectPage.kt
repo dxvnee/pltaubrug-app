@@ -165,10 +165,9 @@ fun ProjectContent(
 
     when(masukpergi){
         "(Masuk)" -> {
-            val jamsebelum by remember { mutableStateOf("07:00") }
             ProjectTambah(
                 viewmodel = viewmodel,
-                jamsebelum = jamsebelum,
+                jamsebelum = viewmodel.currentAbsen.jamtarget,
                 currentJam = viewmodel.currentAbsen.jam,
                 currentKeterangan = viewmodel.currentAbsen.keterangan,
                 currentDeskripsi = viewmodel.currentAbsen.deskripsi,
@@ -184,9 +183,8 @@ fun ProjectContent(
             )
         }
         "(Pulang)" -> {
-            val jamsebelum by remember { mutableStateOf("17:00") }
+            val jamsebelum by remember { mutableStateOf(viewmodel.currentAbsen.jamtarget) }
 
-            Log.d("geg", viewmodel.currentAbsen.keterangan)
             if(viewmodel.currentAbsen.keterangan == "Belum Absen"){
                 Text(
                     text = "Pegawai Belum Mengisi Absen Masuk!",
@@ -200,7 +198,7 @@ fun ProjectContent(
             } else {
                 ProjectTambah(
                     viewmodel = viewmodel,
-                    jamsebelum = jamsebelum,
+                    jamsebelum = if (jamsebelum == "") "16:00" else jamsebelum,
                     currentJam = viewmodel.currentAbsen.jam2,
                     currentKeterangan = viewmodel.currentAbsen.keterangan2,
                     currentDeskripsi = viewmodel.currentAbsen.deskripsi2,
