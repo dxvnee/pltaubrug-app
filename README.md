@@ -15,13 +15,22 @@
 
 ## 📋 Daftar Isi
 
-- [Tentang Repository](#-tentang-repository)
-- [Daftar Aplikasi](#-daftar-aplikasi)
-- [Teknologi yang Digunakan](#-teknologi-yang-digunakan)
-- [Persyaratan Sistem](#-persyaratan-sistem)
-- [Cara Instalasi](#-cara-instalasi)
-- [Struktur Branch](#-struktur-branch)
-- [Tim Pengembang](#-tim-pengembang)
+- [📱 PLTA Ubrug App Collection](#-plta-ubrug-app-collection)
+  - [📋 Daftar Isi](#-daftar-isi)
+  - [📖 Tentang Repository](#-tentang-repository)
+    - [1. 📋 AbsenUbrug (Branch: `egia`)](#1--absenubrug-branch-egia)
+    - [2. 👨‍💼 AbsenUbrug Admin (Branch: `AdminApp`)](#2--absenubrug-admin-branch-adminapp)
+    - [4. 📊 PLTAConnect (Branch: `AplikasiSheet`)](#4--pltaconnect-branch-aplikasisheet)
+  - [🛠️ Teknologi yang Digunakan](#️-teknologi-yang-digunakan)
+  - [💻 Persyaratan Sistem](#-persyaratan-sistem)
+  - [🚀 Cara Instalasi](#-cara-instalasi)
+    - [Clone Repository](#clone-repository)
+    - [Pindah ke Branch yang Diinginkan](#pindah-ke-branch-yang-diinginkan)
+  - [📊 Integrasi Google Sheets Otomatis](#-integrasi-google-sheets-otomatis)
+    - [✨ Keunggulan Fitur](#-keunggulan-fitur)
+    - [⚙️ Alur Sinkronisasi Data](#️-alur-sinkronisasi-data)
+  - [👨‍💻 Pengembang](#-pengembang)
+  - [📄 Lisensi](#-lisensi)
 
 ---
 
@@ -31,29 +40,11 @@ Repository ini berisi kumpulan aplikasi Android yang dikembangkan untuk mendukun
 
 ---
 
-## 📱 Daftar Aplikasi
 
-### 1. 🔗 Tellink (Branch: `main`)
-**Aplikasi Rekrutmen Proyek Mahasiswa**
+### 1. 📋 AbsenUbrug (Branch: `egia`)
+**Aplikasi Absensi Karyawan**
 
-Tellink adalah aplikasi yang menghubungkan mahasiswa satu dengan mahasiswa lainnya, terutama mahasiswa yang ingin membuat proyek dengan mahasiswa yang ingin bergabung ke proyek tersebut.
-
-**Fitur Utama:**
-- 📝 Registrasi dan Login
-- 🏠 Beranda Proyek
-- 📋 Manajemen Proyek
-- ✅ Konfirmasi Pendaftaran
-- ✏️ Edit Profil
-- 📤 Upload Berkas Pendukung
-
-**Package:** `org.d3if3121.tellink`
-
----
-
-### 2. 📋 AbsenUbrug (Branch: `egia`)
-**Aplikasi Absensi Mahasiswa**
-
-AbsenUbrug adalah aplikasi mobile untuk melakukan pencatatan kehadiran mahasiswa dengan fitur upload bukti hadir dan pengelolaan jadwal.
+AbsenUbrug adalah aplikasi mobile untuk melakukan pencatatan kehadiran karyawan dengan fitur upload bukti hadir dan pengelolaan jadwal.
 
 **Fitur Utama:**
 - 🔐 Autentikasi Pengguna
@@ -66,20 +57,31 @@ AbsenUbrug adalah aplikasi mobile untuk melakukan pencatatan kehadiran mahasiswa
 
 ---
 
-### 3. 👨‍💼 AbsenUbrug Admin (Branch: `AdminApp`)
+### 2. 👨‍💼 AbsenUbrug Admin (Branch: `AdminApp`)
 **Aplikasi Admin Pengelolaan Absensi**
 
-AbsenUbrugAdmin adalah aplikasi untuk administrator dalam mengelola data kehadiran mahasiswa secara komprehensif.
+AbsenUbrugAdmin adalah aplikasi untuk administrator dalam mengelola data kehadiran karyawan secara komprehensif.
 
 **Fitur Utama:**
 - 🔐 Login Admin
-- 👥 Manajemen Data Karyawan/Mahasiswa
+- 👥 Manajemen Data Karyawan
 - 📋 Detail Karyawan
 - 📊 Rekap Absensi
 - 📝 Pengelolaan Proyek
 - 📅 Kalender Terintegrasi
 
 **Package:** `org.d3if3121.absenubrugadmin`
+
+⚡ Integrasi Spreadsheet Otomatis
+Seluruh data yang masuk melalui aplikasi ini tidak hanya tersimpan di Firebase Firestore, tetapi juga dikonfigurasi untuk tersinkronisasi secara otomatis ke Google Sheets.
+
+Keunggulan Fitur:
+
+Real-time Sync: Setiap ada data absensi atau produksi baru, baris baru akan otomatis muncul di Spreadsheet.
+
+Easy Reporting: Memudahkan staf kantor untuk mengolah data (filter/pivot) tanpa perlu membuka Console Firebase.
+
+Automated Backup: Berfungsi sebagai cadangan data yang mudah diakses kapan saja.
 
 ---
 
@@ -98,22 +100,6 @@ PLTAConnect adalah aplikasi untuk pengelolaan dan pencatatan data operasional Pe
 - 📊 Laporan Terintegrasi
 
 **Package:** `org.d3if3121.pltaconnect`
-
----
-
-### 5. 🗂️ AdminAbsen (Branch: `absenadmin`)
-**Aplikasi Admin Ketidakhadiran**
-
-AdminAbsen adalah aplikasi untuk pengelolaan dan konfirmasi data ketidakhadiran serta manajemen pengguna.
-
-**Fitur Utama:**
-- 📝 Registrasi dan Login
-- ✅ Konfirmasi Kehadiran
-- ✏️ Edit Data
-- 📋 Manajemen Proyek
-- 👤 Profil Pengguna
-
-**Package:** `org.d3if3121.AdminAbsen`
 
 ---
 
@@ -143,19 +129,6 @@ AdminAbsen adalah aplikasi untuk pengelolaan dan konfirmasi data ketidakhadiran 
 
 ---
 
-## 🚀 Cara Instalasi
-
-### Clone Repository
-```bash
-git clone https://github.com/dxvnee/pltaubrug-app.git
-cd pltaubrug-app
-```
-
-### Pindah ke Branch yang Diinginkan
-```bash
-# Untuk aplikasi Tellink (main)
-git checkout main
-
 # Untuk aplikasi AbsenUbrug
 git checkout egia
 
@@ -165,9 +138,6 @@ git checkout AdminApp
 # Untuk aplikasi PLTAConnect
 git checkout AplikasiSheet
 
-# Untuk aplikasi AdminAbsen
-git checkout absenadmin
-```
 
 ### Build dan Run
 1. Buka proyek di Android Studio
@@ -181,26 +151,32 @@ git checkout absenadmin
 
 ```
 pltaubrug-app/
-├── main          → Tellink (Rekrutmen Proyek)
-├── egia          → AbsenUbrug (Absensi Mahasiswa)
+├── egia          → AbsenUbrug (Absensi karyawan)
 ├── AdminApp      → AbsenUbrug Admin (Admin Absensi)
 ├── AplikasiSheet → PLTAConnect (Data PLTA)
-└── absenadmin    → AdminAbsen (Admin Ketidakhadiran)
 ```
 
 ---
 
-## 👨‍💻 Tim Pengembang
+## 📊 Integrasi Google Sheets Otomatis
 
-<div align="center">
+Proyek ini telah dikonfigurasi dengan sistem sinkronisasi data otomatis. Setiap data yang masuk melalui **Firebase Firestore** akan diteruskan secara *real-time* ke **Google Sheets** menggunakan *Firebase Cloud Functions* / *Extension*.
 
-| NIM | Nama | GitHub |
-|:---:|:----:|:------:|
-| 6706223121 | **Eigiya Daramuli Kale** | [![GitHub](https://img.shields.io/badge/-dxvnee-181717?style=flat-square&logo=github)](https://github.com/dxvnee) |
-| 6706223124 | **Yustifani Putri Candrawulaningsih** | [![GitHub](https://img.shields.io/badge/-yustifani-181717?style=flat-square&logo=github)](https://github.com/yustifani) |
-| 6706223164 | **Dzikri Abdu Rahman** | [![GitHub](https://img.shields.io/badge/-dziryizami-181717?style=flat-square&logo=github)](https://github.com/dziryizami) |
+### ✨ Keunggulan Fitur
+* **🔄 Real-time Sync:** Setiap kali ada data absensi atau operasional baru, baris baru akan otomatis muncul di Spreadsheet tanpa perlu input manual.
+* **📂 Reporting yang Mudah:** Memudahkan staf administrasi untuk melakukan filter, membuat tabel pivot, dan mencetak laporan bulanan tanpa perlu akses ke Firebase Console.
+* **🛡️ Backup Terotomatisasi:** Berfungsi sebagai cadangan data (mirroring) yang aman dan mudah diakses oleh pihak manajemen.
 
-</div>
+### ⚙️ Alur Sinkronisasi Data
+
+
+1.  **Aplikasi Android** mengirimkan data ke Firestore.
+2.  **Firebase trigger** mendeteksi adanya dokumen baru.
+3.  **Google Sheets API** menulis data tersebut ke sheet yang telah ditentukan sesuai dengan kategori (Absensi atau Produksi).
+
+## 👨‍💻 Pengembang
+
+*Dxvnee*
 
 ---
 
