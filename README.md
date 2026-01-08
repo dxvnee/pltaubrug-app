@@ -182,7 +182,6 @@ Proyek ini telah dikonfigurasi dengan sistem sinkronisasi data otomatis. Setiap 
 
 ## 📄 Lisensi
 
-Proyek ini dikembangkan sebagai bagian dari tugas akademik D3 Teknik Informatika Telkom University.
 
 ---
 
@@ -190,6 +189,5 @@ Proyek ini dikembangkan sebagai bagian dari tugas akademik D3 Teknik Informatika
 
 **Dibuat dengan ❤️ oleh Tim PLTA Ubrug**
 
-*© 2024 D3 Teknik Informatika - Telkom University*
 
 </div>
